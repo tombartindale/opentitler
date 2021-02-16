@@ -1,6 +1,6 @@
 <template lang="pug">
 .wrapper
-  .content(v-if="data" :key="data.image" :style="" v-for="(content,index) in data" v-bind:style="{top: offset + (index-current)*700+'px'}")
+  .content(v-if="data" :style="" v-for="(content,index) in data" v-bind:style="{top: offset + (index-current)*700+'px'}")
     .image(v-if="content.image")
       img(:src="content.image")
       .caption {{content.caption}}

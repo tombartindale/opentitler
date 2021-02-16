@@ -6,6 +6,7 @@ import { Quasar } from 'quasar'
 
 Vue.use(Quasar, {
   config: {},
+  extras: ["material-icons"],
   plugins: {
   }
  })

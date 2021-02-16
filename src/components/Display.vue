@@ -10,8 +10,8 @@ div(v-if="display.config" v-bind:style="{'--main-background':display.config.colo
     transition(enter-active-class="animation slide-in-up" leave-active-class="animation slide-out-down" mode="out-in")
       Ticker(:config="display.config" :data="display.ticker" v-if="display.control.ticker")
 
-    transition(enter-active-class="animation fade-in" leave-active-class="animation fade-out")
-    Content(:config="display.config" :data="display.content" v-if="display.control.content" :current="display.control.currentcontent")
+    transition(:key="display.control.content" enter-active-class="animation fade-in" leave-active-class="animation fade-out")
+      Content(:config="display.config" :data="display.content" v-if="display.control.content" :current="display.control.currentcontent")
 
     Watermark(:config="display.config" v-if="display.control.watermark" :data="display.watermark")
 </div>
@@ -35,6 +35,7 @@ Control Panel
 
 
 import {db} from '../lib/db';
+// import firebase from 'firebase';
 import Tweets from './Tweets';
 import Ticker from './Ticker';
 import People from './People';
@@ -46,7 +47,7 @@ const alldisplays = db.ref('displays');
 
 export default {
   name: 'Display',
-  props:['user','id'],
+  props:['id','userid' ],
   data() {
     return {
       display: Object,
@@ -65,7 +66,7 @@ export default {
       // call it upon creation too
       immediate: true,
       handler(id) {
-        this.$rtdbBind('display', alldisplays.child(this.user).child(id))
+        this.$rtdbBind('display', alldisplays.child(this.userid).child(id))
       },
     },
   },

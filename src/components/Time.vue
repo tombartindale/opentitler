@@ -30,7 +30,6 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped lang="scss">
-$background: #335566;
 
 .time {
   position: absolute;
@@ -40,7 +39,7 @@ $background: #335566;
   color:white;
   font-size: 30px;
   line-height:60px;
-  background: $background;
+  background: var(--main-background);
   width:180px;
 
   /* box-shadow: 0px 0px 10px #00000077; */

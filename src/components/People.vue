@@ -1,7 +1,7 @@
 <template lang="pug">
 .people
-  .name {{currentmessage.message}}
-  .attribution {{currentmessage.attribution}}
+  .name {{currentmessage.name}}
+  .attribution {{currentmessage.affiliation}}
   //- Title1(:data="data")
 </template>
 
@@ -35,6 +35,7 @@ export default {
   font-family: Titillium Web;
   /* box-shadow: 0px 0px 10px #00000077; */
   filter: drop-shadow(0 0 10px #00000077);
+  font-size: 20px;
 }
 
 .name {

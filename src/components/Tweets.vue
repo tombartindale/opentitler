@@ -1,6 +1,6 @@
 <template lang="pug">
 .tweets
-  transition-group(appear name="fade-in" mode="out-in" tag="div" v-bind:css="false" v-on:before-enter="beforeEnter" v-on:enter="enter" v-on:leave="leave")
+  transition-group(appear name="fade-in" mode="out-in" tag="div" v-bind:css="false")
     .tweet(v-for="(message, index) in currentmessage" :key="message.message" v-bind:data-index="index")
       .box3.sb13 {{message.message}}
 </template>
