@@ -5,7 +5,7 @@ div
     li(v-for="(display,index) in displays")
       //- div {{display.id}}
       router-link(:to="'/display/'+userid.uid+'/'+index") Display {{display.name}}
-      router-link(:to="'/control/'+userid.uid+'/'+index") Control {{display.name}}
+      router-link(:to="'/control/'+index") Control {{display.name}}
 </template>
 
 <script>

@@ -18,6 +18,11 @@ import Login from './components/Login'
 import './quasar'
 
 
+Vue.component('v-style', {
+  render: function (createElement) {
+    return createElement('style', this.$slots.default)
+  }
+});
 
 const routes = [
   {
@@ -49,12 +54,35 @@ router.beforeEach((to, from, next) => {
 
   // console.log(currentUser)
 
-  console.log(to);
+  // console.log(to);
 
   const requiresAuth = to.matched.some(record => record.meta.requiresAuth);
 
-  if (requiresAuth && !currentUser) next('login');
-  else if (!requiresAuth && currentUser && !to.path.startsWith('/display')) next('dashboard');
+  // console.log('requires auth: ' + requiresAuth);
+  // console.log(currentUser)
+
+  
+
+  // console.log(to.path.startsWith('/login'))
+
+  if (currentUser && to.path.startsWith('/login'))
+  {
+    // console.log('sending to dash')
+    return next('dashboard');
+  }
+
+  if (!requiresAuth)
+    return next();
+  
+  if (requiresAuth && !currentUser){
+    // console.log('sending to login')
+    next('login')
+  }
+  else if (currentUser && requiresAuth)
+  {
+    // console.log('sending to dash 2')
+    next();
+  }
   else next();
 });
 

@@ -50,6 +50,7 @@ export default {
   height:720px;
   overflow: hidden;
   position:relative;
+  outline: solid white 5px;
   /* background:#00ff00; */
   /* background:transparent; */
 }

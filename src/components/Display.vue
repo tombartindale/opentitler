@@ -1,19 +1,22 @@
 <template lang="pug">
-div(v-if="display.config" v-bind:style="{'--main-background':display.config.colors.bgcolor}")
+div(v-if="display.config" :style="allstyles")
+  v-style {{display.config.style}}
   .widescreen
     transition(enter-active-class="animate__animated animate__slideInRight" leave-active-class="animate__animated animate__slideOutRight" mode="out-in")
-      Tweets(:config="display.config" :data="display.messages" v-if="display.control.messages")
+      Tweets(:data="display.messages" v-if="display.control.messages")
 
     transition(mode="out-in" enter-active-class="animate__animated animate__slideInLeft" leave-active-class="animate__animated animate__slideOutLeft" )
-      People(:config="display.config" :key="display.people.message" :data="display.people" v-if="display.control.people")
+      People(:key="display.people.message" :data="display.people" v-if="display.control.people")
+
+    Title(:data="display.title" :control="display.control")
 
     transition(enter-active-class="animation slide-in-up" leave-active-class="animation slide-out-down" mode="out-in")
-      Ticker(:config="display.config" :data="display.ticker" v-if="display.control.ticker")
+      Ticker( :data="display.ticker" v-if="display.control.ticker")
 
     transition(:key="display.control.content" enter-active-class="animation fade-in" leave-active-class="animation fade-out")
-      Content(:config="display.config" :data="display.content" v-if="display.control.content" :current="display.control.currentcontent")
+      Content(:data="display.content" v-if="display.control.content" :current="display.control.currentcontent")
 
-    Watermark(:config="display.config" v-if="display.control.watermark" :data="display.watermark")
+    Watermark(v-if="display.control.watermark" :data="display.watermark")
 </div>
 
 </template>
@@ -42,6 +45,7 @@ import People from './People';
 import Time from './Time';
 import Watermark from './Watermark';
 import Content from './Content';
+import Title from './Title';
 
 const alldisplays = db.ref('displays');
 
@@ -59,7 +63,17 @@ export default {
     People,
     Time,
     Watermark,
-    Content
+    Content,
+    Title
+  },
+  computed:{
+    allstyles(){
+      let local = {
+        '--main-background':this.display.config.colors.bgcolor,
+        '--primary':this.display.config.colors.primary
+      };
+      return local;
+    }
   },
   watch: {
     id: {

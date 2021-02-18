@@ -1,10 +1,13 @@
 <template lang="pug">
 .wrapper
-  .content(v-if="data" :style="" v-for="(content,index) in data" v-bind:style="{top: offset + (index-current)*700+'px'}")
-    .image(v-if="content.image")
+  .content(v-if="data" :class="content.type" v-for="(content,index) in data" v-bind:style="{top: offset + (index-current)*700+'px'}")
+    
+    .image(v-if="content.type='image'")
       img(:src="content.image")
       .caption {{content.caption}}
-    .text(v-if="content.text") {{content.text}}
+    .text(v-if="content.type=='message'") {{content.text}}
+
+    .persona(v-if="content.type=='persona'") {{content.text}}
 </template>
 
 <script>
@@ -12,7 +15,7 @@ export default {
   name: 'Content',
   data(){
     return {
-      offset:80
+      offset:50
     }
   },
   props:{

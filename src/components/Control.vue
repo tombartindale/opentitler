@@ -12,34 +12,51 @@ q-layout(view="hHh lpR fFf")
       q-tab(name="ticker" label="Ticker")
       q-tab(name="watermark" label="Watermark")
       q-tab(name="people" label="People")
+      q-tab(name="titles" label="Titles")
       q-tab(name="content" label="Content")
-      q-tab(name="messages" label="Messages")
-      
+      q-tab(name="style" label="Style")      
             
   q-page-container
     q-page
       q-tab-panels(v-model="tab" animated)
         q-tab-panel(name="control" v-if="control && display.ticker")
           .row
-            q-toggle(v-model="control.ticker" size="100px" val="true"  toggle-color="primary" label="Ticker")
+            q-toggle(v-model="control.ticker" val="true"  toggle-color="primary" label="Ticker")
             span {{display.ticker.message}}
           .row
             .col
-              q-toggle(v-model="control.content" size="100px" val="true" label="Content")
+              q-toggle(v-model="control.title" val="true" toggle-color="primary" label="Title")
+              q-list(bordered separator v-if="display && display.draft && display.draft.titles")
+                q-item(v-for="(title,index) in display.draft.titles")
+                  q-item-section(side)
+                    q-icon(name="done" v-show="display.title.title == title.title && display.title.subtitle == title.subtitle")
+                  q-item-section
+                    q-item-label {{title.title}} ({{title.subtitle}})
+                  q-item-section(side)
+                    div
+                      q-btn(flat icon="monitor" @click="updatetitle(title)")
+            .col
+              q-toggle(v-model="control.content" val="true" label="Content")
               br
               div
                 q-btn(@click="control.currentcontent--") Prev.
                 span {{control.currentcontent+1}}
                 q-btn(@click="control.currentcontent++") Next
-
-            .col
-              q-toggle(v-model="control.messages" size="100px" val="true" toggle-color="primary" label="Messages")
-              div move to next one (list them)
+              
+              q-list(bordered separator)
+                q-item(v-for="(content,index) in display.content")
+                  q-item-section(side)
+                    q-icon(name="done" v-show="index == control.currentcontent")
+                  q-item-section(side) {{index+1}}
+                  q-item-section
+                    q-item-label {{content}}
             
             .col
-              q-toggle(v-model="control.people" size="100px" val="true" toggle-color="primary" label="People")
+              q-toggle(v-model="control.people" val="true" toggle-color="primary" label="People")
               q-list(bordered separator v-if="display && display.draft && display.draft.people")
                 q-item(v-for="(people,index) in display.draft.people")
+                  q-item-section(side)
+                    q-icon(name="done" v-show="display.people.name == people.name && display.people.affiliation == people.affiliation")
                   q-item-section(side)
                     q-circular-progress(v-show="display.people.name == people.name && display.people.affiliation == people.affiliation" :value="peopletimer")
                   q-item-section
@@ -81,21 +98,43 @@ q-layout(view="hHh lpR fFf")
               q-item-section(side)
                 q-btn(flat round icon="add" @click="person_add()")
         
-        q-tab-panel(name="content" v-if="display.draft")
-
-        q-tab-panel(name="messages" v-if="display.draft")
+        q-tab-panel(name="titles" v-if="display.draft")
           q-list(bordered separator)
-            q-item(v-if="display.draft && display.draft.messages" v-for="(message,index) in display.draft.message")
+            q-item(v-if="display.draft && display.draft.titles" v-for="(title,index) in display.draft.titles")
               q-item-section
-                q-item-label {{message.name}}
+                q-item-label
+                  span {{title.title}}
+                  br
+                  span {{title.subtitle}}
               q-item-section(side)
-                q-btn(flat round icon="remove" @click="message_remove(index)")
+                q-btn(flat round icon="remove" @click="title_remove(index)")
             
             q-item
               q-item-section
-                q-input.col-6(label="name" v-model="newperson.name")
-                q-input.col-6(label="affiliation" v-model="newperson.affiliation")
+                q-input.col-6(label="title" v-model="newtitle.title")
+                q-input.col-6(label="subtitle" v-model="newtitle.subtitle")
               q-item-section(side)
+                q-btn(flat round icon="add" @click="title_add()")
+        
+        q-tab-panel(name="content" v-if="display.draft")
+
+        q-tab-panel(name="style" v-if="display.config")
+          q-input(type="textarea" v-model="display.config.style" outlined)
+          q-btn(label="Save" @click="savestyle()")
+
+        //- q-tab-panel(name="messages" v-if="display.draft")
+        //-   q-list(bordered separator)
+        //-     q-item(v-if="display.draft && display.draft.messages" v-for="(message,index) in display.draft.message")
+        //-       q-item-section
+        //-         q-item-label {{message.name}}
+        //-       q-item-section(side)
+        //-         q-btn(flat round icon="remove" @click="message_remove(index)")
+            
+        //-     q-item
+        //-       q-item-section
+        //-         q-input.col-6(label="name" v-model="newperson.name")
+        //-         q-input.col-6(label="affiliation" v-model="newperson.affiliation")
+        //-       q-item-section(side)
                 q-btn(flat round icon="add" @click="person_add()")
 </template>
 
@@ -109,6 +148,9 @@ var timeout;
 export default {
   name: 'Control',
   props:['id'],
+  created () {
+    this.$q.dark.set(true)
+  },
   data() {
     return {
       display: {},
@@ -121,10 +163,33 @@ export default {
       newperson:{
         name:"",
         affiliation:""  
+      },
+      newtitle:{
+        title:"",
+        subtitle:""  
       }
     }
   },
   methods:{
+    savestyle(){
+      this.$firebaseRefs.display.child('config').child('style').set(this.display.config.style);
+    },
+    title_add(){
+      console.log(this.display.draft)
+      this.display.draft.titles.push(this.newtitle);
+      this.newtitle = {
+        title:"",
+        subtitle:""  
+      }
+      this.$firebaseRefs.display.child('draft').child('titles').set(this.display.draft.titles);
+    },
+    title_remove(index){
+      // console.log(this.display.draft);
+      this.display.draft.titles.splice(index,1);
+      // console.log(this.display.draft.people);
+      this.$firebaseRefs.display.child('draft').child('titles').set(this.display.draft.titles);
+
+    },
     person_add(){
       this.display.draft.people.push(this.newperson);
       this.newperson = {
@@ -152,6 +217,10 @@ export default {
       this.peopletimer = 0;
       clearTimeout(timeout);
       this.$firebaseRefs.control.child('people').set(true);
+    },
+    updatetitle(title){
+      this.$firebaseRefs.display.child('title').set(title);
+      this.$firebaseRefs.control.child('title').set(true);
     },
     cancelperson(){
       this.$firebaseRefs.control.child('people').set(false);
@@ -183,10 +252,12 @@ export default {
   watch: {
     display:{
       deep:true,
+      immediate: true,
       handler(display){
         if (!display.draft){
           display.draft = {
-            people:[]
+            people:[],
+            titles:[]
           }
         }
       }

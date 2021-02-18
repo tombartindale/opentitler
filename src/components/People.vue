@@ -29,13 +29,13 @@ export default {
 
 .people {
   position: absolute;
-  left:0;
-  bottom:60px;
+  left:15px;
+  bottom:180px;
   color:white;
   font-family: Titillium Web;
   /* box-shadow: 0px 0px 10px #00000077; */
-  filter: drop-shadow(0 0 10px #00000077);
-  font-size: 20px;
+  /* filter: drop-shadow(0 0 10px #00000077); */
+  font-size: 1.2rem;
 }
 
 .name {
