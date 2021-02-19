@@ -2,8 +2,11 @@
 .box
   transition(mode="out-in" enter-active-class="animate__animated animate__slideInUp" leave-active-class="animate__animated animate__slideOutDown" )
     .titles(v-if="control.title" :key="control.title")
-      .subtitle {{data.subtitle}}
-      .title {{data.title}}
+      transition(name="fade-in" mode="out-in")
+        .subtitle(:key="data.subtitle") {{data.subtitle}}
+      .title
+        transition(name="fade-in" mode="out-in")
+          span(:key="data.title") {{data.title}}
 </template>
 
 <script>
@@ -55,7 +58,6 @@ export default {
 {
   
   background: var(--primary);
-  
   padding: 5px;
   padding-left:10px;
   padding-right:10px;

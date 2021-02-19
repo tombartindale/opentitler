@@ -1,13 +1,15 @@
 <template lang="pug">
 .wrapper
-  .content(v-if="data" :class="content.type" v-for="(content,index) in data" v-bind:style="{top: offset + (index-current)*700+'px'}")
-    
-    .image(v-if="content.type='image'")
+  .content(v-if="data" :class="content.itemtype" v-for="(content,index) in data" v-bind:style="{top: offset + (index-current)*700+'px'}")
+    .imagec(v-if="content.itemtype=='image'")
       img(:src="content.image")
       .caption {{content.caption}}
-    .text(v-if="content.type=='message'") {{content.text}}
+    .text(v-if="content.itemtype=='message'") {{content.message}}
 
-    .persona(v-if="content.type=='persona'") {{content.text}}
+    .persona(v-if="content.itemtype=='profile'") {{content.text}}
+      img.p_img(:src="content.image")
+      .p_caption {{content.caption}}
+      .p_text {{content.message}}
 </template>
 
 <script>
@@ -42,24 +44,67 @@ export default {
   z-index: -3;
   right:20px;
   
-  color:white;
+  // color:white;
   font-size: 30px;
   line-height:60px;
   // display: block;
   
-  background: white;
+  
   transition: top 2s;
-  background: red;
+  // background: red;
 
-  transform: perspective(1500px) rotateY(-15deg);
+  transform: perspective(1500px) rotateY(-17deg);
   // transform: perspective(1500px) rotateY(-15deg);
 }
 
-.image {
+.persona {
+
+  border-radius: 20px;
+  background:white;
+  padding:20px;
+  min-height: 190px;
+
+  .p_img {
+    width:150px;
+    border-radius: 50%;
+    height:150px;
+    float:right;
+  }
+
+  .p_text {
+    line-height: 40px;
+  }
+
+  .p_caption {
+    color:purple;
+  }
+}
+
+.message {
+  height:70%;
+  // background: green;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.text {
+  max-width:400px;
+  border-left: 1px solid white;
+  border-right: 1px solid white;
+  padding: 20px;
+  margin-top:auto;
+  margin-bottom:auto;
+  color:white;
+  font-size: 3rem;
+}
+
+.imagec {
   border: 10px solid white;
   box-shadow: 0px 0px 20px #00000077;
   background: white;
   border-radius: 1px;
+  background: white;
 
   img {
     max-height:450px;

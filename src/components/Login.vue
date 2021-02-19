@@ -1,7 +1,15 @@
-<template>
-<button @click="socialLogin" class="social-button">
-        <img alt="Google Logo" src="../assets/google-logo.png">
-      </button>
+<template lang="pug">
+q-layout(view="hHh lpR fFf")
+  q-header.bg-primary.text-white(elevated height-hint="98")
+    q-toolbar
+      q-toolbar-title
+        q-avatar
+          q-icon(name="monitor")
+        | Login
+
+  q-page-container
+    q-page(padding)
+      q-btn(@click="socialLogin" color="primary") Login with Google
 </template>
 
 <script>
