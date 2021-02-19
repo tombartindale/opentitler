@@ -2,8 +2,8 @@
 div(v-if="display.config" :style="allstyles")
   v-style {{display.config.style}}
   .widescreen
-    transition(enter-active-class="animate__animated animate__slideInRight" leave-active-class="animate__animated animate__slideOutRight" mode="out-in")
-      Tweets(:data="display.messages" v-if="display.control.messages")
+    //- transition(enter-active-class="animate__animated animate__slideInRight" leave-active-class="animate__animated animate__slideOutRight" mode="out-in")
+      //- Tweets(:data="display.messages" v-if="display.control.messages")
 
     transition(mode="out-in" enter-active-class="animate__animated animate__slideInLeft" leave-active-class="animate__animated animate__slideOutLeft" )
       People(:key="display.people.message" :data="display.people" v-if="display.control.people")
@@ -13,7 +13,7 @@ div(v-if="display.config" :style="allstyles")
     transition(enter-active-class="animation slide-in-up" leave-active-class="animation slide-out-down" mode="out-in")
       Ticker( :data="display.ticker" v-if="display.control.ticker")
 
-    transition(:key="display.control.content" enter-active-class="animation fade-in" leave-active-class="animation fade-out")
+    transition(:key="display.control.content" enter-active-class="animate__animated animate__fadeIn animate__fast" leave-active-class="animate__animated animate__fadeOut animate__fast")
       Content(:data="display.content" v-if="display.control.content" :current="display.control.currentcontent")
 
     Watermark(v-if="display.control.watermark" :data="display.watermark")
@@ -79,20 +79,12 @@ export default {
     id: {
       // call it upon creation too
       immediate: true,
-      handler(id) {
-        this.$rtdbBind('display', alldisplays.child(this.userid).child(id))
+      async handler(id) {
+        await this.$rtdbBind('display', alldisplays.child(this.userid).child(id));
+        // console.log(this.display); 
       },
     },
-  },
-  // firebase: {
-  //   messages: db.ref('messages'),
-  //   ticker: db.ref('ticker'),
-  //   people: db.ref('people'),
-  //   control: db.ref('control'),
-  //   watermark: db.ref('watermark'),
-  //   content: db.ref('content'),
-  //   config: db.ref('config')
-  // }
+  }
 }
 </script>
 
