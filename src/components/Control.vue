@@ -4,49 +4,42 @@ q-layout(view="hHh lpR fFf")
     q-toolbar
       q-btn(flat round dense to="/dashboard")
         q-icon(name="arrow_back")
-      q-toolbar-title
-        q-avatar
-          q-icon(name="monitor")
-        | Control of {{display.name}} by {{userid.email}}
+      q-toolbar-title {{display.name}}
 
   q-page-container()
     q-page()
-      q-splitter(v-model="splitter" style="min-height: inherit;height:100%;" :limits="[8, 8]")
-        template(v-slot:before)
-          q-tabs(align="left" v-model="tab" vertical)
+          //- q-splitter(v-model="splitter" style="min-height: inherit;height:100%;")
+          //- template(v-slot:before)
+          q-tabs(align="left" v-model="tab" dense  outside-arrows mobile-arrows)
             q-tab(icon="tune" name="control" label="LIVE")
-            q-tab(icon="subtitles" name="ticker" label="Ticker")
-            q-tab(icon="branding_watermark" name="watermark" label="Watermark")
+            q-tab(icon="ballot" name="content" label="Content")
             q-tab(icon="person" name="people" label="People")
             q-tab(icon="title" name="titles" label="Titles")
-            q-tab(icon="ballot" name="content" label="Content")
-            q-tab(icon="style" name="style" label="Style")
-        template(v-slot:after)
-          q-tab-panels(v-model="tab" v-if="loaded")
-            q-tab-panel(name="control" )
+            q-tab(icon="subtitles" name="ticker" label="Ticker")
+            q-tab(icon="branding_watermark" name="watermark" label="Watermark")
+            q-tab(icon="style" name="style" label="Settings")
+            //- template(v-slot:after)
+          q-tab-panels(v-model="tab" v-if="loaded" padding)
+            q-tab-panel(name="control")
               .row
                 .col-12.col-md.q-pa-xs
                   q-toggle(v-model="control.title" val="true" toggle-color="primary" label="Display title")
-                  q-list(bordered separator v-if="display && draft && draft.titles && display.title")
-                    q-item(v-for="(title,index) in draft.titles")
+                  q-list(separator v-if="display && draft && draft.titles && display.title")
+                    q-item(clickable v-ripple v-for="(title,index) in draft.titles" @click="updatetitle(title)")
                       q-item-section(side)
                         q-icon(name="done" v-show="display.title.title == title.title && display.title.subtitle == title.subtitle")
                       q-item-section
                         q-item-label {{title.title}} ({{title.subtitle}})
-                      q-item-section(side)      
-                        div
-                          q-btn(flat icon="monitor" @click="updatetitle(title)")
                           
                 .col-12.col-md.q-pa-xs
                   q-toggle(v-model="control.content" val="true" label="Display content")
-                  br
-                  div
-                    q-btn(@click="control.currentcontent--") Prev.
-                    span {{control.currentcontent+1}}
-                    q-btn(@click="control.currentcontent++") Next
+                  q-btn-group(spread )
+                    q-btn(color="primary" outline @click="control.currentcontent--") Prev.
+                    q-btn(disabled outline color="primary") {{control.currentcontent+1}}
+                    q-btn(color="primary" outline @click="control.currentcontent++") Next
                   
-                  q-list(bordered separator)
-                    q-item(v-for="(content,index) in display.content")
+                  q-list(separator)
+                    q-item(clickable v-ripple v-for="(content,index) in display.content")
                       q-item-section(side)
                         q-icon(name="done" v-show="index == control.currentcontent")
                       q-item-section(side) {{index+1}}
@@ -55,7 +48,7 @@ q-layout(view="hHh lpR fFf")
                 
                 .col-12.col-md.q-pa-xs
                   q-toggle(v-model="control.people" val="true" toggle-color="primary" label="Display people")
-                  q-list(bordered separator v-if="display && draft && draft.people")
+                  q-list(separator v-if="display && draft && draft.people")
                     q-item(v-for="(people,index) in draft.people")
                       q-item-section(side)
                         q-icon(name="done"  v-if="display.people" v-show="display.people.name == people.name && display.people.affiliation == people.affiliation")
@@ -65,79 +58,104 @@ q-layout(view="hHh lpR fFf")
                         q-item-label {{people.name}} ({{people.affiliation}})
                       q-item-section(side)
                         div
-                          q-btn(flat icon="monitor" @click="updateperson(people)")
-                          q-btn(flat icon="bolt" @click="fireperson(people)") Fire
+                          q-btn(flat icon="monitor" @click="updateperson(people)" color="primary")
+                          q-btn(flat icon="bolt" @click="fireperson(people)" color="primary") Fire
                 
+
+            q-tab-panel(name="people")
+              .q-pa-xs
+                q-list(separator)
+                  q-item-label(header) Add New Person
+                  q-item
+                    q-item-section
+                      q-input.col-6(label="name" v-model="newperson.name")
+                      q-input.col-6(label="affiliation" v-model="newperson.affiliation")
+                    q-item-section(side)
+                      q-btn(flat round icon="add" @click="person_add()")
+                  q-item-label(header) Available People
+                  q-item(v-if="draft && draft.people" v-for="(people,index) in draft.people")
+                    q-item-section
+                      q-item-label {{people.name}}
+                      q-item-label(caption) {{people.affiliation}}
+                    q-item-section(side)
+                      q-btn(flat round icon="remove" @click="person_remove(index)")
+                  
+            q-tab-panel(name="content")
+              .q-pa-xs
+                div.q-pa-md.row.items-start.q-gutter-sm
+                  q-card.col-4-md.col-12-xs.col-6(flat bordered)
+                    q-card-section
+                      q-option-group(inline :options="contenttypes" v-model="newcontent.itemtype")
+                      q-input(label="Message" type="text" v-model="newcontent.message")
+                      q-input(label="Image URL" type="text" v-model="newcontent.image")
+                      q-input(label="Caption" type="text" v-model="newcontent.caption")
+                    q-separator
+                    q-card-actions
+                      q-btn(flat @click="content_add()") Add
+
+                  q-card.col-4-md.col-12-xs.col-6.col-md(flat bordered v-if="display.content && display.content" v-for="(content,index) in display.content")
+                    q-card-section
+                      p {{content.itemtype}}
+                      p {{content.caption}}
+                      p {{content.image}}
+                      p {{content.message}}
+                    q-separator
+                    q-card-actions
+                      q-btn(flat @click="content_remove(index)") Remove
+            
+            q-tab-panel(name="titles")
+              .q-pa-xs
+                q-list(separator)
+                  q-item-label(header) Add New Title
+                  q-item
+                    q-item-section
+                      q-input.col-6(label="title" v-model="newtitle.title")
+                      q-input.col-6(label="subtitle" v-model="newtitle.subtitle")
+                    q-item-section(side)
+                      q-btn(flat round icon="add" @click="title_add()")
+
+                  q-item-label(header) Titles
+                  q-item(v-if="draft && draft.titles" v-for="(title,index) in draft.titles")
+                    q-item-section
+                      q-item-label
+                        span {{title.title}}
+                        br
+                        span {{title.subtitle}}
+                    q-item-section(side)
+                      q-btn(flat round icon="remove" @click="title_remove(index)")
+                  
 
             q-tab-panel(name="ticker")
-              q-toggle(v-model="control.ticker" val="true"  toggle-color="primary" label="Display ticker")
-              q-input(v-model="dirty.ticker.message" clearable label="Ticker text" v-on:keyup.enter="updateticker")
-                template(v-slot:append v-if="dirty.ticker.message != display.ticker.message")
-                  q-avatar
-                    q-icon(name="create")
+              .q-pa-xs
+                q-toggle(v-model="control.ticker" val="true"  toggle-color="primary" label="Display ticker")
+                q-input(v-model="dirty.ticker.message" clearable label="Ticker text" v-on:keyup.enter="updateticker")
+                  template(v-slot:append v-if="dirty.ticker.message != display.ticker.message")
+                    q-avatar
+                      q-icon(name="create")
+
+
 
             q-tab-panel(name="watermark" )
-              q-toggle(v-model="control.watermark" val="true" toggle-color="primary" label="Display watermark")
-              q-input(v-model="dirty.watermark.src" clearable label="Watermark" v-on:keyup.enter="updatewatermark")
-                template(v-slot:append v-if="dirty.watermark.src != display.watermark.src")
-                  q-avatar
-                    q-icon(name="create")
-              .imgdark.row
-                .col-4
-                  q-img(:src="dirty.watermark.src")
-
-            q-tab-panel(name="people" )
-              q-list(bordered separator)
-                q-item(v-if="draft && draft.people" v-for="(people,index) in draft.people")
-                  q-item-section
-                    q-item-label {{people.name}} ({{people.affiliation}})
-                  q-item-section(side)
-                    q-btn(flat round icon="remove" @click="person_remove(index)")
-                
-                q-item
-                  q-item-section
-                    q-input.col-6(label="name" v-model="newperson.name")
-                    q-input.col-6(label="affiliation" v-model="newperson.affiliation")
-                  q-item-section(side)
-                    q-btn(flat round icon="add" @click="person_add()")
+              .q-pa-xs
+                q-toggle(v-model="control.watermark" val="true" toggle-color="primary" label="Display watermark")
+                q-input(v-model="dirty.watermark.src" clearable label="Watermark" v-on:keyup.enter="updatewatermark" placeholder="paste url or data:url here")
+                  template(v-slot:append v-if="dirty.watermark.src != display.watermark.src")
+                    q-avatar
+                      q-icon(name="create")
+                .imgdark.row
+                  .col-4
+                    q-img(:src="dirty.watermark.src")
             
-            q-tab-panel(name="titles" )
-              q-list(bordered separator)
-                q-item(v-if="draft && draft.titles" v-for="(title,index) in draft.titles")
-                  q-item-section
-                    q-item-label
-                      span {{title.title}}
-                      br
-                      span {{title.subtitle}}
-                  q-item-section(side)
-                    q-btn(flat round icon="remove" @click="title_remove(index)")
-                
-                q-item
-                  q-item-section
-                    q-input.col-6(label="title" v-model="newtitle.title")
-                    q-input.col-6(label="subtitle" v-model="newtitle.subtitle")
-                  q-item-section(side)
-                    q-btn(flat round icon="add" @click="title_add()")
-            
-            q-tab-panel(name="content" )
-              div.q-pa-md.row.items-start.q-gutter-md
-                q-card.mycard(outlined v-if="display.content && display.content" v-for="(content,index) in display.content")
-                  q-card-section {{content}}
-                  q-btn(flat round icon="remove" @click="content_remove(index)")
-
-                q-card.mycard(outlined)
-                  q-card-section
-                    q-select(:options="['message','image','profile']" v-model="newcontent.itemtype")
-                    q-input(label="Message" type="text" v-model="newcontent.message")
-                    q-input(label="Image URL" type="text" v-model="newcontent.image")
-                    q-input(label="Caption" type="text" v-model="newcontent.caption")
-                  q-btn(flat round icon="add" @click="content_add()")
-
-
 
             q-tab-panel(name="style")
-              q-input(type="textarea" v-model="display.config.style" outlined)
-              q-btn(label="Save" @click="savestyle()")
+              .q-pa-xs
+                p Insert additional CSS here
+                q-input(type="textarea" v-model="display.config.style" outlined label="Style CSS")
+                q-btn(label="Save" @click="savestyle()" outline)
+                q-input(v-model="dirty.name" label="Display Name" v-on:keyup.enter="updatename")
+                  template(v-slot:append v-if="dirty.name != display.name" )
+                    q-avatar
+                      q-icon(name="create")
 </template>
 
 <script>
@@ -155,6 +173,20 @@ export default {
   },
   data() {
     return {
+      contenttypes:[
+        {
+          label:"Message",
+          value: "message"
+        },
+        {
+          label:"Image",
+          value:"image"
+        },
+        {
+          label:"Profile",
+          value:"profile"
+        }
+      ],
       splitter:5,
       display: {},
       control:{},
@@ -236,6 +268,10 @@ export default {
     updateticker(){
       // console.log(val);
       this.$firebaseRefs.display.child('ticker').set(this.dirty.ticker);
+    },
+    updatename(){
+      // console.log(val);
+      this.$firebaseRefs.display.child('name').set(this.dirty.name);
     },
     updatewatermark(){
       // console.log(val);
@@ -367,10 +403,6 @@ body {
   div {
     opacity: 0.4;
   }
-}
-
-.mycard {
-  width:100%;
 }
 
 </style>
