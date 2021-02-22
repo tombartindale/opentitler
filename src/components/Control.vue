@@ -22,44 +22,76 @@ q-layout(view="hHh lpR fFf")
           q-tab-panels(v-model="tab" v-if="loaded" padding)
             q-tab-panel(name="control")
               .row
-                .col-12.col-md.q-pa-xs
-                  q-toggle(v-model="control.title" val="true" toggle-color="primary" label="Display title")
-                  q-list(separator v-if="display && draft && draft.titles && display.title")
-                    q-item(clickable v-ripple v-for="(title,index) in draft.titles" @click="updatetitle(title)")
+                .col-12.col-md.q-mr-md
+                  //- .text-body1.text-uppercase.q-mb-sm Titles
+                  
+                  q-list(separator v-if="display && draft && draft.titles && display.title" )
+                    q-item
+                      q-item-section
+                        q-item-label.text-uppercase Available Titles
                       q-item-section(side)
-                        q-icon(name="done" v-show="display.title.title == title.title && display.title.subtitle == title.subtitle")
+                        q-btn-toggle(v-model="control.title" :options="displayoptions" outline)
+                    q-separator
+                    q-item(clickable v-ripple v-for="(title,index) in draft.titles" @click="updatetitle(title)")
                       q-item-section
                         q-item-label {{title.title}} ({{title.subtitle}})
+                      q-item-section(side)
+                        q-icon(name="monitor" v-show="display.title.title == title.title && display.title.subtitle == title.subtitle")
+                    
+                    q-item(v-if="!draft.titles.length")
+                      q-item-label Empty
                           
-                .col-12.col-md.q-pa-xs
-                  q-toggle(v-model="control.content" val="true" label="Display content")
-                  q-btn-group(spread )
-                    q-btn(color="primary" outline @click="control.currentcontent--") Prev.
-                    q-btn(disabled outline color="primary") {{control.currentcontent+1}}
-                    q-btn(color="primary" outline @click="control.currentcontent++") Next
+                .col-12.col-md.q-mr-md
+                  //- .text-body1.text-uppercase.q-mb-sm Content
+                  //- q-btn-toggle.q-mb-md(v-model="control.content" :options="displayoptions" outline)
+                  
                   
                   q-list(separator)
-                    q-item(clickable v-ripple v-for="(content,index) in display.content")
+                    q-item
+                      q-item-section
+                        q-item-label.text-uppercase Available Content
                       q-item-section(side)
-                        q-icon(name="done" v-show="index == control.currentcontent")
+                        q-btn-toggle(v-model="control.content" :options="displayoptions" outline)
+                    q-item
+                      q-btn-group(spread style="width:100%;")
+                        q-btn(dense color="primary" outline @click="control.currentcontent--")
+                          q-icon(name="expand_less")
+                        q-btn(dense disabled outline color="primary") {{control.currentcontent+1}}
+                        q-btn(dense color="primary" outline @click="control.currentcontent++")
+                          q-icon(name="expand_more")
+                    q-item(clickable v-ripple v-for="(content,index) in display.content")
                       q-item-section(side) {{index+1}}
                       q-item-section
                         q-item-label {{content.caption}}
+                      q-item-section(side)
+                        q-icon(name="monitor" v-show="index == control.currentcontent")
+                        
+                    q-item(v-if="!display.content.length")
+                      q-item-label Empty
                 
-                .col-12.col-md.q-pa-xs
-                  q-toggle(v-model="control.people" val="true" toggle-color="primary" label="Display people")
+                .col-12.col-md
+                  //- .text-body1.text-uppercase.q-mb-sm People
+                  //- q-btn-toggle(v-model="control.people" :options="displayoptions" outline)
                   q-list(separator v-if="display && draft && draft.people")
+                    q-item
+                      q-item-section
+                        q-item-label.text-uppercase Available People
+                      q-item-section(side)
+                        q-btn-toggle(v-model="control.people" :options="displayoptions" outline)
                     q-item(v-for="(people,index) in draft.people")
                       q-item-section(side)
-                        q-icon(name="done"  v-if="display.people" v-show="display.people.name == people.name && display.people.affiliation == people.affiliation")
-                      q-item-section(side)
-                        q-circular-progress(v-if="display.people" v-show="display.people.name == people.name && display.people.affiliation == people.affiliation" :value="peopletimer")
+                        q-icon(name="monitor"  v-if="display.people" v-show="display.people.name == people.name && display.people.affiliation == people.affiliation")
+                        q-icon(name="blank" v-show="!(display.people.name == people.name && display.people.affiliation == people.affiliation)")
+                      //- q-item-section(side)
                       q-item-section
                         q-item-label {{people.name}} ({{people.affiliation}})
                       q-item-section(side)
                         div
-                          q-btn(flat icon="monitor" @click="updateperson(people)" color="primary")
-                          q-btn(flat icon="bolt" @click="fireperson(people)" color="primary") Fire
+                          q-circular-progress(v-if="display.people" v-show="display.people.name == people.name && display.people.affiliation == people.affiliation" :value="peopletimer")
+                          q-btn(flat dense icon="monitor" @click="updateperson(people)" color="primary")
+                          q-btn(flat dense icon="bolt" @click="fireperson(people)" color="primary")
+                    q-item(v-if="!draft.people.length")
+                      q-item-label Empty
                 
 
             q-tab-panel(name="people")
@@ -205,6 +237,10 @@ export default {
           value:"profile"
         }
       ],
+      displayoptions:[
+        {label:'Display',value:true},
+        {label:'Hide',value:false}
+        ],
       splitter:5,
       display: {},
       control:{},
