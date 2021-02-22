@@ -42,10 +42,6 @@ q-layout(view="hHh lpR fFf")
                       q-item-label Empty
                           
                 .col-12.col-md.q-mr-md
-                  //- .text-body1.text-uppercase.q-mb-sm Content
-                  //- q-btn-toggle.q-mb-md(v-model="control.content" :options="displayoptions" outline)
-                  
-                  
                   q-list(separator)
                     q-item
                       q-item-section
@@ -59,8 +55,12 @@ q-layout(view="hHh lpR fFf")
                         q-btn(dense disabled outline color="primary") {{control.currentcontent+1}}
                         q-btn(dense color="primary" outline @click="control.currentcontent++")
                           q-icon(name="expand_more")
-                    q-item(clickable v-ripple v-for="(content,index) in display.content")
-                      q-item-section(side) {{index+1}}
+                    q-item(clickable v-ripple v-for="(content,index) in display.content" @click="control.currentcontent = index")
+                      q-item-section(side)
+                        q-badge(outline) {{index+1}}
+                      q-item-section(side)
+                        q-avatar(square)
+                          q-img( :src="content.image")
                       q-item-section
                         q-item-label {{content.caption}}
                       q-item-section(side)
@@ -114,26 +114,28 @@ q-layout(view="hHh lpR fFf")
                   
             q-tab-panel(name="content")
               .q-pa-xs
-                div.q-pa-md.row.items-start.q-gutter-sm
-                  q-card.col-4-md.col-12-xs.col-6(flat bordered)
-                    q-card-section
-                      q-option-group(inline :options="contenttypes" v-model="newcontent.itemtype")
-                      q-input(label="Message" type="text" v-model="newcontent.message")
-                      q-input(label="Image URL" type="text" v-model="newcontent.image")
-                      q-input(label="Caption" type="text" v-model="newcontent.caption")
-                    q-separator
-                    q-card-actions
-                      q-btn(flat @click="content_add()") Add
+                div.row.items-start.q-col-gutter-sm
+                  .col-md-4.col-xs-12
+                    q-card(flat bordered)
+                      q-card-section
+                        q-option-group(inline :options="contenttypes" v-model="newcontent.itemtype")
+                        q-input(label="Message" type="text" v-model="newcontent.message")
+                        q-input(label="Image URL" type="text" v-model="newcontent.image")
+                        q-input(label="Caption" type="text" v-model="newcontent.caption")
+                      q-separator
+                      q-card-actions(align="right")
+                        q-btn(flat @click="content_add()") Add New
 
-                  q-card.col-4-md.col-12-xs.col-6.col-md(flat bordered v-if="display.content && display.content" v-for="(content,index) in display.content")
-                    q-card-section
-                      p {{content.itemtype}}
-                      p {{content.caption}}
-                      p {{content.image}}
-                      p {{content.message}}
-                    q-separator
-                    q-card-actions
-                      q-btn(flat @click="content_remove(index)") Remove
+                  .col-md-4.col-xs-12(v-if="display.content && display.content" v-for="(content,index) in display.content")
+                    q-card(flat bordered )
+                      q-card-section
+                        q-badge(floating transparent) {{content.itemtype}}
+                        q-img(contain :src="content.image")
+                        p {{content.caption}}
+                        p {{content.message}}
+                      q-separator
+                      q-card-actions(align="right")
+                        q-btn(flat @click="content_remove(index)") Remove
             
             q-tab-panel(name="titles")
               .q-pa-xs
