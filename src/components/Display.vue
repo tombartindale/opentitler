@@ -69,10 +69,23 @@ export default {
   computed:{
     allstyles(){
       let local = {
-        '--main-background':this.display.config.colors.bgcolor,
-        '--primary':this.display.config.colors.primary
+        '--main-background':this.colors.bgcolor,
+        '--primary':this.colors.primary
       };
       return local;
+    },
+    colors(){
+      if (this.display.config && this.display.config.colors)
+      {
+        return this.display.config.colors;
+      }
+      else
+      {
+        return {
+          bgcolor:'green',
+          primary:'red'
+        }
+      }
     }
   },
   watch: {
@@ -100,23 +113,25 @@ export default {
 @import url('https://fonts.googleapis.com/css2?family=Hammersmith+One&family=Titillium+Web&display=swap');
 </style> 
 
-<style>
+<style scoped>
 .widescreen {
   width:1280px;
   height:720px;
   overflow: hidden;
   position:relative;
-  /* background:#00ff00; */
+  background:#00ff00;
+  outline: solid white 5px;
+  z-index:-1;
   /* background:transparent; */
 }
 
 body {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
+  /* font-family: Avenir, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   margin:0;
-  padding:0;
-  background:gray;
+  padding:0; */
+  /* background:rgb(0,255,0); */
 }
 
 .fade-in-enter-active {

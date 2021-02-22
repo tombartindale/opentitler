@@ -65,15 +65,17 @@ router.beforeEach((to, from, next) => {
 
   // console.log(to.path.startsWith('/login'))
 
+
+
+  if (!requiresAuth)
+    return next();
+  
   if (currentUser && to.path.startsWith('/login'))
   {
     // console.log('sending to dash')
     return next('dashboard');
   }
 
-  if (!requiresAuth)
-    return next();
-  
   if (requiresAuth && !currentUser){
     // console.log('sending to login')
     next('login')

@@ -4,28 +4,33 @@ q-layout(view="hHh lpR fFf")
     q-toolbar
       q-toolbar-title
         q-avatar
-          q-icon(name="monitor")
+          q-icon(name="web")
         | Dashboard for {{userid.email}}
       q-btn(flat right @click="logout") Logout
 
   q-page-container
     q-page(padding)
-      .q-pa-md.row.items-start.q-gutter-md
-        q-card(v-for="(display,index) in displays" outlined)
-          q-card-section.text-center
-            q-btn(flat :to="'/control/'+index" size="xl" stack)
-              q-icon(name="tune")
-              .text-h6 {{display.name}}
-          q-separator
-          q-card-actions
-            q-input(readonly dense outlined type="text" :value="geturl(index)")
-            q-btn(flat :to="'/display/'+userid.uid+'/'+index" icon="monitor")
+      .text-body1.q-mb-md Each of the following is an independently controllable titles environment.
+      .row.q-col-gutter-md
+        .col-md-3.col-sm-4.col-xs-12(v-for="(display,index) in displays" outlined)
+          q-card
+            q-card-section.text-center
+              q-btn(flat :to="'/control/'+index" size="xl" stack)
+                q-tooltip Control Output
+                q-icon(name="tune")
+                .text-h6 {{display.name}}
+            q-separator
+            q-card-actions
+              q-input.col(readonly dense outlined type="text" :value="geturl(index)")
+              q-btn.col-2(flat :to="'/display/'+userid.uid+'/'+index" icon="monitor")
+                q-tooltip Display output
 
-        q-card(outlined)
-          q-card-section.text-center
-            q-btn(flat @click="add" size="xl" stack)
-              q-icon(name="add")
-              .text-h6 Add
+        .col-md-3.col-sm-4.col-xs-12(outlined)
+          q-card
+            q-card-section.text-center
+              q-btn(flat @click="add" size="xl" stack)
+                q-icon(name="add")
+                .text-h6 Add New Display
 </template>
 
 <script>
@@ -52,16 +57,18 @@ export default {
   },
   methods:{
     geturl(id){
-      return document.location.origin + '/display/'+this.userid.uid+'/'+id;
+      return document.location.origin + '/#/display/'+this.userid.uid+'/'+id;
     },
     async logout(){
       await firebase.auth().signOut();
       this.$router.push('login');
     },
-    add() {
-      this.$firebaseRefs.displays.push({
+    async add() {
+      var index = await this.$firebaseRefs.displays.push({
         name:"New Display"
       });
+
+      this.$router.push('/control/'+index.getKey());
     }
   },
   mounted(){

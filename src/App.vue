@@ -45,26 +45,26 @@ export default {
 </style> 
 
 <style>
-.widescreen {
+/* .widescreen {
   width:1280px;
   height:720px;
   overflow: hidden;
   position:relative;
-  outline: solid white 5px;
+  
   /* background:#00ff00; */
   /* background:transparent; */
-}
+/* } */
 
-body {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
+/* body { */
+  /* font-family: Avenir, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   margin:0;
-  padding:0;
-  background:gray;
-}
+  padding:0; */
+  /* background:gray; */
+/* } */
 
-.fade-in-enter-active {
+/* .fade-in-enter-active {
   transition: opacity 300ms cubic-bezier(0.55, 0.085, 0.68, 0.53);
 }
 
@@ -75,6 +75,10 @@ body {
 .fade-in-enter,
 .fade-in-leave-to {
   opacity: 0;
+} */
+
+body {
+  color:white;
 }
 </style>
 

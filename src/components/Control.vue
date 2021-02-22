@@ -148,7 +148,25 @@ q-layout(view="hHh lpR fFf")
             
 
             q-tab-panel(name="style")
-              .q-pa-xs
+              .q-pa-xs(v-if="display.config")
+
+                p Brand colors
+                .row.q-gutter-xs
+                  
+                  q-avatar(:style="{'background-color':display.config.colors.bgcolor}")
+                  q-input.col-3( filled v-model="display.config.colors.bgcolor"  :rules="['anyColor']" label="Background Color")
+                    template(v-slot:append)
+                      q-icon(name="colorize" class="cursor-pointer")
+                        q-popup-proxy(transition-show="scale" transition-hide="scale")
+                          q-color(v-model="display.config.colors.bgcolor" format-model="hex" @input="updatecolor")
+                  
+                  q-avatar(:style="{'background-color':display.config.colors.primary}")
+                  q-input.col-3(filled v-model="display.config.colors.primary" :rules="['anyColor']" label="Primary Color")
+                    template(v-slot:append)
+                      q-icon(name="colorize" class="cursor-pointer")
+                        q-popup-proxy(transition-show="scale" transition-hide="scale")
+                          q-color(v-model="display.config.colors.primary" format-model="hex" @input="updatecolor")
+
                 p Insert additional CSS here
                 q-input(type="textarea" v-model="display.config.style" outlined label="Style CSS")
                 q-btn(label="Save" @click="savestyle()" outline)
@@ -213,6 +231,9 @@ export default {
     }
   },
   methods:{
+    updatecolor(){
+      this.$firebaseRefs.display.child('config').child('colors').set(this.display.config.colors);
+    },
     savestyle(){
       this.$firebaseRefs.display.child('config').child('style').set(this.display.config.style);
     },
@@ -343,7 +364,11 @@ export default {
         this.display = Object.assign({
           
           config:{
-            style:""
+            style:"",
+            colors:{
+              bgcolor:"",
+              primary:""
+            }
           },
 
           watermark:{
@@ -364,7 +389,7 @@ export default {
 
         await this.$firebaseRefs.display.set(this.display);
 
-        // console.log(this.display);
+        console.log(this.display);
 
         this.dirty = Object.assign({
           ticker:{},
