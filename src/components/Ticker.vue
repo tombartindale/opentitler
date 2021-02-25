@@ -1,12 +1,14 @@
 <template lang="pug">
-.t_wrap
-  .lefter
-    .fader
-    .ticker-wrap
-      .ticker.animateme(ref="ticker")
-        transition(name="fade-in" mode="out-in")
-          .ticker__item(:key="currentmessage") {{currentmessage}}
-  Time
+.ticker_wrapper
+  transition(enter-active-class="animate__animated animate__slideInDown" leave-active-class="animate__animated animate__slideOutUp" mode="out-in")
+    .inner_ticker(v-if="control.ticker" :key="control.ticker")
+      .lefter
+        .fader
+        .ticker-wrap
+          .ticker.animateme(ref="ticker")
+            transition(name="fade-in" mode="out-in")
+              .ticker__item(:key="currentmessage") {{currentmessage}}
+      Time(v-cname)
 </template>
 
 <script>
@@ -17,7 +19,8 @@ export default {
   components:{Time},
   props: {
     data: Object,
-    config: Object
+    config: Object,
+    control:Object
   },
   watch:{
     currentmessage(){
@@ -45,9 +48,9 @@ export default {
 <style lang="scss">
 
 $duration: 15s;
-$width: 1070px;
+$width: 1150px;
 
-.t_wrap {
+.ticker_wrapper {
   // box-shadow: 0px 0px 10px #00000077;
   position: absolute;
   top:675px;
@@ -58,6 +61,11 @@ $width: 1070px;
   font-family: Titillium Web;
   // border-left:5px var(--primary) solid;
   overflow: hidden;
+  height: 30px;
+}
+
+.inner_ticker {
+  
 }
 
 

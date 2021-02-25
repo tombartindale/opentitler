@@ -1,5 +1,5 @@
 <template lang="pug">
-.wrapper
+.content_wrapper
   .content(v-if="data" :class="content.itemtype" v-for="(content,index) in data" v-bind:style="{top: offset + (index-current)*700+'px'}")
     .imagec(v-if="content.itemtype=='image'")
       img(:src="content.image")
@@ -17,7 +17,7 @@ export default {
   name: 'Content',
   data(){
     return {
-      offset:50
+      offset:60
     }
   },
   props:{

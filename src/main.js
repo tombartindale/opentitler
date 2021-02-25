@@ -16,6 +16,7 @@ import Dashboard from './components/Dashboard'
 import Login from './components/Login'
 
 import './quasar'
+// import { QBadge } from 'quasar';
 
 
 Vue.component('v-style', {
@@ -90,7 +91,22 @@ router.beforeEach((to, from, next) => {
 
 let app = '';
 
-Vue.config.productionTip = false
+Vue.config.productionTip = false;
+
+Vue.directive('cname', {
+  bind: function (el) {
+    // console.log(binding.value)
+    // console.log(el.className);
+    var node = document.createElement("div");
+    var text = document.createTextNode(el.className);
+    node.appendChild(text);
+    node.className = "classlabel";
+    el.appendChild(node);
+    el.className += " classborder";
+  }
+})
+
+
 
 firebase.auth().onAuthStateChanged(() => {
   if (!app) {

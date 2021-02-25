@@ -1,22 +1,21 @@
 <template lang="pug">
-div(v-if="display.config" :style="allstyles")
+div(v-if="display.config" :style="allstyles" :class="{ showclassname:display.control.debug}")
   v-style {{display.config.style}}
   .widescreen
-    //- transition(enter-active-class="animate__animated animate__slideInRight" leave-active-class="animate__animated animate__slideOutRight" mode="out-in")
-      //- Tweets(:data="display.messages" v-if="display.control.messages")
 
     transition(mode="out-in" enter-active-class="animate__animated animate__slideInLeft" leave-active-class="animate__animated animate__slideOutLeft" )
-      People(:key="display.people.message" :data="display.people" v-if="display.control.people")
+      People(v-cname :key="display.people.message" :data="display.people" v-if="display.control.people")
 
-    Title(:data="display.title" :control="display.control")
+    Title(v-cname :data="display.title" :control="display.control")
 
-    transition(enter-active-class="animation slide-in-up" leave-active-class="animation slide-out-down" mode="out-in")
-      Ticker( :data="display.ticker" v-if="display.control.ticker")
+    Ticker(v-cname  :data="display.ticker" :control="display.control")
 
     transition(:key="display.control.content" enter-active-class="animate__animated animate__fadeIn animate__fast" leave-active-class="animate__animated animate__fadeOut animate__fast")
-      Content(:data="display.content" v-if="display.control.content" :current="display.control.currentcontent")
+      Content(v-cname :data="display.content" v-if="display.control.content" :current="display.control.currentcontent")
 
-    Watermark(v-if="display.control.watermark" :data="display.watermark")
+    Watermark(v-cname v-if="display.control.watermark" :data="display.watermark")
+
+    .live(v-cname) LIVE
 </div>
 
 </template>
@@ -113,7 +112,7 @@ export default {
 @import url('https://fonts.googleapis.com/css2?family=Hammersmith+One&family=Titillium+Web&display=swap');
 </style> 
 
-<style scoped>
+<style lang="scss">
 .widescreen {
   width:1280px;
   height:720px;
@@ -145,6 +144,44 @@ body {
 .fade-in-enter,
 .fade-in-leave-to {
   opacity: 0;
+}
+
+.live {
+  background: var(--primary);
+  color:white;
+  position: absolute;
+  right:10px;
+  top:10px;
+  padding:5px;
+  padding-left:10px;
+  padding-right:10px;
+}
+
+.classlabel {
+  position:absolute;
+  left:0;
+  top:0;
+  z-index: 100;
+  display: none;
+  background: red;
+  padding-left:2px;
+  padding-right:2px;
+  font-size: 8pt;
+  line-height: 15px;
+  // height:20px;
+}
+
+
+
+.showclassname {
+  .classlabel {
+    display: block !important;
+  }
+  .classborder {
+   // box-shadow: 0px 3px 0px red inset; 
+    outline:2px solid red;
+    outline-offset: -2px
+  }
 }
 </style>
 

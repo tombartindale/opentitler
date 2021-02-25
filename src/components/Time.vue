@@ -39,8 +39,8 @@ export default {
   color:white;
   font-size: 1.2rem;
   line-height:30px;
-  background: black;
-  width:180px;
+  background: var(--primary);
+  width:100px;
 
   /* box-shadow: 0px 0px 10px #00000077; */
 }

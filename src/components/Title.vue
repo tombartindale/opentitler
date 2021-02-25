@@ -1,5 +1,5 @@
 <template lang="pug">
-.box
+.title_box
   transition(mode="out-in" enter-active-class="animate__animated animate__slideInUp" leave-active-class="animate__animated animate__slideOutDown" )
     .titles(v-if="control.title" :key="control.title")
       transition(name="fade-in" mode="out-in")
@@ -23,7 +23,7 @@ export default {
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped lang="scss">
 
-.box
+.title_box
 {
   position: absolute;
   left:15px;
@@ -66,6 +66,8 @@ export default {
 
   font-size: 1.4rem;
   text-transform: uppercase;
+  vertical-align: bottom;
+  // overflow: hidden;
 }
 
 </style>

@@ -206,6 +206,10 @@ q-layout(view="hHh lpR fFf")
                 p Insert additional CSS here
                 q-input(type="textarea" v-model="display.config.style" outlined label="Style CSS")
                 q-btn(label="Save" @click="savestyle()" outline)
+
+                p Show CSS Classes
+                q-btn-toggle(v-model="control.debug" :options="displayoptions" outline)
+
                 q-input(v-model="dirty.name" label="Display Name" v-on:keyup.enter="updatename")
                   template(v-slot:append v-if="dirty.name != display.name" )
                     q-avatar
