@@ -96,21 +96,24 @@ q-layout(view="hHh lpR fFf")
 
             q-tab-panel(name="people")
               .q-pa-xs
-                q-list(separator)
-                  q-item-label(header) Add New Person
-                  q-item
-                    q-item-section
-                      q-input.col-6(label="name" v-model="newperson.name")
-                      q-input.col-6(label="affiliation" v-model="newperson.affiliation")
-                    q-item-section(side)
-                      q-btn(flat round icon="add" @click="person_add()")
-                  q-item-label(header) Available People
-                  q-item(v-if="draft && draft.people" v-for="(people,index) in draft.people")
-                    q-item-section
-                      q-item-label {{people.name}}
-                      q-item-label(caption) {{people.affiliation}}
-                    q-item-section(side)
-                      q-btn(flat round icon="remove" @click="person_remove(index)")
+                div.row.items-start.q-col-gutter-sm
+                  .col-md-4.col-xs-12
+                    q-card(flat bordered)
+                      q-card-section
+                        q-input.col-6(label="name" v-model="newperson.name")
+                        q-input.col-6(label="affiliation" v-model="newperson.affiliation")
+                      q-separator
+                      q-card-actions(align="right")
+                        q-btn(flat @click="person_add()") Add
+
+                  .col-md-4.col-xs-12(v-if="draft && draft.people" v-for="(people,index) in draft.people")
+                    q-card(flat bordered)
+                      q-card-section
+                        .text-h6 {{people.name}}
+                        .text-subtitle2 {{people.affiliation}}
+                      q-separator
+                      q-card-actions(align="right")
+                        q-btn(flat @click="person_remove(index)") Remove
                   
             q-tab-panel(name="content")
               .q-pa-xs
@@ -139,24 +142,24 @@ q-layout(view="hHh lpR fFf")
             
             q-tab-panel(name="titles")
               .q-pa-xs
-                q-list(separator)
-                  q-item-label(header) Add New Title
-                  q-item
-                    q-item-section
-                      q-input.col-6(label="title" v-model="newtitle.title")
-                      q-input.col-6(label="subtitle" v-model="newtitle.subtitle")
-                    q-item-section(side)
-                      q-btn(flat round icon="add" @click="title_add()")
+                div.row.items-start.q-col-gutter-sm
+                  .col-md-4.col-xs-12
+                    q-card(flat bordered)
+                      q-card-section
+                        q-input.col-6(label="title" v-model="newtitle.title")
+                        q-input.col-6(label="subtitle" v-model="newtitle.subtitle")
+                      q-separator
+                      q-card-actions(align="right")
+                        q-btn(flat @click="title_add()") Add
 
-                  q-item-label(header) Titles
-                  q-item(v-if="draft && draft.titles" v-for="(title,index) in draft.titles")
-                    q-item-section
-                      q-item-label
-                        span {{title.title}}
-                        br
-                        span {{title.subtitle}}
-                    q-item-section(side)
-                      q-btn(flat round icon="remove" @click="title_remove(index)")
+                  .col-md-4.col-xs-12(v-if="draft && draft.titles" v-for="(title,index) in draft.titles")
+                    q-card(flat bordered)
+                      q-card-section
+                        .text-h6 {{title.title}}
+                        .text-subtitle2 {{title.subtitle}}
+                      q-separator
+                      q-card-actions(align="right")
+                        q-btn(flat @click="title_remove(index)") Remove
                   
 
             q-tab-panel(name="ticker")
@@ -172,13 +175,12 @@ q-layout(view="hHh lpR fFf")
             q-tab-panel(name="watermark" )
               .q-pa-xs
                 q-toggle(v-model="control.watermark" val="true" toggle-color="primary" label="Display watermark")
-                q-input(v-model="dirty.watermark.src" clearable label="Watermark" v-on:keyup.enter="updatewatermark" placeholder="paste url or data:url here")
+                q-input.q-my-md(v-model="dirty.watermark.src" clearable label="Watermark" v-on:keyup.enter="updatewatermark" placeholder="paste url or data:url here")
                   template(v-slot:append v-if="dirty.watermark.src != display.watermark.src")
                     q-avatar
                       q-icon(name="create")
-                .imgdark.row
-                  .col-4
-                    q-img(:src="dirty.watermark.src")
+                .imgdark
+                    q-img.watermark(:src="dirty.watermark.src")
             
 
             q-tab-panel(name="style")
@@ -321,7 +323,7 @@ export default {
     person_remove(index){
       // console.log(this.display.draft);
       this.display.draft.people.splice(index,1);
-      console.log(this.display.draft.people);
+      // console.log(this.display.draft.people);
       this.$firebaseRefs.display.child('draft').child('people').set(this.display.draft.people);
     },
     updateticker(){
@@ -427,7 +429,7 @@ export default {
 
         await this.$firebaseRefs.display.set(this.display);
 
-        console.log(this.display);
+        // console.log(this.display);
 
         this.dirty = Object.assign({
           ticker:{},
@@ -461,9 +463,18 @@ body {
 }
 
 .imgdark {
+  // max-width:300px;
+  width: 100%;
+  position:relative;
+  padding-top:56.25%;
   background:gray;
-  padding:20px;
-  div {
+
+  .watermark
+  {
+    position:absolute;
+    left:10px;
+    top:10px;
+    max-width:10%;
     opacity: 0.4;
   }
 }
