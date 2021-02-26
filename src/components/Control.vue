@@ -62,7 +62,7 @@ q-layout(view="hHh lpR fFf")
                         q-avatar(square)
                           q-img( :src="content.image")
                       q-item-section
-                        q-item-label {{content.caption}}
+                        q-item-label {{content.caption || content.message}}
                       q-item-section(side)
                         q-icon(name="monitor" v-show="index == control.currentcontent")
                         

@@ -35,20 +35,27 @@ export default {
   font-family: Titillium Web;
   /* box-shadow: 0px 0px 10px #00000077; */
   /* filter: drop-shadow(0 0 10px #00000077); */
-  font-size: 1.2rem;
+  font-size: 1.3rem;
 }
 
 .name {
-  background: darkcyan;
+  background: var(--primary);
   padding:10px;
   text-transform: uppercase;
   display:block;
+  border-left:white 5px solid;
 }
 
 .attribution {
-  padding:10px;
-  background: #616161;
+  padding-left:10px;
+  padding-top:5px;
+  padding-bottom:5px;
+  padding-right:10px;
+  background: white;
   display:inline-block;
+  font-size: 15px;
+  vertical-align: top;
+  color:var(--primary);
 }
 
 </style>

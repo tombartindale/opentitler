@@ -1,21 +1,21 @@
 <template lang="pug">
-div(v-if="display.config" :style="allstyles" :class="{ showclassname:display.control.debug}")
+.widescreen(v-if="display.config" :class="{ showclassname:display.control.debug}" :style="allstyles")
   v-style {{display.config.style}}
-  .widescreen
 
-    transition(mode="out-in" enter-active-class="animate__animated animate__slideInLeft" leave-active-class="animate__animated animate__slideOutLeft" )
-      People(v-cname :key="display.people.message" :data="display.people" v-if="display.control.people")
+  transition(mode="out-in" enter-active-class="animate__animated animate__slideInLeft" leave-active-class="animate__animated animate__slideOutLeft" )
+    People(v-cname :key="display.people.message" :data="display.people" v-if="display.control.people")
 
-    Title(v-cname :data="display.title" :control="display.control")
+  Title(v-cname :data="display.title" :control="display.control")
 
-    Ticker(v-cname  :data="display.ticker" :control="display.control")
+  Ticker(v-cname  :data="display.ticker" :control="display.control")
 
-    transition(:key="display.control.content" enter-active-class="animate__animated animate__fadeIn animate__fast" leave-active-class="animate__animated animate__fadeOut animate__fast")
-      Content(v-cname :data="display.content" v-if="display.control.content" :current="display.control.currentcontent")
+  transition(:key="display.control.content" enter-active-class="animate__animated animate__fadeIn animate__fast" leave-active-class="animate__animated animate__fadeOut animate__fast")
+    Content(v-cname :data="display.content" v-if="display.control.content" :current="display.control.currentcontent")
 
-    Watermark(v-cname v-if="display.control.watermark" :data="display.watermark")
+  Watermark(v-cname v-if="display.control.watermark" :data="display.watermark")
 
-    .live(v-cname) LIVE
+  .live(v-cname)
+    div LIVE
 </div>
 
 </template>
@@ -118,7 +118,7 @@ export default {
   height:720px;
   overflow: hidden;
   position:relative;
-  background:#00ff00;
+  // background:#00ff00;
   outline: solid white 5px;
   z-index:-1;
   /* background:transparent; */
@@ -147,21 +147,28 @@ body {
 }
 
 .live {
-  background: var(--primary);
+  
   color:white;
   position: absolute;
-  right:10px;
-  top:10px;
-  padding:5px;
-  padding-left:10px;
-  padding-right:10px;
+  left:10px;
+  top:15px;
+  
+  border:solid 1px var(--primary);
+  padding-left:115px;
+  div {
+    display:inline-block;
+    background: var(--primary);
+    padding:5px;
+    padding-left:10px;
+    padding-right:10px;
+  }
 }
 
 .classlabel {
   position:absolute;
   left:0;
   top:0;
-  z-index: 100;
+  z-index: 1000;
   display: none;
   background: red;
   padding-left:2px;
@@ -169,8 +176,8 @@ body {
   font-size: 8pt;
   line-height: 15px;
   // height:20px;
+  opacity: 0.2;
 }
-
 
 
 .showclassname {
@@ -180,7 +187,19 @@ body {
   .classborder {
    // box-shadow: 0px 3px 0px red inset; 
     outline:2px solid red;
-    outline-offset: -2px
+    outline-offset: -2px;
+    
+    &:hover {
+      cursor: pointer;
+      .classlabel {
+        opacity: 1;
+        
+      }
+    }
+
+    // &:hover {
+      // opacity: 1;
+      // }
   }
 }
 </style>

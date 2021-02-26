@@ -4,6 +4,7 @@
     .imagec(v-if="content.itemtype=='image'")
       img(:src="content.image")
       .caption {{content.caption}}
+
     .text(v-if="content.itemtype=='message'") {{content.message}}
 
     .persona(v-if="content.itemtype=='profile'") {{content.text}}
@@ -53,7 +54,7 @@ export default {
   transition: top 2s;
   // background: red;
 
-  transform: perspective(1500px) rotateY(-17deg);
+  transform: perspective(1500px) rotateY(-20deg);
   // transform: perspective(1500px) rotateY(-15deg);
 }
 
@@ -73,6 +74,7 @@ export default {
 
   .p_text {
     line-height: 40px;
+    color:darkslategray;
   }
 
   .p_caption {
@@ -97,6 +99,7 @@ export default {
   margin-bottom:auto;
   color:white;
   font-size: 3rem;
+  background:rgba(0,0,0,0.2);
 }
 
 .imagec {
