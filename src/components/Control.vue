@@ -7,24 +7,20 @@ q-layout(view="hHh lpR fFf")
       q-toolbar-title {{display.name}}
 
   q-page-container()
-    q-page()
-          //- q-splitter(v-model="splitter" style="min-height: inherit;height:100%;")
-          //- template(v-slot:before)
-          q-tabs(align="left" v-model="tab" dense  outside-arrows mobile-arrows)
-            q-tab(icon="tune" name="control" label="LIVE")
-            q-tab(icon="ballot" name="content" label="Content")
-            q-tab(icon="person" name="people" label="People")
-            q-tab(icon="title" name="titles" label="Titles")
-            q-tab(icon="subtitles" name="ticker" label="Ticker")
-            q-tab(icon="branding_watermark" name="watermark" label="Watermark")
-            q-tab(icon="style" name="style" label="Settings")
-            //- template(v-slot:after)
-          q-tab-panels(v-model="tab" v-if="loaded" padding)
+    q-page.column()
+          .col-auto
+            q-tabs(align="left" v-model="tab" dense  outside-arrows mobile-arrows)
+              q-tab(icon="tune" name="control" label="LIVE")
+              q-tab(icon="ballot" name="content" label="Content")
+              q-tab(icon="person" name="people" label="People")
+              q-tab(icon="title" name="titles" label="Titles")
+              q-tab(icon="subtitles" name="ticker" label="Ticker")
+              q-tab(icon="branding_watermark" name="watermark" label="Watermark")
+              q-tab(icon="style" name="style" label="Settings")
+          q-tab-panels.col(v-model="tab" v-if="loaded" padding)
             q-tab-panel(name="control")
               .row
-                .col-12.col-md.q-mr-md
-                  //- .text-body1.text-uppercase.q-mb-sm Titles
-                  
+                .col-12.col-md.q-mr-md                  
                   q-list(separator v-if="display && draft && draft.titles && display.title" )
                     q-item
                       q-item-section
@@ -32,11 +28,12 @@ q-layout(view="hHh lpR fFf")
                       q-item-section(side)
                         q-btn-toggle(v-model="control.title" :options="displayoptions" outline)
                     q-separator
-                    q-item(clickable v-ripple v-for="(title,index) in draft.titles" @click="updatetitle(title)")
-                      q-item-section
-                        q-item-label {{title.title}} ({{title.subtitle}})
-                      q-item-section(side)
-                        q-icon(name="monitor" v-show="display.title.title == title.title && display.title.subtitle == title.subtitle")
+                    .scrollable(style="overflow-y:scroll;height:400px;")
+                      q-item(clickable v-ripple v-for="(title,index) in draft.titles" @click="updatetitle(title)")
+                        q-item-section
+                          q-item-label {{title.title}} ({{title.subtitle}})
+                        q-item-section(side)
+                          q-icon(name="monitor" v-show="display.title.title == title.title && display.title.subtitle == title.subtitle")
                     
                     q-item(v-if="!draft.titles.length")
                       q-item-label Empty
@@ -55,48 +52,48 @@ q-layout(view="hHh lpR fFf")
                         q-btn(dense disabled outline color="primary") {{control.currentcontent+1}}
                         q-btn(dense color="primary" outline @click="control.currentcontent++")
                           q-icon(name="expand_more")
-                    q-item(clickable v-ripple v-for="(content,index) in display.content" @click="control.currentcontent = index")
-                      q-item-section(side)
-                        q-badge(outline) {{index+1}}
-                      q-item-section(side)
-                        q-avatar(square)
-                          q-img( :src="content.image")
-                      q-item-section
-                        q-item-label {{content.caption || content.message}}
-                      q-item-section(side)
-                        q-icon(name="monitor" v-show="index == control.currentcontent")
+                    .scrollable(style="overflow-y:scroll;height:400px;")
+                      q-item(clickable v-ripple v-for="(content,index) in display.content" @click="control.currentcontent = index")
+                        q-item-section(side)
+                          q-badge(outline) {{index+1}}
+                        q-item-section(side)
+                          q-avatar(square)
+                            q-img( :src="content.image")
+                        q-item-section
+                          q-item-label {{content.caption || content.message}}
+                        q-item-section(side)
+                          q-icon(name="monitor" v-show="index == control.currentcontent")
                         
                     q-item(v-if="!display.content.length")
                       q-item-label Empty
                 
                 .col-12.col-md
-                  //- .text-body1.text-uppercase.q-mb-sm People
-                  //- q-btn-toggle(v-model="control.people" :options="displayoptions" outline)
                   q-list(separator v-if="display && draft && draft.people")
                     q-item
                       q-item-section
                         q-item-label.text-uppercase Available People
                       q-item-section(side)
                         q-btn-toggle(v-model="control.people" :options="displayoptions" outline)
-                    q-item(v-for="(people,index) in draft.people")
-                      q-item-section(side)
-                        q-icon(name="monitor"  v-if="display.people" v-show="display.people.name == people.name && display.people.affiliation == people.affiliation")
-                        q-icon(name="blank" v-show="!(display.people.name == people.name && display.people.affiliation == people.affiliation)")
-                      //- q-item-section(side)
-                      q-item-section
-                        q-item-label {{people.name}} ({{people.affiliation}})
-                      q-item-section(side)
-                        div
-                          q-circular-progress(v-if="display.people" v-show="display.people.name == people.name && display.people.affiliation == people.affiliation" :value="peopletimer")
-                          q-btn(flat dense icon="monitor" @click="updateperson(people)" color="primary")
-                          q-btn(flat dense icon="bolt" @click="fireperson(people)" color="primary")
+                    .column
+                      .scrollable(style="overflow-y:scroll;height:400px;")
+                        q-item(v-for="(people,index) in draft.people")
+                          q-item-section(side)
+                            q-icon(name="monitor"  v-if="display.people" v-show="display.people.name == people.name && display.people.affiliation == people.affiliation")
+                            q-icon(name="blank" v-show="!(display.people.name == people.name && display.people.affiliation == people.affiliation)")
+                          q-item-section
+                            q-item-label {{people.name}} ({{people.affiliation}})
+                          q-item-section(side)
+                            div
+                              q-circular-progress(v-if="display.people" v-show="display.people.name == people.name && display.people.affiliation == people.affiliation" :value="peopletimer")
+                              q-btn(flat dense icon="monitor" @click="updateperson(people)" color="primary")
+                              q-btn(flat dense icon="bolt" @click="fireperson(people)" color="primary")
                     q-item(v-if="!draft.people.length")
                       q-item-label Empty
                 
 
             q-tab-panel(name="people")
               .q-pa-xs
-                div.row.items-start.q-col-gutter-sm
+                div.row.q-col-gutter-sm
                   .col-md-4.col-xs-12
                     q-card(flat bordered)
                       q-card-section
@@ -107,19 +104,19 @@ q-layout(view="hHh lpR fFf")
                         q-btn(flat @click="person_add()") Add
 
                   .col-md-4.col-xs-12(v-if="draft && draft.people" v-for="(people,index) in draft.people")
-                    q-card(flat bordered)
-                      q-card-section
+                    q-card.column.full-height(flat bordered)
+                      q-card-section.col
                         .text-h6 {{people.name}}
                         .text-subtitle2 {{people.affiliation}}
                       q-separator
-                      q-card-actions(align="right")
+                      q-card-actions.col-auto(align="right")
                         q-btn(flat @click="person_remove(index)") Remove
                   
             q-tab-panel(name="content")
               .q-pa-xs
-                div.row.items-start.q-col-gutter-sm
+                div.row.q-col-gutter-sm
                   .col-md-4.col-xs-12
-                    q-card(flat bordered)
+                    q-card.full-height(flat bordered)
                       q-card-section
                         q-option-group(inline :options="contenttypes" v-model="newcontent.itemtype")
                         q-input(label="Message" type="text" v-model="newcontent.message")
@@ -130,19 +127,19 @@ q-layout(view="hHh lpR fFf")
                         q-btn(flat @click="content_add()") Add New
 
                   .col-md-4.col-xs-12(v-if="display.content && display.content" v-for="(content,index) in display.content")
-                    q-card(flat bordered )
-                      q-card-section
+                    q-card.column.full-height(flat bordered )
+                      q-card-section.col
                         q-badge(floating transparent) {{content.itemtype}}
-                        q-img(contain :src="content.image")
-                        p {{content.caption}}
                         p {{content.message}}
+                        q-img(v-if="content.image" contain :src="content.image" style="height:100%;")
+                          .absolute-bottom.text-subtitle1.text-center {{content.caption}}
                       q-separator
-                      q-card-actions(align="right")
+                      q-card-actions.col-auto(align="right")
                         q-btn(flat @click="content_remove(index)") Remove
             
             q-tab-panel(name="titles")
               .q-pa-xs
-                div.row.items-start.q-col-gutter-sm
+                div.row.q-col-gutter-sm
                   .col-md-4.col-xs-12
                     q-card(flat bordered)
                       q-card-section
@@ -152,13 +149,13 @@ q-layout(view="hHh lpR fFf")
                       q-card-actions(align="right")
                         q-btn(flat @click="title_add()") Add
 
-                  .col-md-4.col-xs-12(v-if="draft && draft.titles" v-for="(title,index) in draft.titles")
-                    q-card(flat bordered)
-                      q-card-section
+                  .col-md-4(v-if="draft && draft.titles" v-for="(title,index) in draft.titles")
+                    q-card.column.full-height(flat bordered)
+                      q-card-section.col
                         .text-h6 {{title.title}}
                         .text-subtitle2 {{title.subtitle}}
                       q-separator
-                      q-card-actions(align="right")
+                      q-card-actions.col-auto(align="right")
                         q-btn(flat @click="title_remove(index)") Remove
                   
 
