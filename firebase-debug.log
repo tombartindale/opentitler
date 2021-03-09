@@ -1,0 +1,38 @@
+[debug] [2021-03-09T04:57:10.405Z] ----------------------------------------------------------------------
+[debug] [2021-03-09T04:57:10.407Z] Command:       /usr/local/bin/firebase /Users/tbar0012/.cache/firebase/tools/lib/node_modules/firebase-tools/lib/bin/firebase deploy
+[debug] [2021-03-09T04:57:10.407Z] CLI Version:   9.4.0
+[debug] [2021-03-09T04:57:10.407Z] Platform:      darwin
+[debug] [2021-03-09T04:57:10.407Z] Node Version:  v12.18.1
+[debug] [2021-03-09T04:57:10.414Z] Time:          Tue Mar 09 2021 15:57:10 GMT+1100 (Australian Eastern Daylight Time)
+[debug] [2021-03-09T04:57:10.414Z] ----------------------------------------------------------------------
+[debug] [2021-03-09T04:57:10.414Z] 
+[debug] [2021-03-09T04:57:10.416Z] >>> [apiv2][query] GET https://firebase-public.firebaseio.com/cli.json [none]
+[debug] [2021-03-09T04:57:10.431Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2021-03-09T04:57:10.431Z] > authorizing via signed-in user
+[debug] [2021-03-09T04:57:10.431Z] [iam] checking project obstally for permissions ["firebase.projects.get","firebasehosting.sites.update"]
+[debug] [2021-03-09T04:57:10.432Z] > refreshing access token with scopes: ["email","https://www.googleapis.com/auth/cloud-platform","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","openid"]
+[debug] [2021-03-09T04:57:10.433Z] >>> HTTP REQUEST POST https://www.googleapis.com/oauth2/v3/token  
+ <request body omitted>
+[debug] [2021-03-09T04:57:10.716Z] <<< HTTP RESPONSE 200 {"cache-control":"no-cache, no-store, max-age=0, must-revalidate","pragma":"no-cache","date":"Tue, 09 Mar 2021 04:57:10 GMT","expires":"Mon, 01 Jan 1990 00:00:00 GMT","content-type":"application/json; charset=utf-8","vary":"X-Origin, Referer, Origin,Accept-Encoding","server":"scaffolding on HTTPServer2","x-xss-protection":"0","x-frame-options":"SAMEORIGIN","x-content-type-options":"nosniff","alt-svc":"h3-29=\":443\"; ma=2592000,h3-T051=\":443\"; ma=2592000,h3-Q050=\":443\"; ma=2592000,h3-Q046=\":443\"; ma=2592000,h3-Q043=\":443\"; ma=2592000,quic=\":443\"; ma=2592000; v=\"46,43\"","accept-ranges":"none","transfer-encoding":"chunked"}
+[debug] [2021-03-09T04:57:10.747Z] >>> HTTP REQUEST POST https://cloudresourcemanager.googleapis.com/v1/projects/obstally:testIamPermissions  
+ {"permissions":["firebase.projects.get","firebasehosting.sites.update"]}
+[debug] [2021-03-09T04:57:11.186Z] <<< [apiv2][status] GET https://firebase-public.firebaseio.com/cli.json 200
+[debug] [2021-03-09T04:57:11.186Z] <<< [apiv2][body] GET https://firebase-public.firebaseio.com/cli.json {"cloudBuildErrorAfter":1594252800000,"cloudBuildWarnAfter":1590019200000,"defaultNode10After":1594252800000,"minVersion":"3.0.5","node8DeploysDisabledAfter":1613390400000,"node8RuntimeDisabledAfter":1615809600000,"node8WarnAfter":1600128000000}
+[debug] [2021-03-09T04:57:11.243Z] <<< HTTP RESPONSE 200 {"content-type":"application/json; charset=UTF-8","vary":"X-Origin, Referer, Origin,Accept-Encoding","date":"Tue, 09 Mar 2021 04:57:11 GMT","server":"ESF","cache-control":"private","x-xss-protection":"0","x-frame-options":"SAMEORIGIN","x-content-type-options":"nosniff","server-timing":"gfet4t7; dur=197","alt-svc":"h3-29=\":443\"; ma=2592000,h3-T051=\":443\"; ma=2592000,h3-Q050=\":443\"; ma=2592000,h3-Q046=\":443\"; ma=2592000,h3-Q043=\":443\"; ma=2592000,quic=\":443\"; ma=2592000; v=\"46,43\"","accept-ranges":"none","transfer-encoding":"chunked"}
+[debug] [2021-03-09T04:57:11.244Z] > refreshing access token with scopes: []
+[debug] [2021-03-09T04:57:11.244Z] >>> HTTP REQUEST POST https://www.googleapis.com/oauth2/v3/token  
+ <request body omitted>
+[debug] [2021-03-09T04:57:11.504Z] <<< HTTP RESPONSE 200 {"pragma":"no-cache","cache-control":"no-cache, no-store, max-age=0, must-revalidate","expires":"Mon, 01 Jan 1990 00:00:00 GMT","date":"Tue, 09 Mar 2021 04:57:11 GMT","content-type":"application/json; charset=utf-8","vary":"X-Origin, Referer, Origin,Accept-Encoding","server":"scaffolding on HTTPServer2","x-xss-protection":"0","x-frame-options":"SAMEORIGIN","x-content-type-options":"nosniff","alt-svc":"h3-29=\":443\"; ma=2592000,h3-T051=\":443\"; ma=2592000,h3-Q050=\":443\"; ma=2592000,h3-Q046=\":443\"; ma=2592000,h3-Q043=\":443\"; ma=2592000,quic=\":443\"; ma=2592000; v=\"46,43\"","accept-ranges":"none","transfer-encoding":"chunked"}
+[debug] [2021-03-09T04:57:11.533Z] >>> [apiv2][query] GET https://firebase.googleapis.com/v1beta1/projects/obstally [none]
+[debug] [2021-03-09T04:57:12.118Z] <<< [apiv2][status] GET https://firebase.googleapis.com/v1beta1/projects/obstally 200
+[debug] [2021-03-09T04:57:12.119Z] <<< [apiv2][body] GET https://firebase.googleapis.com/v1beta1/projects/obstally {"projectId":"obstally","projectNumber":"611932210483","displayName":"opentally","name":"projects/obstally","resources":{"hostingSite":"obstally","realtimeDatabaseInstance":"obstally","storageBucket":"obstally.appspot.com","locationId":"australia-southeast1"},"state":"ACTIVE"}
+[info] 
+[info] === Deploying to 'obstally'...
+[info] 
+[info] i  deploying hosting 
+[debug] [2021-03-09T04:57:12.122Z] > refreshing access token with scopes: ["email","https://www.googleapis.com/auth/cloud-platform","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","openid"]
+[debug] [2021-03-09T04:57:12.122Z] >>> HTTP REQUEST POST https://www.googleapis.com/oauth2/v3/token  
+ <request body omitted>
+[debug] [2021-03-09T04:57:12.398Z] <<< HTTP RESPONSE 200 {"date":"Tue, 09 Mar 2021 04:57:12 GMT","pragma":"no-cache","expires":"Mon, 01 Jan 1990 00:00:00 GMT","cache-control":"no-cache, no-store, max-age=0, must-revalidate","content-type":"application/json; charset=utf-8","vary":"X-Origin, Referer, Origin,Accept-Encoding","server":"scaffolding on HTTPServer2","x-xss-protection":"0","x-frame-options":"SAMEORIGIN","x-content-type-options":"nosniff","alt-svc":"h3-29=\":443\"; ma=2592000,h3-T051=\":443\"; ma=2592000,h3-Q050=\":443\"; ma=2592000,h3-Q046=\":443\"; ma=2592000,h3-Q043=\":443\"; ma=2592000,quic=\":443\"; ma=2592000; v=\"46,43\"","accept-ranges":"none","transfer-encoding":"chunked"}
+[debug] [2021-03-09T04:57:12.426Z] >>> HTTP REQUEST POST https://firebasehosting.googleapis.com/v1beta1/sites/opentitler/versions  
+ {"config":{},"labels":{"deployment-tool":"cli-firebase"}}

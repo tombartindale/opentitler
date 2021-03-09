@@ -1,0 +1,21 @@
+version: '3.1'
+
+services:
+  dev:
+    build: .
+    volumes:
+      - ./src:/src
+      - ./vue.config.js:/vue.config.js
+      - ./public:/public
+    ports:
+      - 8080:8080
+    ulimits:
+      nofile:
+        soft: 10240
+        hard: 10240
+  deploy:
+    build: .
+    volumes:
+      - ./src:/src
+      - ./dist:/dist
+    command: npm run build

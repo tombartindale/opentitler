@@ -3,7 +3,7 @@
   v-style {{display.config.style}}
 
   transition(mode="out-in" enter-active-class="animate__animated animate__slideInLeft" leave-active-class="animate__animated animate__slideOutLeft" )
-    People(v-cname :key="display.people.message" :data="display.people" v-if="display.control.people")
+    People(v-cname :key="display.people.name" :data="display.people" v-if="display.control.people")
 
   Title(v-cname :data="display.title" :control="display.control")
 
@@ -14,7 +14,7 @@
 
   Watermark(v-cname v-if="display.control.watermark" :data="display.watermark")
 
-  .live(v-cname)
+  .live()
     div LIVE
 </div>
 

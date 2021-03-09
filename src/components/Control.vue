@@ -7,7 +7,7 @@ q-layout(view="hHh lpR fFf")
       q-toolbar-title {{display.name}}
 
   q-page-container()
-    q-page.column()
+    q-page
           .col-auto
             q-tabs(align="left" v-model="tab" dense  outside-arrows mobile-arrows)
               q-tab(icon="tune" name="control" label="LIVE")
@@ -20,7 +20,7 @@ q-layout(view="hHh lpR fFf")
           q-tab-panels.col(v-model="tab" v-if="loaded" padding)
             q-tab-panel(name="control")
               .row
-                .col-12.col-md.q-mr-md                  
+                .col-12.col-md.q-mr-md
                   q-list(separator v-if="display && draft && draft.titles && display.title" )
                     q-item
                       q-item-section
@@ -28,7 +28,7 @@ q-layout(view="hHh lpR fFf")
                       q-item-section(side)
                         q-btn-toggle(v-model="control.title" :options="displayoptions" outline)
                     q-separator
-                    .scrollable(style="overflow-y:scroll;height:400px;")
+                    q-scroll-area(style="height:400px;")
                       q-item(clickable v-ripple v-for="(title,index) in draft.titles" @click="updatetitle(title)")
                         q-item-section
                           q-item-label {{title.title}} ({{title.subtitle}})
@@ -38,21 +38,17 @@ q-layout(view="hHh lpR fFf")
                     q-item(v-if="!draft.titles.length")
                       q-item-label Empty
                           
-                .col-12.col-md.q-mr-md
-                  q-list(separator)
+                .col-12.col-md.q-mr-md.column
+                  q-list.col-auto(separator)
                     q-item
                       q-item-section
                         q-item-label.text-uppercase Available Content
                       q-item-section(side)
                         q-btn-toggle(v-model="control.content" :options="displayoptions" outline)
-                    q-item
-                      q-btn-group(spread style="width:100%;")
-                        q-btn(dense color="primary" outline @click="control.currentcontent--")
-                          q-icon(name="expand_less")
-                        q-btn(dense disabled outline color="primary") {{control.currentcontent+1}}
-                        q-btn(dense color="primary" outline @click="control.currentcontent++")
-                          q-icon(name="expand_more")
-                    .scrollable(style="overflow-y:scroll;height:400px;")
+                  
+                  q-list.col(separator)
+
+                    div.fill-height(style="overflow:scroll;height:60vh")
                       q-item(clickable v-ripple v-for="(content,index) in display.content" @click="control.currentcontent = index")
                         q-item-section(side)
                           q-badge(outline) {{index+1}}
@@ -62,10 +58,18 @@ q-layout(view="hHh lpR fFf")
                         q-item-section
                           q-item-label {{content.caption || content.message}}
                         q-item-section(side)
-                          q-icon(name="monitor" v-show="index == control.currentcontent")
-                        
-                    q-item(v-if="!display.content.length")
-                      q-item-label Empty
+                          q-icon(name="monitor" v-show="index == control.currentcontent") 
+                      q-item(v-if="!display.content.length")
+                        q-item-label Empty
+
+                  q-list.col-auto(separator)
+                    q-item
+                      q-btn-group(spread style="width:100%;")
+                        q-btn(dense color="primary" outline @click="control.currentcontent--")
+                          q-icon(name="expand_less")
+                        q-btn(dense disabled outline color="primary") {{control.currentcontent+1}}
+                        q-btn(dense color="primary" outline @click="control.currentcontent++")
+                          q-icon(name="expand_more")
                 
                 .col-12.col-md
                   q-list(separator v-if="display && draft && draft.people")
@@ -75,8 +79,8 @@ q-layout(view="hHh lpR fFf")
                       q-item-section(side)
                         q-btn-toggle(v-model="control.people" :options="displayoptions" outline)
                     .column
-                      .scrollable(style="overflow-y:scroll;height:400px;")
-                        q-item(v-for="(people,index) in draft.people")
+                      q-scroll-area(style="height:400px;")
+                        q-item(v-for="(people,index) in draft.people" @click="fireperson(people)" clickable ripple)
                           q-item-section(side)
                             q-icon(name="monitor"  v-if="display.people" v-show="display.people.name == people.name && display.people.affiliation == people.affiliation")
                             q-icon(name="blank" v-show="!(display.people.name == people.name && display.people.affiliation == people.affiliation)")
@@ -85,8 +89,8 @@ q-layout(view="hHh lpR fFf")
                           q-item-section(side)
                             div
                               q-circular-progress(v-if="display.people" v-show="display.people.name == people.name && display.people.affiliation == people.affiliation" :value="peopletimer")
-                              q-btn(flat dense icon="monitor" @click="updateperson(people)" color="primary")
-                              q-btn(flat dense icon="bolt" @click="fireperson(people)" color="primary")
+                              q-btn(flat dense icon="monitor" @click.capture.stop="updateperson(people)" color="primary")
+                              //- q-btn(flat dense icon="bolt" @click="fireperson(people)" color="primary")
                     q-item(v-if="!draft.people.length")
                       q-item-label Empty
                 
@@ -211,6 +215,8 @@ q-layout(view="hHh lpR fFf")
                   template(v-slot:append v-if="dirty.name != display.name" )
                     q-avatar
                       q-icon(name="create")
+                
+                //- q-btn(flat primary @click="remove()") Remove Display (can't undo)
 </template>
 
 <script>
@@ -272,6 +278,10 @@ export default {
     }
   },
   methods:{
+    remove(){
+      this.$firebaseRefs.display.remove();
+      this.$router.go(-1);
+    },
     updatecolor(){
       this.$firebaseRefs.display.child('config').child('colors').set(this.display.config.colors);
     },
@@ -387,6 +397,7 @@ export default {
       deep:true,
       immediate: true,
       handler(){
+        
         // if (!display.draft){
         //   display.draft = {
         //     people:[],
@@ -412,6 +423,16 @@ export default {
             }
           },
 
+          content:[
+            {
+              message:"My First Message"
+            }
+          ],
+
+          people:{
+
+          },
+
           watermark:{
             src:""
           },
@@ -430,7 +451,8 @@ export default {
 
         await this.$firebaseRefs.display.set(this.display);
 
-        // console.log(this.display);
+        console.log("********");
+        console.log(this.display);
 
         this.dirty = Object.assign({
           ticker:{},

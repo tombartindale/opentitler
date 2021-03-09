@@ -64,6 +64,7 @@ export default {
   background:white;
   padding:20px;
   min-height: 190px;
+  font-family: Titillium Web;
 
   .p_img {
     width:150px;
@@ -75,10 +76,11 @@ export default {
   .p_text {
     line-height: 40px;
     color:darkslategray;
+    word-wrap: break-word;
   }
 
   .p_caption {
-    color:purple;
+    color:var(--primary);
   }
 }
 

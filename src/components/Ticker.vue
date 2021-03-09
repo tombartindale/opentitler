@@ -47,7 +47,7 @@ export default {
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style lang="scss">
 
-$duration: 15s;
+$duration: 20s;
 $width: 1150px;
 
 .ticker_wrapper {
