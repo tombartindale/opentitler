@@ -35,9 +35,10 @@ q-layout(view="hHh lpR fFf")
                         q-item-section(side)
                           q-icon(name="monitor" v-show="display.title.title == title.title && display.title.subtitle == title.subtitle")
                     
-                    q-item(v-if="!draft.titles.length")
-                      q-item-label Empty
-                          
+                      q-item(v-if="!draft.titles.length")
+                        q-item-label
+                          em No titles yet
+                            
                 .col-12.col-md.q-mr-md.column
                   q-list.col-auto(separator)
                     q-item
@@ -45,7 +46,7 @@ q-layout(view="hHh lpR fFf")
                         q-item-label.text-uppercase Available Content
                       q-item-section(side)
                         q-btn-toggle(v-model="control.content" :options="displayoptions" outline)
-                  
+                    q-separator
                   q-list.col(separator)
 
                     div.fill-height(style="overflow:scroll;height:60vh")
@@ -60,7 +61,8 @@ q-layout(view="hHh lpR fFf")
                         q-item-section(side)
                           q-icon(name="monitor" v-show="index == control.currentcontent") 
                       q-item(v-if="!display.content.length")
-                        q-item-label Empty
+                        q-item-label
+                          em No content yet
 
                   q-list.col-auto(separator)
                     q-item
@@ -78,6 +80,7 @@ q-layout(view="hHh lpR fFf")
                         q-item-label.text-uppercase Available People
                       q-item-section(side)
                         q-btn-toggle(v-model="control.people" :options="displayoptions" outline)
+                    q-separator
                     .column
                       q-scroll-area(style="height:400px;")
                         q-item(v-for="(people,index) in draft.people" @click="fireperson(people)" clickable ripple)
@@ -91,8 +94,9 @@ q-layout(view="hHh lpR fFf")
                               q-circular-progress(v-if="display.people" v-show="display.people.name == people.name && display.people.affiliation == people.affiliation" :value="peopletimer")
                               q-btn(flat dense icon="monitor" @click.capture.stop="updateperson(people)" color="primary")
                               //- q-btn(flat dense icon="bolt" @click="fireperson(people)" color="primary")
-                    q-item(v-if="!draft.people.length")
-                      q-item-label Empty
+                        q-item(v-if="!draft.people.length")
+                          q-item-label
+                            em No people yet
                 
 
             q-tab-panel(name="people")
