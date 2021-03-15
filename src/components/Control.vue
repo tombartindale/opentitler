@@ -29,11 +29,13 @@ q-layout(view="hHh lpR fFf")
                         q-btn-toggle(v-model="control.title" :options="displayoptions" outline)
                     q-separator
                     q-scroll-area(style="height:400px;")
-                      q-item(clickable v-ripple v-for="(title,index) in draft.titles" @click="updatetitle(title)")
-                        q-item-section
-                          q-item-label {{title.title}} ({{title.subtitle}})
-                        q-item-section(side)
-                          q-icon(name="monitor" v-show="display.title.title == title.title && display.title.subtitle == title.subtitle")
+                      draggable(v-model="display.draft.titles" group="titles" @end="updatetitles")
+                        transition-group(name="flip-list")
+                          q-item(:key="title.title+title.subtitle" clickable v-ripple v-for="(title,index) in draft.titles" @click="updatetitle(title)")
+                            q-item-section
+                              q-item-label {{title.title}} ({{title.subtitle}})
+                            q-item-section(side)
+                              q-icon(name="monitor" v-show="display.title.title == title.title && display.title.subtitle == title.subtitle")
                     
                       q-item(v-if="!draft.titles.length")
                         q-item-label
@@ -50,16 +52,18 @@ q-layout(view="hHh lpR fFf")
                   q-list.col(separator)
 
                     div.fill-height(style="overflow:scroll;height:60vh")
-                      q-item(clickable v-ripple v-for="(content,index) in display.content" @click="control.currentcontent = index")
-                        q-item-section(side)
-                          q-badge(outline) {{index+1}}
-                        q-item-section(side)
-                          q-avatar(square)
-                            q-img( :src="content.image")
-                        q-item-section
-                          q-item-label {{content.caption || content.message}}
-                        q-item-section(side)
-                          q-icon(name="monitor" v-show="index == control.currentcontent") 
+                      draggable(v-model="display.content" group="content" @end="updatecontent")
+                        transition-group(name="flip-list")
+                          q-item(:key="JSON.stringify(content)" clickable v-ripple v-for="(content,index) in display.content" @click="control.currentcontent = index")
+                            q-item-section(side)
+                              q-badge(outline) {{index+1}}
+                            q-item-section(side)
+                              q-avatar(square)
+                                q-img( :src="content.image")
+                            q-item-section
+                              q-item-label {{content.caption || content.message}}
+                            q-item-section(side)
+                              q-icon(name="monitor" v-show="index == control.currentcontent") 
                       q-item(v-if="!display.content.length")
                         q-item-label
                           em No content yet
@@ -156,8 +160,7 @@ q-layout(view="hHh lpR fFf")
                       q-separator
                       q-card-actions(align="right")
                         q-btn(flat @click="title_add()") Add
-
-                  .col-md-4(v-if="draft && draft.titles" v-for="(title,index) in draft.titles")
+                  .col-md-4(v-if="draft && draft.titles" v-for="(title,index) in draft.titles" )
                     q-card.column.full-height(flat bordered)
                       q-card-section.col
                         .text-h6 {{title.title}}
@@ -227,11 +230,22 @@ q-layout(view="hHh lpR fFf")
 import {db} from '../lib/db';
 import firebase from 'firebase';
 const alldisplays = db.ref('displays');
+import draggable from 'vuedraggable';
+
+// import * as Tone from 'tone';
+// const meter = new Tone.Meter();
+// const mic = new Tone.UserMedia();
+// mic.open();
+// // connect mic to the meter
+// mic.connect(meter);
+// // the current level of the mic
+// setInterval(() => console.log(meter.getValue()), 100);
 
 var timeout;
 
 export default {
   name: 'Control',
+  components:{draggable},
   props:['id'],
   created () {
     this.$q.dark.set(true)
@@ -261,6 +275,7 @@ export default {
       control:{},
       tab:'control',
       peopletimer:0,
+      coutdowntimer:-1,
       dirty:{
         watermark:''
       },
@@ -282,10 +297,16 @@ export default {
     }
   },
   methods:{
-    remove(){
-      this.$firebaseRefs.display.remove();
-      this.$router.go(-1);
+    updatetitles(){
+      this.$firebaseRefs.display.child('draft').child('titles').set(this.display.draft.titles);
     },
+    updatecontent(){
+      this.$firebaseRefs.display.child('content').set(this.display.content);
+    },
+    // remove(){
+    //   this.$firebaseRefs.display.remove();
+    //   this.$router.go(-1);
+    // },
     updatecolor(){
       this.$firebaseRefs.display.child('config').child('colors').set(this.display.config.colors);
     },
@@ -357,6 +378,7 @@ export default {
       this.$firebaseRefs.display.child('people').set(person);
       this.peopletimer = 0;
       clearTimeout(timeout);
+      clearTimeout(this.coutdowntimer);
       this.$firebaseRefs.control.child('people').set(true);
     },
     updatetitle(title){
@@ -370,6 +392,7 @@ export default {
     fireperson(person){
       this.updateperson(person);
       this.peopletimer = 100;
+      clearTimeout(this.coutdowntimer);
       this.countDown();
       //set timer:
       timeout = setTimeout(this.cancelperson,5000);
@@ -377,7 +400,7 @@ export default {
     countDown(){
       if (this.peopletimer > 0)
       {
-        setTimeout(()=>{
+        this.coutdowntimer = setTimeout(()=>{
           this.peopletimer -= 20;
           this.countDown();
         },1000);
@@ -455,8 +478,8 @@ export default {
 
         await this.$firebaseRefs.display.set(this.display);
 
-        console.log("********");
-        console.log(this.display);
+        // console.log("********");
+        // console.log(this.display);
 
         this.dirty = Object.assign({
           ticker:{},
@@ -506,4 +529,8 @@ body {
   }
 }
 
+
+.flip-list-move {
+  transition: transform 1s;
+}
 </style>
