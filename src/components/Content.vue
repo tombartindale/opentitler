@@ -5,7 +5,9 @@
       img(:src="content.image")
       .caption {{content.caption}}
 
-    .text(v-if="content.itemtype=='message'") {{content.message}}
+    .text(v-if="content.itemtype=='message'")
+      .message {{content.message}}
+      .caption {{content.caption}}
 
     .persona(v-if="content.itemtype=='profile'") {{content.text}}
       img.p_img(:src="content.image")
@@ -93,14 +95,29 @@ export default {
 }
 
 .text {
-  max-width:400px;
-  border-left: 1px solid white;
-  border-right: 1px solid white;
-  padding: 20px;
-  margin-top:auto;
-  margin-bottom:auto;
-  color:white;
-  font-size: 3rem;
+  
+
+  .message {
+  // width:400px;
+    max-width:450px;
+    min-width: 200px;
+    border-left: 1px solid white;
+    border-right: 1px solid white;
+    padding: 20px;
+    margin-top:auto;
+    margin-bottom:auto;
+    color:white;
+    text-align: center;
+    font-size: 1em;
+    line-height: 1.3em;
+  }
+
+  .caption {
+    text-align:right;
+    font-size: 0.5em;
+    margin-top:-20px;
+  }
+
   background:rgba(0,0,0,0.2);
 }
 
