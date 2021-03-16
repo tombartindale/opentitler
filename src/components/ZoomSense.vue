@@ -5,12 +5,13 @@ div
     p Paste the &ldquo;Anonymous access token&rdquo; generated when sharing your meeting in ZoomSense.
     q-input(v-model="mytoken" label="ZoomSense Token" clearable)
   div(v-show="showcontent")
-    q-list.col(separator)
+    q-list.col
       q-item
         q-item-section
           q-item-label.text-uppercase Zoom Messages
       .text-center(v-show="loading")
         q-spinner-dots(size="3em")
+      q-separator
       q-item(clickable v-ripple v-for="(content,index) of ordered" @click="addmessage(content,false)" :key="JSON.stringify(content)")
         q-item-section
           q-item-label.overflow-hidden {{content.msg}}
@@ -133,3 +134,8 @@ export default {
 }
 </script>
 
+<style scoped>
+a {
+    color:white;
+}
+</style>

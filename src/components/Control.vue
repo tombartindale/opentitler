@@ -51,7 +51,8 @@ q-layout(view="hHh lpR fFf")
                         transition-group(name="flip-list")
                           q-item(:class="{'text-info': display.title.title == title.title && display.title.subtitle == title.subtitle}" :key="title.title+title.subtitle" clickable v-ripple v-for="(title,index) in draft.titles" @click="updatetitle(title)")
                             q-item-section
-                              q-item-label {{title.title}} ({{title.subtitle}})
+                              q-item-label {{title.title}}
+                              q-item-label(caption) {{title.subtitle}}
                             q-item-section(side)
                               q-icon(name="monitor" v-show="display.title.title == title.title && display.title.subtitle == title.subtitle")
                       
@@ -83,14 +84,15 @@ q-layout(view="hHh lpR fFf")
                             q-item(:class="{'text-info': index == control.currentcontent}" :key="JSON.stringify(content)" clickable v-ripple v-for="(content,index) in display.content" @click="control.currentcontent = index")
                               q-item-section(side)
                                 q-badge(outline) {{index+1}}
-                              q-item-section(side)
+                              q-item-section(side v-if="content.image")
                                 q-avatar(square)
                                   q-img( :src="content.image")
                               q-item-section
-                                q-item-label {{content.message}}
+                                q-item-label.overflow-hidden {{content.message}}
                                 q-item-label {{content.caption}}
                               q-item-section(side)
-                                q-icon(name="monitor" v-show="index == control.currentcontent") 
+                                q-icon(:name="(index == control.currentcontent)?'monitor':''") 
+                                //- q-icon(name="blank" v-if="!(index == control.currentcontent)")
                         q-item(v-if="!display.content.length")
                           q-item-label
                             em No content yet
@@ -113,7 +115,8 @@ q-layout(view="hHh lpR fFf")
                             q-icon(name="monitor"  v-if="display.people" v-show="display.people.name == people.name && display.people.affiliation == people.affiliation")
                             q-icon(name="blank" v-show="!(display.people.name == people.name && display.people.affiliation == people.affiliation)")
                           q-item-section
-                            q-item-label {{people.name}} ({{people.affiliation}})
+                            q-item-label {{people.name}}
+                            q-item-label(caption) {{people.affiliation}}
                           q-item-section(side)
                             div
                               q-circular-progress(v-if="display.people" v-show="display.people.name == people.name && display.people.affiliation == people.affiliation" :value="peopletimer")
