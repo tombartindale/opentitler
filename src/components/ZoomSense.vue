@@ -9,9 +9,11 @@ div
       q-item
         q-item-section
           q-item-label.text-uppercase Zoom Messages
+      .text-center(v-show="loading")
+        q-spinner-dots(size="3em")
       q-item(clickable v-ripple v-for="(content,index) of ordered" @click="addmessage(content,false)" :key="JSON.stringify(content)")
         q-item-section
-          q-item-label {{content.msg}}
+          q-item-label.overflow-hidden {{content.msg}}
           q-item-label(caption) {{content.msgSenderName}} - {{ts(content.timestamp).format('h:mma')}}
         q-item-section(side)
           q-btn(flat icon="monitor" @click.capture.stop="addmessage(content,true)")
@@ -33,7 +35,8 @@ export default {
       return {
           zoomsense:{},
           meetinginfo:{},
-          mytoken: this.token
+          mytoken: this.token,
+          loading:true
       }
   },
   computed: {
@@ -115,7 +118,8 @@ export default {
             .set({ createdAt: new Date().getTime() });
         //   EventBus.$emit("logged-in");
 
-            this.$rtdbBind('zoomsense', zsense.child('chats').child(this.meetinginfo.meetingid).child('ZoomSensor_1'));
+            await this.$rtdbBind('zoomsense', zsense.child('chats').child(this.meetinginfo.meetingid).child('ZoomSensor_1'));
+            this.loading = false;
 
         //   this.$router.push("/" + curMeetingid);
 

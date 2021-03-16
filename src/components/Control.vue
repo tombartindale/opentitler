@@ -49,7 +49,7 @@ q-layout(view="hHh lpR fFf")
                     q-scroll-area(:style="colStyle")
                       draggable(v-model="display.draft.titles" group="titles" @end="updatetitles")
                         transition-group(name="flip-list")
-                          q-item(:key="title.title+title.subtitle" clickable v-ripple v-for="(title,index) in draft.titles" @click="updatetitle(title)")
+                          q-item(:class="{'text-info': display.title.title == title.title && display.title.subtitle == title.subtitle}" :key="title.title+title.subtitle" clickable v-ripple v-for="(title,index) in draft.titles" @click="updatetitle(title)")
                             q-item-section
                               q-item-label {{title.title}} ({{title.subtitle}})
                             q-item-section(side)
@@ -80,7 +80,7 @@ q-layout(view="hHh lpR fFf")
                       template(v-slot:before)
                         draggable(v-model="display.content" group="content" @end="updatecontent")
                           transition-group(name="flip-list")
-                            q-item(:key="JSON.stringify(content)" clickable v-ripple v-for="(content,index) in display.content" @click="control.currentcontent = index")
+                            q-item(:class="{'text-info': index == control.currentcontent}" :key="JSON.stringify(content)" clickable v-ripple v-for="(content,index) in display.content" @click="control.currentcontent = index")
                               q-item-section(side)
                                 q-badge(outline) {{index+1}}
                               q-item-section(side)
@@ -95,7 +95,7 @@ q-layout(view="hHh lpR fFf")
                           q-item-label
                             em No content yet
                       template(v-slot:after)
-                        ZoomSense.col(:token="control.zoomsensetoken" v-on:update:token="savetoken" v-on:new:message="addmsg" showcontent="true")
+                        ZoomSense.col( :token="control.zoomsensetoken" v-on:update:token="savetoken" v-on:new:message="addmsg" showcontent="true")
 
                 
                 .col-12.col-md
@@ -108,7 +108,7 @@ q-layout(view="hHh lpR fFf")
                     q-separator
                     .column
                       q-scroll-area(:style="colStyle")
-                        q-item(v-for="(people,index) in draft.people" @click="fireperson(people)" clickable ripple)
+                        q-item(:class="{'text-info': display.people.name == people.name && display.people.affiliation == people.affiliation}" v-for="(people,index) in draft.people" @click="fireperson(people)" clickable ripple)
                           q-item-section(side)
                             q-icon(name="monitor"  v-if="display.people" v-show="display.people.name == people.name && display.people.affiliation == people.affiliation")
                             q-icon(name="blank" v-show="!(display.people.name == people.name && display.people.affiliation == people.affiliation)")
@@ -118,7 +118,6 @@ q-layout(view="hHh lpR fFf")
                             div
                               q-circular-progress(v-if="display.people" v-show="display.people.name == people.name && display.people.affiliation == people.affiliation" :value="peopletimer")
                               q-btn(flat dense icon="monitor" @click.capture.stop="updateperson(people)" color="primary")
-                              //- q-btn(flat dense icon="bolt" @click="fireperson(people)" color="primary")
                         q-item(v-if="!draft.people.length")
                           q-item-label
                             em No people yet
@@ -285,7 +284,6 @@ export default {
   data() {
     return {
       colheight:100,
-      splitterModel: 50,
       zoomsense:{},
       contenttypes:[
         {
@@ -494,6 +492,9 @@ export default {
 
   },
   computed:{
+    splitterModel(){
+      return (typeof(this.control.zoomsensetoken)=='undefined' || this.control.zoomsensetoken=="")?100:50;
+    },
     colStyle(){
       return {
         height:this.colheight + 'px'
