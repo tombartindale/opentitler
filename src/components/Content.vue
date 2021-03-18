@@ -87,7 +87,7 @@ export default {
 }
 
 .message {
-  height:120%;
+  height:110%;
   // background: green;
   display: flex;
   justify-content: center;
@@ -98,7 +98,7 @@ export default {
   
 
   .message {
-    max-width:450px;
+    max-width:550px;
     min-width: 200px;
     border-left: 1px solid white;
     border-right: 1px solid white;
@@ -107,7 +107,7 @@ export default {
     margin-bottom:auto;
     color:white;
     text-align: center;
-    font-size: 1em;
+    font-size: 0.9em;
     line-height: 1.3em;
     word-wrap: break-word;
     display: inline-block;
