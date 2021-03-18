@@ -87,7 +87,7 @@ export default {
 }
 
 .message {
-  height:70%;
+  height:120%;
   // background: green;
   display: flex;
   justify-content: center;
@@ -98,7 +98,6 @@ export default {
   
 
   .message {
-  // width:400px;
     max-width:450px;
     min-width: 200px;
     border-left: 1px solid white;
@@ -110,6 +109,9 @@ export default {
     text-align: center;
     font-size: 1em;
     line-height: 1.3em;
+    word-wrap: break-word;
+    display: inline-block;
+    background:rgba(0,0,0,0.2);
   }
 
   .caption {
@@ -118,7 +120,7 @@ export default {
     margin-top:-20px;
   }
 
-  background:rgba(0,0,0,0.2);
+  
 }
 
 .imagec {

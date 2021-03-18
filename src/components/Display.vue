@@ -121,7 +121,7 @@ export default {
   // background:#00ff00;
   outline: solid white 5px;
   z-index:-1;
-  /* background:transparent; */
+  // background:green;
 }
 
 body {

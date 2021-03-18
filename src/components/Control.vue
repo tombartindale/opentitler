@@ -1,18 +1,19 @@
 <template lang="pug">
 q-layout(view="hHh lpR fFf")
   //- q - next title
-  Keypress(key-event="keyup" preventDefault="true" :modifiers="['altKey']" :key-code="81" @success="prevTitle")
+  Keypress(key-event="keyup" :preventDefault="true" :modifiers="['altKey','ctrlKey']" :key-code="81" @success="prevTitle")
   //- w - prev title
-  Keypress(key-event="keyup" preventDefault="true" :modifiers="['altKey']" :key-code="87" @success="nextTitle")
+  Keypress(key-event="keyup" :preventDefault="true" :modifiers="['altKey','ctrlKey']" :key-code="87" @success="nextTitle")
   //- a - prev content
-  Keypress(key-event="keyup" preventDefault="true" :modifiers="['altKey']" :key-code="65" @success="control.currentcontent--;control.content=true;")
+  Keypress(key-event="keyup" :preventDefault="true" :modifiers="['altKey','ctrlKey']" :key-code="65" @success="control.currentcontent--;control.content=true;")
   //- s - next content
-  Keypress(key-event="keyup" preventDefault="true" :modifiers="['altKey']" :key-code="83" @success="control.currentcontent++;control.content=true;")
+  Keypress(key-event="keyup" :preventDefault="true" :modifiers="['altKey','ctrlKey']" :key-code="83" @success="control.currentcontent++;control.content=true;")
   //- z - hide content
-  Keypress(key-event="keyup" preventDefault="true" :modifiers="['altKey']" :key-code="90" @success="control.content=false;")
+  Keypress(key-event="keyup" :preventDefault="true" :modifiers="['altKey','ctrlKey']" :key-code="90" @success="control.content=false;")
+  //- x - show content
+  Keypress(key-event="keyup" :preventDefault="true" :modifiers="['altKey','ctrlKey']" :key-code="88" @success="control.content=true;")
   //- ctrl + num - person
-  Keypress(key-event="keydown" preventDefault="true" :modifiers="['altKey']" @success="setPersonKey")
-
+  Keypress(key-event="keydown" :preventDefault="true" :modifiers="['altKey','ctrlKey']" @success="setPersonKey")
 
   q-header.bg-primary.text-white(elevated height-hint="98")
     q-toolbar

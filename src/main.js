@@ -9,6 +9,7 @@ import VueRouter from 'vue-router'
 Vue.use(rtdbPlugin)
 Vue.use(require("vue-moment"));
 Vue.use(VueRouter);
+Vue.use(require('./components/plugins/ZoomSense'));
 
 import Display from './components/Display'
 import Control from './components/Control'

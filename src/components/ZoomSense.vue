@@ -40,6 +40,9 @@ export default {
           loading:true
       }
   },
+  created(){
+    //   this.$zoomsense.setToken('test token');
+  },
   computed: {
       tok(){
           return this.token;
