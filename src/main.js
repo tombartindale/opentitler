@@ -9,7 +9,16 @@ import VueRouter from 'vue-router'
 Vue.use(rtdbPlugin)
 Vue.use(require("vue-moment"));
 Vue.use(VueRouter);
-Vue.use(require('./components/plugins/ZoomSense'));
+
+import ZoomSense from './components/plugins/ZoomSense';
+Vue.use(ZoomSense,{
+  name:'zoom',
+  apiKey: 'AIzaSyAzlJsBb_xz0p9bd9caHr_79tagYnFU77A',
+  authDomain: 'zoombot.firebaseapp.com',
+  databaseURL: 'https://zoombot.firebaseio.com',
+  projectId: 'zoombot',
+  appId: "1:578675125264:web:27a74a7ee45f0ca7b6ee95"
+});
 
 import Display from './components/Display'
 import Control from './components/Control'

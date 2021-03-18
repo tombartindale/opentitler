@@ -24,24 +24,24 @@ div
 
 <script>
 
-import {zs,auth,functions} from '../lib/db';
+// import {zs,auth,functions} from '../lib/db';
 import moment from 'moment';
 // import firebase from 'firebase';
-const zsense = zs.ref('data');
-const decryptToken = functions.httpsCallable("decryptToken");
+// const zsense = zs.ref('data');
+// const decryptToken = functions.httpsCallable("decryptToken");
 
 export default {
   name: 'ZoomSense',
   data(){
       return {
-          zoomsense:{},
+        //   zoomsense:{},
           meetinginfo:{},
           mytoken: this.token,
-          loading:true
+        //   loading: true
       }
   },
   created(){
-    //   this.$zoomsense.setToken('test token');
+      
   },
   computed: {
       tok(){
@@ -64,8 +64,9 @@ export default {
       token:{
           immediate:true,
           handler(){
-            console.log('updated token')
-            this.signInAnonymously()
+            // console.log(this.$zoomsense)
+            this.$zoomsense.setToken(this.token);
+            // this.signInAnonymously()
           }
       }
   },
@@ -79,60 +80,60 @@ export default {
       },
       ts(time){
         return moment(time);
-      },
-      async signInAnonymously() {
-      if (!this.token) {
-        console.log("Missing Token...");
-        return;
       }
+    //   async signInAnonymously() {
+    //   if (!this.token) {
+    //     console.log("Missing Token...");
+    //     return;
+    //   }
 
-        console.log('logging in')
+    //     console.log('logging in')
 
-      let curMeetingid;
-      let curHostuid;
-      auth
-        .signInAnonymously()
-        .then(async (loginData) => {
-          this.user = loginData.user;
-        //   this.$cookies.set("user", loginData.user, "1d");
+    //   let curMeetingid;
+    //   let curHostuid;
+    //   auth
+    //     .signInAnonymously()
+    //     .then(async (loginData) => {
+    //       this.user = loginData.user;
+    //     //   this.$cookies.set("user", loginData.user, "1d");
 
-          // Read result of the decryptToken Function
-          const result = await decryptToken({ token: this.token });
-          const { meetingid, hostuid } = result.data;
-          curMeetingid = meetingid;
-          curHostuid = hostuid;
-          const anonymousSession = {
-            hostuid: curHostuid,
-            meetingid: curMeetingid,
-          };
-          this.meetinginfo = anonymousSession;
-        //   console.log(anonymousSession);
-        //   this.$cookies.set("anonymous", anonymousSession, "1d");
-          return loginData.user.getIdToken();
-        })
-        .then(async () => {
+    //       // Read result of the decryptToken Function
+    //       const result = await decryptToken({ token: this.token });
+    //       const { meetingid, hostuid } = result.data;
+    //       curMeetingid = meetingid;
+    //       curHostuid = hostuid;
+    //       const anonymousSession = {
+    //         hostuid: curHostuid,
+    //         meetingid: curMeetingid,
+    //       };
+    //       this.meetinginfo = anonymousSession;
+    //     //   console.log(anonymousSession);
+    //     //   this.$cookies.set("anonymous", anonymousSession, "1d");
+    //       return loginData.user.getIdToken();
+    //     })
+    //     .then(async () => {
 
-            // console.log(idToken);
-        //   this.$cookies.set("session", idToken, "1d");
-          await zs
-            .ref(`/anonymous/users/${this.user.uid}/hosts/${curHostuid}`)
-            .set({ createdAt: new Date().getTime() });
-          await zs
-            .ref(`/anonymous/users/${this.user.uid}/meetings/${curMeetingid}`)
-            .set({ createdAt: new Date().getTime() });
-        //   EventBus.$emit("logged-in");
+    //         // console.log(idToken);
+    //     //   this.$cookies.set("session", idToken, "1d");
+    //       await zs
+    //         .ref(`/anonymous/users/${this.user.uid}/hosts/${curHostuid}`)
+    //         .set({ createdAt: new Date().getTime() });
+    //       await zs
+    //         .ref(`/anonymous/users/${this.user.uid}/meetings/${curMeetingid}`)
+    //         .set({ createdAt: new Date().getTime() });
+    //     //   EventBus.$emit("logged-in");
 
-            await this.$rtdbBind('zoomsense', zsense.child('chats').child(this.meetinginfo.meetingid).child('ZoomSensor_1'));
-            this.loading = false;
+    //         await this.$rtdbBind('zoomsense', zsense.child('chats').child(this.meetinginfo.meetingid).child('ZoomSensor_1'));
+    //         this.loading = false;
 
-        //   this.$router.push("/" + curMeetingid);
+    //     //   this.$router.push("/" + curMeetingid);
 
-        })
-        .catch((error) => {
-          console.log("Error " + error.code + ": " + error.message);
-        //   return this.$router.push("/");
-        });
-    }
+    //     })
+    //     .catch((error) => {
+    //       console.log("Error " + error.code + ": " + error.message);
+    //     //   return this.$router.push("/");
+    //     });
+    // }
   }
 }
 </script>
