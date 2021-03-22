@@ -36,7 +36,7 @@ q-layout(view="hHh lpR fFf")
           q-tab-panels.fixed.fixed-left.fixed-right.fixed-bottom(v-model="tab" v-if="loaded" padding style="top:106px;")
             q-tab-panel(name="zoomsense")
               ZoomSense(:token="control.zoomsensetoken" v-on:update:token="savetoken" settings="false")
-
+                
             q-tab-panel(name="control")
               .row.full-height
                 .col-12.col-md.q-mr-md
@@ -385,7 +385,7 @@ export default {
       }
     },
     savetoken(val){
-      console.log('save token',val);
+      // console.log('save token',val);
       this.$firebaseRefs.control.child('zoomsensetoken').set(val);
     },
     updatetitles(){

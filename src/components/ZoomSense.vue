@@ -1,14 +1,16 @@
 <template lang="pug">
 div
+  ZoomSenseData(:token="token" v-on:zoomsense:loading="loadingchanged" v-on:zoomsense:loaded="loaded" v-on:zoomsense:tokenerror="tokenerror" v-on:zoomsense:error="error")
   div(v-show="settings")
     p #[a(href="https://zoomsense.io") ZoomSense] integration requires you to set up ZoomSense for broadcast prior to the event starting.
     p Paste the &ldquo;Anonymous access token&rdquo; generated when sharing your meeting in ZoomSense.
     q-input(v-model="mytoken" label="ZoomSense Token" clearable)
+    .text-danger {{tokenerrormsg}}
   div(v-show="showcontent")
     q-list.col
       q-item
         q-item-section
-          q-item-label.text-uppercase Zoom Messages
+          q-item-label.text-uppercase Zoom Messages for {{meetinginfo.topic}}
       .text-center(v-show="loading")
         q-spinner-dots(size="3em")
       q-separator
@@ -18,26 +20,20 @@ div
           q-item-label(caption) {{content.msgSenderName}} - {{ts(content.timestamp).format('h:mma')}}
         q-item-section(side)
           q-btn(flat icon="monitor" @click.capture.stop="addmessage(content,true)")
-
-
 </template>
 
 <script>
-
-// import {zs,auth,functions} from '../lib/db';
 import moment from 'moment';
-// import firebase from 'firebase';
-// const zsense = zs.ref('data');
-// const decryptToken = functions.httpsCallable("decryptToken");
 
 export default {
   name: 'ZoomSense',
   data(){
       return {
-        //   zoomsense:{},
+          zoomsense:{},
           meetinginfo:{},
           mytoken: this.token,
-        //   loading: true
+          loading: true,
+          tokenerrormsg:''
       }
   },
   created(){
@@ -60,17 +56,23 @@ export default {
   watch:{
       mytoken(val){
           this.$emit('update:token',val);
-      },
-      token:{
-          immediate:true,
-          handler(){
-            // console.log(this.$zoomsense)
-            this.$zoomsense.setToken(this.token);
-            // this.signInAnonymously()
-          }
       }
   },
   methods:{
+      tokenerror(error){
+          this.tokenerrormsg = error;
+      },
+      error(error){
+          console.log(error);
+      },
+      loadingchanged(isloading){
+          this.loading = isloading;
+      },
+      loaded(data){
+          this.tokenerrormsg = '';
+          this.meetinginfo = data.meeting;
+          this.$rtdbBind('zoomsense', data.fbpath);
+      },
       addmessage(msg,display){
         this.$emit('new:message',{
             itemtype:'message',
