@@ -41,13 +41,13 @@ div
         q-item-section
           q-item-label.overflow-hidden {{ content.msg }}
           q-item-label(caption) {{ content.msgSenderName }} - {{ ts(content.timestamp).format('h:mma') }}
+            //- q-item-section(side top)
         q-item-section(side)
           q-btn(
             flat,
             icon="ballot",
             @click.capture.stop="addmessage(content, control.zoomsense_autodisplay)"
           )
-        q-item-section(side)
           q-btn(
             flat,
             icon="title",
