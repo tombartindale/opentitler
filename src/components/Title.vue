@@ -4,8 +4,8 @@
     .titles(v-if="control.title" :key="control.title")
       transition(name="fade-in" mode="out-in")
         .subtitle(v-cname :key="data.subtitle") {{data.subtitle}}
-      .title(v-cname :style="calcfont()")
-        transition(name="fade-in" mode="out-in")
+      .title(v-cname :style="style")
+        transition(name="fade-in" mode="out-in" v-on:after-leave="afterenter")
           span(:key="data.title") {{data.title}}
 </template>
 
@@ -17,7 +17,22 @@ export default {
     data: Object,
     control: Object
   },
+  data(){
+    return {
+      style:{
+        'font-size':`30px`
+      }
+    }
+  },
   methods:{
+    afterenter(){
+      // console.log('changefont')
+      // console.log(this.data);
+
+      //now set font
+      this.style = this.calcfont();
+
+    },
     calcfont(){
 
       let fontsize = 30;
