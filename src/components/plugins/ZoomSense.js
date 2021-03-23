@@ -1,67 +1,120 @@
+import firebase from 'firebase/app'
+import "firebase/auth";
+import 'firebase/database';
+import 'firebase/functions';
 
-let zoomsenseapi = {
-    setToken(token){
-        console.log("set:", token);
-    }
+let zoomsenseapp, db, auth, functions, decryptToken, data, meetings;
+
+function setup(options) {
+    zoomsenseapp = firebase.initializeApp(options, "zoomsense");
+    db = zoomsenseapp.database(),
+        auth = zoomsenseapp.auth(),
+        functions = zoomsenseapp.functions()
+    decryptToken = functions.httpsCallable("decryptToken");
+    data = db.ref('data');
+    meetings = db.ref('meetings');
 }
 
 export default {
-    // called by Vue.use(FirstPlugin)
-    install(Vue) {
-        Vue.$zoomsense = zoomsenseapi;
+    install(Vue, options) {
+        setup(options);
+
+        Vue.component('ZoomSenseData', {
+            render: function (createElement) {
+                return createElement('span');
+            },
+            name: 'ZoomSenseData',
+            props: ['token'],
+            data: () => ({
+                meetinginfo: {}
+            }),
+            watch: {
+                token: {
+                    immediate: true,
+                    handler: async function () {
+
+                        if (!this.token) {
+                            // console.log("Missing Token...");
+                            return;
+                        }
+                        
+                        this.$emit('zoomsense:loading', true);
+                        let curMeetingid;
+                        let curHostuid;
+                        let loginData = {};
+                        try {
+                            loginData = await auth.signInAnonymously();
+                        }
+                        catch (e) {
+                            this.$emit('zoomsense:error', e);
+                            return;
+                        }
+
+                        try {
+                            await (async (loginData) => {
+                                // .then(async (loginData) => {
+                                this.user = loginData.user;
+
+                                let parsedtoken = this.token;
+
+                                if (parsedtoken.startsWith('https://'))
+                                    parsedtoken = parsedtoken.split('?token=')[1];
+
+                                // console.log('token',parsedtoken);
+
+                                // Read result of the decryptToken Function
+                                const result = await decryptToken({ token: parsedtoken });
+                                const { meetingid, hostuid } = result.data;
+                                curMeetingid = meetingid;
+                                curHostuid = hostuid;
+                                const anonymousSession = {
+                                    hostuid: curHostuid,
+                                    meetingid: curMeetingid,
+                                };
+                                this.meetinginfo = anonymousSession;
+                                // console.log(this.meetinginfo);
+                                return loginData.user.getIdToken();
+                            })(loginData);
+                        }
+                        catch (e) {
+                            this.$emit('zoomsense:tokenerror', e);
+                            return;
+                        }
+
+                        try {
+                            await (async () => {
+                                // .then(async () => {
+                                await db
+                                    .ref(`/anonymous/users/${this.user.uid}/hosts/${curHostuid}`)
+                                    .set({ createdAt: new Date().getTime() });
+                                await db
+                                    .ref(`/anonymous/users/${this.user.uid}/meetings/${curMeetingid}`)
+                                    .set({ createdAt: new Date().getTime() });
+
+                                // zoomloading = false;
+                                // await this.$rtdbBind('zoomdata', data.child('chats').child(this.meetinginfo.meetingid).child('ZoomSensor_1'));
+                                let meeting = await new Promise((resolve) => {
+                                    meetings.child(this.meetinginfo.hostuid).child(this.meetinginfo.meetingid).once('value', snapshot => {
+                                        resolve(snapshot.val());
+                                    });
+                                });
+                                // console.log(meeting);
+                                this.$emit('zoomsense:loaded', {
+                                    fbpath: data.child('chats').child(this.meetinginfo.meetingid).child('ZoomSensor_1'),
+                                    meeting: meeting
+                                });
+                                this.$emit('zoomsense:loading', false);
+                            })();
+                        }
+                        catch (e) {
+                            this.$emit('zoomsense:error', e);
+                        }
+                    }
+                }
+            }
+        });
     }
- }
+}
 
 
-//  async signInAnonymously() {
-//     if (!this.token) {
-//       console.log("Missing Token...");
-//       return;
-//     }
-
-//       console.log('logging in')
-
-//     let curMeetingid;
-//     let curHostuid;
-//     auth
-//       .signInAnonymously()
-//       .then(async (loginData) => {
-//         this.user = loginData.user;
-//       //   this.$cookies.set("user", loginData.user, "1d");
-
-//         // Read result of the decryptToken Function
-//         const result = await decryptToken({ token: this.token });
-//         const { meetingid, hostuid } = result.data;
-//         curMeetingid = meetingid;
-//         curHostuid = hostuid;
-//         const anonymousSession = {
-//           hostuid: curHostuid,
-//           meetingid: curMeetingid,
-//         };
-//         this.meetinginfo = anonymousSession;
-//       //   console.log(anonymousSession);
-//       //   this.$cookies.set("anonymous", anonymousSession, "1d");
-//         return loginData.user.getIdToken();
-//       })
-//       .then(async () => {
-
-//           // console.log(idToken);
-//       //   this.$cookies.set("session", idToken, "1d");
-//         await zs
-//           .ref(`/anonymous/users/${this.user.uid}/hosts/${curHostuid}`)
-//           .set({ createdAt: new Date().getTime() });
-//         await zs
-//           .ref(`/anonymous/users/${this.user.uid}/meetings/${curMeetingid}`)
-//           .set({ createdAt: new Date().getTime() });
-//       //   EventBus.$emit("logged-in");
-
-//           await this.$rtdbBind('zoomsense', zsense.child('chats').child(this.meetinginfo.meetingid).child('ZoomSensor_1'));
-//           this.loading = false;
-
-//       //   this.$router.push("/" + curMeetingid);
-
-//       })
-//       .catch((error) => {
-//         console.log("Error " + error.code + ": " + error.message);
-//       //   return this.$router.push("/");
-//       });
+//  

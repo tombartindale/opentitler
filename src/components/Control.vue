@@ -397,7 +397,7 @@ export default {
       }
     },
     savetoken(val){
-      console.log('save token',val);
+      // console.log('save token',val);
       this.$firebaseRefs.control.child('zoomsense_token').set(val);
     },
     updatetitles(){
