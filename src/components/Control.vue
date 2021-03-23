@@ -35,7 +35,7 @@ q-layout(view="hHh lpR fFf")
               q-tab(icon="style" name="style" label="Settings")
           q-tab-panels.fixed.fixed-left.fixed-right.fixed-bottom(v-model="tab" v-if="loaded" padding style="top:106px;")
             q-tab-panel(name="zoomsense")
-              ZoomSense(:token="control.zoomsensetoken" v-on:update:token="savetoken" settings="false")
+              ZoomSense(:token="control.zoomsense_token" :control="control" v-on:update:token="savetoken" settings="false")
 
             q-tab-panel(name="control")
               .row.full-height
@@ -98,7 +98,7 @@ q-layout(view="hHh lpR fFf")
                           q-item-label
                             em No content yet
                       template(v-slot:after)
-                        ZoomSense.col( :token="control.zoomsensetoken" v-on:update:token="savetoken" v-on:new:message="addmsg" showcontent="true")
+                        ZoomSense.col(:control="control" :token="control.zoomsense_token" v-on:update:token="savetoken" v-on:new:message="addmsg" v-on:new:title="addtitle" showcontent="true")
 
                 
                 .col-12.col-md
@@ -384,9 +384,21 @@ export default {
         this.control.content = true;
       }
     },
+    addtitle(title,display){
+      this.display.draft.titles.push(title);
+      this.$firebaseRefs.display.child('draft').child('titles').set(this.display.draft.titles);
+      // console.log(Object.keys(this.display.content));
+      // console.log(display);
+      if (display)
+      {
+        // console.log(this.control.currentcontent)
+        this.$firebaseRefs.display.child('title').set(title);
+        this.$firebaseRefs.control.child('title').set(true);
+      }
+    },
     savetoken(val){
       console.log('save token',val);
-      this.$firebaseRefs.control.child('zoomsensetoken').set(val);
+      this.$firebaseRefs.control.child('zoomsense_token').set(val);
     },
     updatetitles(){
       this.$firebaseRefs.display.child('draft').child('titles').set(this.display.draft.titles);

@@ -9,15 +9,19 @@ div
       q-item
         q-item-section
           q-item-label.text-uppercase Zoom Messages
+        q-item-section(side)
+          q-btn-toggle(v-model="control.zoomsense_autodisplay" :options="displayoptions" outline)
+      q-separator
       .text-center(v-show="loading")
         q-spinner-dots(size="3em")
-      q-separator
-      q-item(clickable v-ripple v-for="(content,index) of ordered" @click="addmessage(content,false)" :key="JSON.stringify(content)")
+      q-item(clickable v-ripple v-for="(content,index) of ordered" :key="JSON.stringify(content)")
         q-item-section
           q-item-label.overflow-hidden {{content.msg}}
           q-item-label(caption) {{content.msgSenderName}} - {{ts(content.timestamp).format('h:mma')}}
         q-item-section(side)
-          q-btn(flat icon="monitor" @click.capture.stop="addmessage(content,true)")
+          q-btn(flat icon="ballot" @click.capture.stop="addmessage(content,control.zoomsense_autodisplay)")
+        q-item-section(side)
+          q-btn(flat icon="title" @click.capture.stop="addtitle(content,control.zoomsense_autodisplay)")
 
 
 </template>
@@ -37,7 +41,11 @@ export default {
           zoomsense:{},
           meetinginfo:{},
           mytoken: this.token,
-          loading:true
+          loading:true,
+           displayoptions:[
+            {label:'Display',value:true},
+            {label:'Add',value:false}
+            ]
       }
   },
   created(){
@@ -52,10 +60,10 @@ export default {
       }
   },
   props: [
-    // data: Object
     'token',
     'settings',
-    'showcontent'
+    'showcontent',
+    'control'
   ],
   watch:{
       mytoken(val){
@@ -64,7 +72,7 @@ export default {
       token:{
           immediate:true,
           handler(){
-            console.log('updated token')
+            // console.log('updated token')
             this.signInAnonymously()
           }
       }
@@ -75,6 +83,13 @@ export default {
             itemtype:'message',
             message: msg.msg,
             caption: msg.msgSenderName
+        },display);
+      },
+      addtitle(msg,display)
+      {
+          this.$emit('new:title',{
+            title: msg.msg + '. From ' + msg.msgSenderName,
+            subtitle: 'Zoom Message'
         },display);
       },
       ts(time){

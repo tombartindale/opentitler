@@ -4,7 +4,7 @@
     .titles(v-if="control.title" :key="control.title")
       transition(name="fade-in" mode="out-in")
         .subtitle(v-cname :key="data.subtitle") {{data.subtitle}}
-      .title(v-cname)
+      .title(v-cname :style="calcfont()")
         transition(name="fade-in" mode="out-in")
           span(:key="data.title") {{data.title}}
 </template>
@@ -16,6 +16,25 @@ export default {
   props: {
     data: Object,
     control: Object
+  },
+  methods:{
+    calcfont(){
+
+      let fontsize = 30;
+
+      let charcount = this.data.title.length;
+      // console.log('chars',charcount)
+
+      if (charcount > 100)
+        fontsize = 20;
+      
+      if (charcount > 400)
+        fontsize = 17;
+
+      return {
+        'font-size':`${fontsize}px`
+      }
+    }
   }
 }
 </script>
@@ -48,7 +67,7 @@ export default {
   border-left: var(--primary) solid 5px;
   /* box-shadow: 0px 0px 10px #00000077; */
   /* filter: drop-shadow(0 0 10px #00000077); */
-  font-size: 2rem;
+  // font-size: 2rem;
   
   background:white;
 

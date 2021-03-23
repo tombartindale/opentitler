@@ -1,6 +1,6 @@
 <template lang="pug">
 .content_wrapper
-  .content(v-if="data" :class="content.itemtype" v-for="(content,index) in data" v-bind:style="{top: offset + (index-current)*700+'px'}")
+  .content(v-if="data" :class="content.itemtype" v-for="(content,index) in data" v-bind:style="{top: offset + (index-current)*720+'px'}")
     .imagec(v-if="content.itemtype=='image'")
       img(:src="content.image")
       .caption {{content.caption}}
@@ -20,7 +20,7 @@ export default {
   name: 'Content',
   data(){
     return {
-      offset:60
+      offset:0
     }
   },
   props:{
@@ -43,6 +43,7 @@ export default {
 
 .content {
   position: absolute;
+  // background: green;
   // height:100%;
   z-index: -3;
   right:20px;
@@ -87,7 +88,7 @@ export default {
 }
 
 .message {
-  height:110%;
+  height:100%;
   // background: green;
   display: flex;
   justify-content: center;
