@@ -49,13 +49,12 @@ q-layout(view="hHh lpR fFf")
                     q-separator
                     q-scroll-area(:style="colStyle")
                       draggable(v-model="display.draft.titles" group="titles" @end="updatetitles")
-                        transition-group(name="flip-list")
-                          q-item(:class="{'text-info': display.title.title == title.title && display.title.subtitle == title.subtitle}" :key="title.title+title.subtitle" clickable v-ripple v-for="(title,index) in draft.titles" @click="updatetitle(title)")
-                            q-item-section
-                              q-item-label {{title.title}}
-                              q-item-label(caption) {{title.subtitle}}
-                            q-item-section(side)
-                              q-icon(name="monitor" v-show="display.title.title == title.title && display.title.subtitle == title.subtitle")
+                        q-item(:class="{'text-info': display.title.title == title.title && display.title.subtitle == title.subtitle}" :key="index" clickable v-ripple v-for="(title,index) in draft.titles" @click="updatetitle(title)")
+                          q-item-section
+                            q-item-label {{title.title}}
+                            q-item-label(caption) {{title.subtitle}}
+                          q-item-section(side)
+                            q-icon(name="monitor" v-show="display.title.title == title.title && display.title.subtitle == title.subtitle")
                       
                       q-item(v-if="!draft.titles.length")
                         q-item-label
@@ -98,7 +97,7 @@ q-layout(view="hHh lpR fFf")
                           q-item-label
                             em No content yet
                       template(v-slot:after)
-                        ZoomSense.col(:control="control" :token="control.zoomsense_token" v-on:update:token="savetoken" v-on:new:message="addmsg" v-on:new:title="addtitle" showcontent="true")
+                        ZoomSense.col(:control="control" :token="control.zoomsense_token" v-on:update:token="savetoken" v-on:new:message="addmsg" v-on:new:title="addtitle" v-on:update:person="zoomperson" showcontent="true")
 
                 
                 .col-12.col-md
@@ -307,7 +306,7 @@ export default {
         {label:'Display',value:true},
         {label:'Hide',value:false}
         ],
-      splitter:5,
+      // splitter:5,
       display: {},
       control:{},
       tab:'control',
@@ -488,6 +487,15 @@ export default {
       this.$firebaseRefs.control.child('people').set(false);
       this.peopletimer = 0;
     },
+    zoomperson(person){
+      //find person affiliation:
+      for (let p of this.display.draft.people)
+      {
+        if (p.name == person.name)
+          person.affiliation = p.affiliation;
+      }
+      this.fireperson(person);
+    },
     fireperson(person){
       this.updateperson(person);
       this.peopletimer = 100;
@@ -509,7 +517,7 @@ export default {
   },
   computed:{
     splitterModel(){
-      return (typeof(this.control.zoomsensetoken)=='undefined' || this.control.zoomsensetoken=="")?100:50;
+      return (typeof(this.control.zoomsense_token)=='undefined' || this.control.zoomsense_token=="")?100:50;
     },
     colStyle(){
       return {
@@ -532,19 +540,6 @@ export default {
     }
   },
   watch: {
-    display:{
-      deep:true,
-      immediate: true,
-      handler(){
-        
-        // if (!display.draft){
-        //   display.draft = {
-        //     people:[],
-        //     titles:[]
-        //   }
-        // }
-      }
-    },
     id: {
       // call it upon creation too
       immediate: true,
