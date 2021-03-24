@@ -124,15 +124,6 @@ export default {
   // background:green;
 }
 
-body {
-  /* font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  margin:0;
-  padding:0; */
-  /* background:rgb(0,255,0); */
-}
-
 .fade-in-enter-active {
   transition: opacity 300ms cubic-bezier(0.55, 0.085, 0.68, 0.53);
 }

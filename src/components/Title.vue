@@ -65,11 +65,6 @@ export default {
   overflow:hidden;
 }
 
-.titles
-{
-  
-}
-
 .title {
   
   padding: 5px;

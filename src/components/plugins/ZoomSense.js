@@ -3,13 +3,13 @@ import "firebase/auth";
 import 'firebase/database';
 import 'firebase/functions';
 
-let zoomsenseapp, db, auth, functions, decryptToken, data, meetings,meeting;
+let zoomsenseapp, db, auth, functions, decryptToken, data, meetings, meeting;
 
 function setup(options) {
     zoomsenseapp = firebase.initializeApp(options, "zoomsense");
     db = zoomsenseapp.database(),
-        auth = zoomsenseapp.auth(),
-        functions = zoomsenseapp.functions()
+    auth = zoomsenseapp.auth(),
+    functions = zoomsenseapp.functions()
     decryptToken = functions.httpsCallable("decryptToken");
     data = db.ref('data');
     meetings = db.ref('meetings');
@@ -56,12 +56,11 @@ export default {
 
                         this.user = loginData.user;
 
-                        if (!this.meetinginfo)
-                        {
+                        if (!this.meetinginfo) {
                             try {
                                 await (async (loginData) => {
                                     // .then(async (loginData) => {
-                                    
+
 
                                     let parsedtoken = this.token;
 
@@ -86,40 +85,40 @@ export default {
                                 this.$emit('zoomsense:tokenerror', e);
                                 return;
                             }
-                        
-                    
-                        // console.log(this.meetinginfo);
 
-                    // if (!auth.currentUser) {
 
-                        try {
-                            await (async () => {
-                                // .then(async () => {
-                                await db
-                                    .ref(`/anonymous/users/${this.user.uid}/hosts/${curHostuid}`)
-                                    .set({ createdAt: new Date().getTime() });
-                                await db
-                                    .ref(`/anonymous/users/${this.user.uid}/meetings/${curMeetingid}`)
-                                    .set({ createdAt: new Date().getTime() });
+                            // console.log(this.meetinginfo);
 
-                                meeting = await new Promise((resolve) => {
-                                    meetings.child(this.meetinginfo.hostuid).child(this.meetinginfo.meetingid).once('value', snapshot => {
-                                        resolve(snapshot.val());
+                            // if (!auth.currentUser) {
+
+                            try {
+                                await (async () => {
+                                    // .then(async () => {
+                                    await db
+                                        .ref(`/anonymous/users/${this.user.uid}/hosts/${curHostuid}`)
+                                        .set({ createdAt: new Date().getTime() });
+                                    await db
+                                        .ref(`/anonymous/users/${this.user.uid}/meetings/${curMeetingid}`)
+                                        .set({ createdAt: new Date().getTime() });
+
+                                    meeting = await new Promise((resolve) => {
+                                        meetings.child(this.meetinginfo.hostuid).child(this.meetinginfo.meetingid).once('value', snapshot => {
+                                            resolve(snapshot.val());
+                                        });
                                     });
-                                });
-                            })();
+                                })();
+                            }
+                            catch (e) {
+                                this.$emit('zoomsense:error', e);
+                                return;
+                            }
                         }
-                        catch (e) {
-                            this.$emit('zoomsense:error', e);
-                            return;
-                        }
-                    }
 
                         try {
                             this.$emit('zoomsense:loaded', {
                                 data: data,
                                 // activepath: data.child('activeSpeakers').child(this.meetinginfo.meetingid).child('ZoomSensor_1/current/activeHistory').limitToLast(10),
-                                meeting: Object.assign(meeting,this.meetinginfo)
+                                meeting: Object.assign(meeting, this.meetinginfo)
                             });
                             this.$emit('zoomsense:loading', false);
                         }
@@ -133,6 +132,3 @@ export default {
         });
     }
 }
-
-
-//  
