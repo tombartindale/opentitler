@@ -1,6 +1,6 @@
 <template lang="pug">
 div
-  ZoomSenseData(
+  ZoomSenseConnection(
     :token="token",
     v-on:zoomsense:loading="loadingchanged",
     v-on:zoomsense:loaded="loaded",

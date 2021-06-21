@@ -25,7 +25,8 @@
     "vue-moment": "^4.1.0",
     "vue-router": "^3.5.1",
     "vuedraggable": "^2.24.3",
-    "vuefire": "^2.2.5"
+    "vuefire": "^2.2.5",
+    "@zoomsense/vue-zoomsense": "1.1.0"
   },
   "devDependencies": {
     "@vue/cli-plugin-babel": "~4.5.0",

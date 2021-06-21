@@ -89,66 +89,66 @@ q-layout(view="hHh lpR fFf")
 </template>
 
 <script>
-
-import {db} from '../lib/db';
-import firebase from 'firebase';
-const alldisplays = db.ref('displays');
+import { db } from "../lib/db";
+import firebase from "firebase";
+const alldisplays = db.ref("displays");
 
 export default {
-  name: 'Dashboard',
-  props:['id'],
-  created () {
-    this.$q.dark.set(true)
+  name: "Dashboard",
+  props: ["id"],
+  created() {
+    this.$q.dark.set(true);
   },
   data() {
     return {
       displays: Object,
-      showInstructions:false
-    }
+      showInstructions: false,
+    };
   },
-  computed:{
-    userid(){
+  computed: {
+    userid() {
       return firebase.auth().currentUser;
-    }
+    },
   },
-  methods:{
-    remove(index){
+  methods: {
+    remove(index) {
       this.$firebaseRefs.displays.child(index).remove();
     },
-    copy(index){
+    copy(index) {
       let tmp = this.displays[index];
-      tmp.name = tmp.name + ' Copy';
+      tmp.name = tmp.name + " Copy";
       this.$firebaseRefs.displays.push(tmp);
     },
-    geturl(id){
-      return document.location.origin + '/#/display/'+this.userid.uid+'/'+id;
+    geturl(id) {
+      return (
+        document.location.origin + "/#/display/" + this.userid.uid + "/" + id
+      );
     },
-    async logout(){
+    async logout() {
       await firebase.auth().signOut();
-      this.$router.push('login');
+      this.$router.push("login");
     },
     async add() {
       var index = await this.$firebaseRefs.displays.push({
-        name:"New Display"
+        name: "New Display",
       });
 
-      this.$router.push('/control/'+index.getKey());
-    }
+      this.$router.push("/control/" + index.getKey());
+    },
   },
-  mounted(){
+  mounted() {
     // console.log(this.userid);
-    this.$rtdbBind('displays', alldisplays.child(this.userid.uid))
-  }
-}
+    this.$rtdbBind("displays", alldisplays.child(this.userid.uid));
+  },
+};
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped lang="scss">
 .timeline {
   img {
-    max-width:50%;  
-    height:auto;
+    max-width: 50%;
+    height: auto;
   }
 }
-
 </style>
