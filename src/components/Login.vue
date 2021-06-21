@@ -17,66 +17,75 @@ q-layout(view="hHh lpR fFf")
               li Native browser rendered overlay
               li Remote production control (overlay can be controlled by remote user)
               li Fully customisable styles and graphics
+              li Integrated with ZoomSense for live Zoom chat display.
         .text-center.q-mt-lg
           q-btn(@click="socialLogin" color="primary" size="lg") Login with Google
 </template>
 
 <style src="animate.css/animate.css">
-    /* global styles */
-</style> 
+/* global styles */
+</style>
 
 <script>
-import firebase from 'firebase';
+import firebase from "firebase";
 export default {
-  name: 'Login',
-  data(){
+  name: "Login",
+  data() {
     return {
-      alltitles:['Dynamic on-screen titles...','Dynamic content...','Remote Controlled...','Multiple operators...'],
-      title: 0
-    }
+      alltitles: [
+        "Dynamic on-screen titles...",
+        "Dynamic content...",
+        "Remote Controlled...",
+        "Multiple operators...",
+      ],
+      title: 0,
+    };
   },
-  mounted(){
+  mounted() {
     var self = this;
-    setInterval(function(){
+    setInterval(function() {
       self.title = (self.title + 1) % self.alltitles.length;
-    },3000);
+    }, 3000);
   },
-  methods:{
+  methods: {
     socialLogin() {
-        const provider = new firebase.auth.GoogleAuthProvider();
-        firebase.auth().signInWithPopup(provider).then(() => {
-          this.$router.replace('dashboard');
-        }).catch((err) => {
-          alert('Oops. ' + err.message)
+      const provider = new firebase.auth.GoogleAuthProvider();
+      firebase
+        .auth()
+        .signInWithPopup(provider)
+        .then(() => {
+          this.$router.replace("dashboard");
+        })
+        .catch((err) => {
+          alert("Oops. " + err.message);
         });
-      }
-  }
-}
+    },
+  },
+};
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped lang="scss">
 .vid {
-  opacity:0.4;
-  width:100%;
-  min-width:1200px;
+  opacity: 0.4;
+  width: 100%;
+  min-width: 1200px;
 }
 
 .title1 {
   background: white;
-  padding:.3em;
-  color:black;
-  font-size:2.5em;
-  border-left: #00838F 3px solid;
+  padding: 0.3em;
+  color: black;
+  font-size: 2.5em;
+  border-left: #00838f 3px solid;
 }
 
 .title2 {
-  background: #00838F;
-  display:inline-block;
-  padding:.3em;
-  padding-left:.9em;
-  padding-right:.9em;
-  font-size:1.3em;
+  background: #00838f;
+  display: inline-block;
+  padding: 0.3em;
+  padding-left: 0.9em;
+  padding-right: 0.9em;
+  font-size: 1.3em;
 }
-
 </style>
