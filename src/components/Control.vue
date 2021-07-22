@@ -110,7 +110,7 @@ q-layout(view="hHh lpR fFf")
                     q-separator
                     .column
                       q-scroll-area(:style="colStyle")
-                        q-item(:class="{'text-info': display.people.name == people.name && display.people.affiliation == people.affiliation}" v-for="(people,index) in draft.people" @click="fireperson(people)" clickable ripple)
+                        q-item(:class="{'text-info': display.people.name == people.name && display.people.affiliation == people.affiliation}" :key="index" v-for="(people,index) in draft.people" @click="fireperson(people)" clickable ripple)
                           q-item-section(side)
                             q-icon(name="monitor"  v-if="display.people" v-show="display.people.name == people.name && display.people.affiliation == people.affiliation")
                             q-icon(name="blank" v-show="!(display.people.name == people.name && display.people.affiliation == people.affiliation)")
@@ -138,7 +138,7 @@ q-layout(view="hHh lpR fFf")
                       q-card-actions(align="right")
                         q-btn(flat @click="person_add()") Add
 
-                  .col-md-4.col-xs-12(v-if="draft && draft.people" v-for="(people,index) in draft.people")
+                  .col-md-4.col-xs-12(v-if="draft && draft.people" v-for="(people,index) in draft.people" :key="index")
                     q-card.column.full-height(flat bordered)
                       q-card-section.col
                         .text-h6 {{people.name}}
@@ -250,12 +250,12 @@ q-layout(view="hHh lpR fFf")
 </template>
 
 <script>
-import {db} from '../lib/db';
-import firebase from 'firebase';
-const alldisplays = db.ref('displays');
+import { db } from "../lib/db";
+import firebase from "firebase";
+const alldisplays = db.ref("displays");
 // const zsense = zs.ref('data');
-import draggable from 'vuedraggable';
-import ZoomSense from './ZoomSense';
+import draggable from "vuedraggable";
+import ZoomSense from "./ZoomSense";
 
 // import * as Tone from 'tone';
 // const meter = new Tone.Meter();
@@ -269,368 +269,411 @@ import ZoomSense from './ZoomSense';
 var timeout;
 
 export default {
-  name: 'Control',
-  components:{
+  name: "Control",
+  components: {
     draggable,
     ZoomSense,
-    Keypress: () => import('vue-keypress')
-    },
-  props:['id'],
-  created () {
+    Keypress: () => import("vue-keypress"),
+  },
+  props: ["id"],
+  created() {
     this.$q.dark.set(true);
     window.addEventListener("resize", this.onResize);
-    this.onResize()
+    this.onResize();
   },
   destroyed() {
     window.removeEventListener("resize", this.onResize);
   },
   data() {
     return {
-      colheight:100,
-      zoomsense:{},
-      contenttypes:[
+      colheight: 100,
+      zoomsense: {},
+      contenttypes: [
         {
-          label:"Message",
-          value: "message"
+          label: "Message",
+          value: "message",
         },
         {
-          label:"Image",
-          value:"image"
+          label: "Image",
+          value: "image",
         },
         {
-          label:"Profile",
-          value:"profile"
-        }
+          label: "Profile",
+          value: "profile",
+        },
       ],
-      displayoptions:[
-        {label:'Display',value:true},
-        {label:'Hide',value:false}
-        ],
+      displayoptions: [
+        { label: "Display", value: true },
+        { label: "Hide", value: false },
+      ],
       // splitter:5,
       display: {},
-      control:{},
-      tab:'control',
-      peopletimer:0,
-      coutdowntimer:-1,
-      dirty:{
-        watermark:''
+      control: {},
+      tab: "control",
+      peopletimer: 0,
+      coutdowntimer: -1,
+      dirty: {
+        watermark: "",
       },
-      newperson:{
-        name:"",
-        affiliation:""  
+      newperson: {
+        name: "",
+        affiliation: "",
       },
-      newtitle:{
-        title:"",
-        subtitle:""  
+      newtitle: {
+        title: "",
+        subtitle: "",
       },
-      newcontent:{
-        itemtype:"message",
-        message:"",
-        image:"",
-        caption:""
+      newcontent: {
+        itemtype: "message",
+        message: "",
+        image: "",
+        caption: "",
       },
-      loaded:false
-    }
+      loaded: false,
+    };
   },
-  methods:{
-    onResize(){
-      this.colheight = window.innerHeight-190;
+  methods: {
+    onResize() {
+      this.colheight = window.innerHeight - 190;
       // console.log(window.innerHeight);
     },
-    setPersonKey(key){
-
-      let index = key.event.keyCode-49;
-      let person = this.display.draft.people[index];
-      if (person)
-      {
-        this.fireperson(person);
+    setPersonKey(key) {
+      try {
+        let index = key.event.keyCode - 49;
+        let person = this.display.draft.people[index];
+        if (person) {
+          this.fireperson(person);
+        }
+      } catch {
+        //do nothing
       }
     },
-    getCurrentTitle(){
+    getCurrentTitle() {
       for (let title in this.display.draft.titles) {
         let tt = this.display.draft.titles[title];
-        if (tt.title == this.display.title.title && tt.subtitle == this.display.title.subtitle)
+        if (
+          tt.title == this.display.title.title &&
+          tt.subtitle == this.display.title.subtitle
+        )
           return parseInt(title);
       }
     },
-    prevTitle(){
-      let title = this.display.draft.titles[this.getCurrentTitle()-1];
+    prevTitle() {
+      let title = this.display.draft.titles[this.getCurrentTitle() - 1];
 
-      if (title)
-      {
-        this.$firebaseRefs.display.child('title').set(title);
-        this.$firebaseRefs.control.child('title').set(true);
+      if (title) {
+        this.$firebaseRefs.display.child("title").set(title);
+        this.$firebaseRefs.control.child("title").set(true);
       }
     },
-    nextTitle(){
-      let title = this.display.draft.titles[this.getCurrentTitle()+1];
+    nextTitle() {
+      let title = this.display.draft.titles[this.getCurrentTitle() + 1];
 
-      if (title)
-      {
-        this.$firebaseRefs.display.child('title').set(title);
-        this.$firebaseRefs.control.child('title').set(true);
+      if (title) {
+        this.$firebaseRefs.display.child("title").set(title);
+        this.$firebaseRefs.control.child("title").set(true);
       }
     },
-    addmsg(msg,display){
+    addmsg(msg, display) {
       this.display.content.push(msg);
-      this.$firebaseRefs.display.child('content').set(this.display.content);
+      this.$firebaseRefs.display.child("content").set(this.display.content);
       // console.log(Object.keys(this.display.content));
       // console.log(display);
-      if (display)
-      {
+      if (display) {
         // console.log(this.control.currentcontent)
-        this.control.currentcontent = Object.keys(this.display.content).length-1;
+        this.control.currentcontent =
+          Object.keys(this.display.content).length - 1;
         this.control.content = true;
       }
     },
-    addtitle(title,display){
+    addtitle(title, display) {
       this.display.draft.titles.push(title);
-      this.$firebaseRefs.display.child('draft').child('titles').set(this.display.draft.titles);
+      this.$firebaseRefs.display
+        .child("draft")
+        .child("titles")
+        .set(this.display.draft.titles);
       // console.log(Object.keys(this.display.content));
       // console.log(display);
-      if (display)
-      {
+      if (display) {
         // console.log(this.control.currentcontent)
-        this.$firebaseRefs.display.child('title').set(title);
-        this.$firebaseRefs.control.child('title').set(true);
+        this.$firebaseRefs.display.child("title").set(title);
+        this.$firebaseRefs.control.child("title").set(true);
       }
     },
-    savetoken(val){
+    savetoken(val) {
       // console.log('save token',val);
-      this.$firebaseRefs.control.child('zoomsense_token').set(val);
+      this.$firebaseRefs.control.child("zoomsense_token").set(val);
     },
-    updatetitles(){
-      this.$firebaseRefs.display.child('draft').child('titles').set(this.display.draft.titles);
+    updatetitles() {
+      this.$firebaseRefs.display
+        .child("draft")
+        .child("titles")
+        .set(this.display.draft.titles);
     },
-    updatecontent(){
-      this.$firebaseRefs.display.child('content').set(this.display.content);
+    updatecontent() {
+      this.$firebaseRefs.display.child("content").set(this.display.content);
     },
-    updatecolor(){
-      this.$firebaseRefs.display.child('config').child('colors').set(this.display.config.colors);
+    updatecolor() {
+      this.$firebaseRefs.display
+        .child("config")
+        .child("colors")
+        .set(this.display.config.colors);
     },
-    savestyle(){
-      this.$firebaseRefs.display.child('config').child('style').set(this.display.config.style);
+    savestyle() {
+      this.$firebaseRefs.display
+        .child("config")
+        .child("style")
+        .set(this.display.config.style);
     },
-    content_add(){
-      if (!this.display.content)
-        this.display.content = [];
+    content_add() {
+      if (!this.display.content) this.display.content = [];
 
       this.display.content.push(this.newcontent);
-      this.newcontent={
-        itemtype:"message",
-        message:"",
-        image:"",
-        caption:""
-      }
-      this.$firebaseRefs.display.child('content').set(this.display.content);
+      this.newcontent = {
+        itemtype: "message",
+        message: "",
+        image: "",
+        caption: "",
+      };
+      this.$firebaseRefs.display.child("content").set(this.display.content);
     },
-    content_remove(index){
+    content_remove(index) {
       // console.log(this.display.draft);
-      this.display.content.splice(index,1);
+      this.display.content.splice(index, 1);
       // console.log(this.display.draft.people);
-      this.$firebaseRefs.display.child('content').set(this.display.content);
-
+      this.$firebaseRefs.display.child("content").set(this.display.content);
     },
-    title_add(){
+    title_add() {
       this.draft.titles.push(this.newtitle);
       this.newtitle = {
-        title:"",
-        subtitle:""  
-      }
-      this.$firebaseRefs.display.child('draft').child('titles').set(this.draft.titles);
+        title: "",
+        subtitle: "",
+      };
+      this.$firebaseRefs.display
+        .child("draft")
+        .child("titles")
+        .set(this.draft.titles);
     },
-    title_remove(index){
+    title_remove(index) {
       // console.log(this.display.draft);
-      this.display.draft.titles.splice(index,1);
+      this.display.draft.titles.splice(index, 1);
       // console.log(this.display.draft.people);
-      this.$firebaseRefs.display.child('draft').child('titles').set(this.display.draft.titles);
-
+      this.$firebaseRefs.display
+        .child("draft")
+        .child("titles")
+        .set(this.display.draft.titles);
     },
-    person_add(){
+    person_add() {
       this.draft.people.push(this.newperson);
       this.newperson = {
-        name:"",
-        affiliation:""
-      }
-      this.$firebaseRefs.display.child('draft').child('people').set(this.draft.people);
+        name: "",
+        affiliation: "",
+      };
+      this.$firebaseRefs.display
+        .child("draft")
+        .child("people")
+        .set(this.draft.people);
     },
-    person_remove(index){
+    person_remove(index) {
       // console.log(this.display.draft);
-      this.display.draft.people.splice(index,1);
+      this.display.draft.people.splice(index, 1);
       // console.log(this.display.draft.people);
-      this.$firebaseRefs.display.child('draft').child('people').set(this.display.draft.people);
+      this.$firebaseRefs.display
+        .child("draft")
+        .child("people")
+        .set(this.display.draft.people);
     },
-    updateticker(){
+    updateticker() {
       // console.log(val);
-      this.$firebaseRefs.display.child('ticker').set(this.dirty.ticker);
+      this.$firebaseRefs.display.child("ticker").set(this.dirty.ticker);
     },
-    updatename(){
+    updatename() {
       // console.log(val);
-      this.$firebaseRefs.display.child('name').set(this.dirty.name);
+      this.$firebaseRefs.display.child("name").set(this.dirty.name);
     },
-    updatewatermark(){
+    updatewatermark() {
       // console.log(val);
-      this.$firebaseRefs.display.child('watermark').set(this.dirty.watermark);
+      this.$firebaseRefs.display.child("watermark").set(this.dirty.watermark);
     },
-    updateperson(person){
-      this.$firebaseRefs.display.child('people').set(person);
+    updateperson(person) {
+      this.$firebaseRefs.display.child("people").set(person);
       this.peopletimer = 0;
       clearTimeout(timeout);
       clearTimeout(this.coutdowntimer);
-      this.$firebaseRefs.control.child('people').set(true);
+      this.$firebaseRefs.control.child("people").set(true);
     },
-    updatetitle(title){
-      this.$firebaseRefs.display.child('title').set(title);
-      this.$firebaseRefs.control.child('title').set(true);
+    updatetitle(title) {
+      this.$firebaseRefs.display.child("title").set(title);
+      this.$firebaseRefs.control.child("title").set(true);
     },
-    cancelperson(){
-      this.$firebaseRefs.control.child('people').set(false);
+    cancelperson() {
+      this.$firebaseRefs.control.child("people").set(false);
       this.peopletimer = 0;
     },
-    zoomperson(person){
+    zoomperson(person) {
       //find person affiliation:
-      for (let p of this.display.draft.people)
-      {
-        if (p.name == person.name)
-          person.affiliation = p.affiliation;
+      for (let p of this.display.draft.people) {
+        if (p.name == person.name) person.affiliation = p.affiliation;
       }
       this.fireperson(person);
     },
-    fireperson(person){
+    fireperson(person) {
       this.updateperson(person);
       this.peopletimer = 100;
       clearTimeout(this.coutdowntimer);
       this.countDown();
       //set timer:
-      timeout = setTimeout(this.cancelperson,5000);
+      timeout = setTimeout(this.cancelperson, 5000);
     },
-    countDown(){
-      if (this.peopletimer > 0)
-      {
-        this.coutdowntimer = setTimeout(()=>{
+    countDown() {
+      if (this.peopletimer > 0) {
+        this.coutdowntimer = setTimeout(() => {
           this.peopletimer -= 20;
           this.countDown();
-        },1000);
+        }, 1000);
       }
-    }
-
+    },
   },
-  computed:{
-    splitterModel(){
-      return (typeof(this.control.zoomsense_token)=='undefined' || this.control.zoomsense_token=="")?100:50;
+  computed: {
+    splitterModel() {
+      return typeof this.control.zoomsense_token == "undefined" ||
+        this.control.zoomsense_token == ""
+        ? 100
+        : 50;
     },
-    colStyle(){
+    colStyle() {
       return {
-        height:this.colheight + 'px'
+        height: this.colheight + "px",
       };
     },
-    splitStyle(){
+    splitStyle() {
       return {
-        height:this.colheight-48 + 'px'
+        height: this.colheight - 48 + "px",
       };
     },
-    userid(){
+    userid() {
       return firebase.auth().currentUser;
     },
-    draft(){
-      return Object.assign({
-        people:[],
-        titles:[]
-      },this.display.draft);
-    }
+    draft() {
+      return Object.assign(
+        {
+          people: [],
+          titles: [],
+        },
+        this.display.draft
+      );
+    },
   },
   watch: {
     id: {
       // call it upon creation too
       immediate: true,
       async handler(id) {
+        await Promise.all([
+          this.$rtdbBind(
+            "control",
+            alldisplays
+              .child(this.userid.uid)
+              .child(id)
+              .child("control")
+          ),
+          this.$rtdbBind(
+            "display",
+            alldisplays.child(this.userid.uid).child(id)
+          ),
+        ]);
 
-        await Promise.all([this.$rtdbBind('control', alldisplays.child(this.userid.uid).child(id).child('control')),
-        this.$rtdbBind('display', alldisplays.child(this.userid.uid).child(id))]);
+        this.display = Object.assign(
+          {
+            config: {
+              style: "",
+              colors: {
+                bgcolor: "",
+                primary: "",
+              },
+            },
 
-        this.display = Object.assign({
-          
-          config:{
-            style:"",
-            colors:{
-              bgcolor:"",
-              primary:""
-            }
+            content: [
+              {
+                message: "My First Message",
+              },
+            ],
+
+            people: {},
+
+            watermark: {
+              src: "",
+            },
+
+            ticker: {
+              message: "",
+            },
+
+            title: {
+              title: "",
+              subtitle: "",
+            },
+
+            draft: {
+              titles: [
+                {
+                  subtitle: "",
+                  title: "My First Title",
+                },
+              ],
+            },
           },
+          this.display
+        );
 
-          content:[
-            {
-              message:"My First Message"
-            }
-          ],
-
-          people:{
-
-          },
-
-          watermark:{
-            src:""
-          },
-          
-          ticker:{
-            message:""
-          },
-
-          title:{
-            title:"",
-            subtitle:""
-          }
-        },this.display);
-
-        // console.log(this.display);
+        console.log(this.display);
 
         await this.$firebaseRefs.display.set(this.display);
 
         // console.log("********");
         // console.log(this.display);
 
-        this.dirty = Object.assign({
-          ticker:{},
-          watermark:{}
-        },JSON.parse(JSON.stringify(this.display)));
+        this.dirty = Object.assign(
+          {
+            ticker: {},
+            watermark: {},
+          },
+          JSON.parse(JSON.stringify(this.display))
+        );
 
         this.loaded = true;
       },
     },
-    control:{
+    control: {
       // call it upon creation too
       immediate: false,
-      deep:true,
+      deep: true,
       handler(control) {
-        if (!control.currentcontent)
-          control.currentcontent = 0;
+        if (!control.currentcontent) control.currentcontent = 0;
         this.$firebaseRefs.control.set(control);
-      }
-    }
+      },
+    },
   },
-}
+};
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped lang="scss">
-
 .imgdark {
   // max-width:300px;
   width: 100%;
-  position:relative;
-  padding-top:56.25%;
-  background:gray;
+  position: relative;
+  padding-top: 56.25%;
+  background: gray;
 
-  .watermark
-  {
-    position:absolute;
-    left:10px;
-    top:10px;
-    max-width:10%;
+  .watermark {
+    position: absolute;
+    left: 10px;
+    top: 10px;
+    max-width: 10%;
     opacity: 0.4;
   }
 }
-
 
 .flip-list-move {
   transition: transform 1s;
