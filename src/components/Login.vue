@@ -68,7 +68,7 @@ export default {
 <style scoped lang="scss">
 .vid {
   opacity: 0.4;
-  width: 100%;
+  width: 103%;
   min-width: 1200px;
 }
 

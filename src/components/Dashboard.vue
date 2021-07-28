@@ -6,91 +6,83 @@ q-layout(view="hHh lpR fFf")
         q-avatar
           q-icon(name="web")
         | Displays for {{userid.email}}
-      q-btn(flat right @click="logout") Logout
+      q-btn(flat right @click="logout" icon="logout")
 
   q-page-container
     q-page(padding)
-      
-      q-banner.bg-primary.text-white.q-mb-lg
-        .text-body1.q-mb-md Each of the following is an independently controllable titles environment. These can be used easily to augment an existing live streaming session such as Zoom or Skype.
-        template(v-slot:action)
-          q-btn(outline @click="showInstructions = true" ) Find Out How
-      
-      q-dialog(v-model="showInstructions" full-width)
-        q-card
-          q-card-section
-            .text-h6 How to Use Titles
-          q-card-section.q-pt-none
-            q-timeline(color="secondary").timeline
-              q-timeline-entry(title="Install OBS")
-                p Firstly, you need to install the free OBS software to the computer that you want to stream from (using something like Zoom or Skype).
-                q-btn(type="a" href="https://obsproject.com/") Get OBS Now
-
-              q-timeline-entry(title="Setup Open Titler")
-                p Create a new display on this screen, and copy the link on the tile for that display to the clipboard.
-
-              q-timeline-entry(title="Select Virtual Camera Settings")
-                p Use the default settings for 'Virtual Camera'
-                img(src="/img/obs1.png")
-
-              q-timeline-entry(title="Add Camera Source")
-                p Add your camera (that you would normally use) as a source.
-                img(src="/img/obs3.png")
-                p Select your camera
-                img(src="/img/obs4.png")
-
-
-              q-timeline-entry(title="Add Browser Source")
-                p Add a Browser Source
-                img(src="/img/obs5.png")
-                p Paste the URL copied from this dashboard into the URL input
-                img(src="/img/obs6.png")
-                p If needed, match the browser source size to the output.
-                img(src="/img/obs7.png")
-
-              q-timeline-entry(title="Start Virtual Camera")
-                p Start the Virtual Camera
-                img(src="/img/obs8.png")
-
-              q-timeline-entry(title="Select Camera in Streaming Software")
-                p In Zoom, Skype etc, select the OBS Virtual Camera as your video input
-                img(src="/img/obs9.png")
+      .row.justify-center
+        .col-xs-12.col-lg-10.col-xl-8
+          q-banner(bordered rounded).text-white.q-mb-lg.q-pa-md.text-center
+            .text-body1.bigtext.q-mb-md.text-secondary Each Display is an independently controllable titles environment. These can be used easily to augment an existing live streaming session such as Zoom or Skype.
+            //- template(v-slot:action)
+            .text-center
+              q-btn(outline @click="showInstructions" size="lg") How to Setup
             
-          q-card-actions.text-teal(align='right')
-            q-btn(flat label='OK' v-close-popup).
-        
-        
-      
-      .row.q-col-gutter-md
-        .col-md-3.col-sm-4.col-xs-12(v-for="(display,index) in displays" outlined v-if="display.name") 
-          q-card
-            q-card-section.text-center
-              q-btn(flat :to="'/control/'+index" size="xl" stack)
-                q-tooltip Control Output
-                q-icon(name="tune")
-                .text-h6 {{display.name}}
-            q-separator
-            q-card-actions
-              q-input.col(readonly dense outlined type="text" :value="geturl(index)")
-              //- q-btn.col-2(flat  icon="monitor")
-              //-   q-tooltip Display output
-              q-btn(icon="more_horiz")
-                q-menu
-                  q-item(clickable v-close-popup :to="'/display/'+userid.uid+'/'+index") View
-                  q-item(clickable v-close-popup @click="remove(index)") Remove
-                  q-item(clickable v-close-popup @click="copy(index)") Copy
+          .row.q-my-sm
+            .col.text-center
+              .text-h5 My Displays
 
-        .col-md-3.col-sm-4.col-xs-12(outlined)
-          q-card
-            q-card-section.text-center
+              q-spinner-dots(color="primary" size="3em" v-if="loading")
+          .row.q-col-gutter-md(v-if="!loading").justify-center
+            .col-xs-12(v-for="(display,index) in displays" outlined v-if="display.name") 
+              q-card(bordered flat)
+                q-card-section(horizontal)
+                  //- q-card-section
+                  //-   q-icon(name="o_call_to_action" size="100px")
+                  q-card-section.col.self-center
+                    .text-h4 {{display.name}}
+                    .text-subtitle.text-grey-7 {{timeFrom(display.lastTouched) || 'Never'}}
+                  q-separator(inset vertical)
+                  q-card-section.text-center.self-center
+                    q-btn(flat size="xl" stack icon="link" @click="showConnect=true") Connect
+                    q-dialog(v-model="showConnect")
+                      q-card(style="width: 700px; max-width: 80vw;")
+                        q-card-section
+                          .text-h6 Link for Browser Source in OBS
+                        q-separator
+                        q-card-section.text-center
+                          p Copy the following link and paste it into the URL input box in the 'Browser Source' settings in OBS. 
+                            q-btn(dense flat @click="showConnect=false;showInstructions()") Help setting up OBS.
+                          q-input.col.q-mb-lg(readonly outlined type="text" :value="geturl(index)" size="xl")
+                            q-tooltip Copy this link and paste into an OBS Browser Source.
+                            template(v-slot:prepend)
+                              q-icon(name="link")
+                            template(v-slot:append)
+                              q-btn(color="primary" @click="copyLink(geturl(index))" icon="content_copy")
+                            
+                          q-img(src="/img/obs6.png" contain)
+                        q-separator
+                        q-card-actions.text-teal(align='right')
+                          q-btn(flat v-close-popup) OK
+                  q-separator(vertical inset)
+                  q-card-section.text-center.self-center
+                    q-btn(flat :to="'/control/'+index" size="xl" stack icon="tune") Controls
+
+                  q-separator(vertical)
+                  q-card-actions(vertical)
+                    //- q-btn(icon="more_horiz" flat)
+                    q-btn(clickable flat :to="'/display/'+userid.uid+'/'+index" icon="computer")
+                      q-tooltip View Live Display
+                    q-btn(clickable flat icon="person_add")
+                      q-tooltip Allow access
+                    q-btn(clickable flat @click="copy(index)" icon="content_copy")
+                      q-tooltip Copy
+                    q-btn(clickable flat @click="remove(index)" icon="o_delete")
+                      q-tooltip Delete
+
+            .col-auto
               q-btn(flat @click="add" size="xl" stack)
                 q-icon(name="add")
                 .text-h6 Add New Display
-</template>
+  </template>
 
 <script>
 import { db } from "../lib/db";
 import firebase from "firebase";
+import HowTo from "./HowTo.vue";
+import { DateTime } from "luxon";
+import { sortBy } from "lodash";
+import { copyToClipboard } from "quasar";
 const alldisplays = db.ref("displays");
 
 export default {
@@ -102,17 +94,45 @@ export default {
   data() {
     return {
       displays: Object,
-      showInstructions: false,
+      showConnect: false,
+      loading: true,
     };
   },
   computed: {
     userid() {
       return firebase.auth().currentUser;
     },
+    alldisplays() {
+      return sortBy(this.displays, "lastTouched.seconds");
+    },
   },
   methods: {
+    async copyLink(link) {
+      await copyToClipboard(link);
+      this.$q.notify("Linked copied to clipboard!");
+    },
+    timeFrom(now) {
+      if (now && now.seconds)
+        return DateTime.fromSeconds(now.seconds).toRelative();
+      else return null;
+    },
+    showInstructions() {
+      this.$q.dialog({
+        component: HowTo,
+      });
+    },
     remove(index) {
-      this.$firebaseRefs.displays.child(index).remove();
+      console.log(index);
+      this.$q
+        .dialog({
+          title: "Confirm",
+          message: "Really delete this Display?",
+          cancel: true,
+          persistent: true,
+        })
+        .onOk(() => {
+          this.$firebaseRefs.displays.child(index).remove();
+        });
     },
     copy(index) {
       let tmp = this.displays[index];
@@ -131,14 +151,19 @@ export default {
     async add() {
       var index = await this.$firebaseRefs.displays.push({
         name: "New Display",
+        lastTouched: firebase.firestore.Timestamp.fromDate(new Date()),
       });
 
       this.$router.push("/control/" + index.getKey());
     },
   },
-  mounted() {
+  async mounted() {
     // console.log(this.userid);
-    this.$rtdbBind("displays", alldisplays.child(this.userid.uid));
+    await this.$rtdbBind(
+      "displays",
+      alldisplays.child(this.userid.uid).orderByChild("lastTouched")
+    );
+    this.loading = false;
   },
 };
 </script>
@@ -150,5 +175,9 @@ export default {
     max-width: 50%;
     height: auto;
   }
+}
+
+.bigtext {
+  font-size: 1.6em;
 }
 </style>

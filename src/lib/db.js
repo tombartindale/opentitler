@@ -1,20 +1,18 @@
-import firebase from 'firebase/app'
+import firebase from "firebase/app";
 import "firebase/auth";
-import 'firebase/database';
-import 'firebase/functions';
+import "firebase/database";
+import "firebase/functions";
 
 const config = {
-  appId:'',
-  apiKey: 'AIzaSyDGEMPLVKAGGx1U_1GGvWGRvHRh8qzZm8A',
-  authDomain: 'obstally.firebaseapp.com',
-  databaseURL: 'https://opentally-titles.firebaseio.com',
-  projectId: '611932210483',
-  storageBucket: 'obstally.appspot.com'
+  appId: "",
+  apiKey: "AIzaSyDGEMPLVKAGGx1U_1GGvWGRvHRh8qzZm8A",
+  authDomain: "obstally.firebaseapp.com",
+  databaseURL: "https://opentally-titles.firebaseio.com",
+  projectId: "611932210483",
+  storageBucket: "obstally.appspot.com",
 };
 
-export const db = firebase
-  .initializeApp(config)
-  .database();
+export const db = firebase.initializeApp(config).database();
 
 // const config2 = {
 //   name:'zoom',
@@ -24,8 +22,6 @@ export const db = firebase
 //   projectId: 'zoombot',
 //   appId: "1:578675125264:web:27a74a7ee45f0ca7b6ee95"
 // };
-
-
 
 // let zsff = firebase.initializeApp(config2,"zoomsense");
 

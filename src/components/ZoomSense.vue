@@ -10,15 +10,19 @@ div
   div(v-show="settings")
     p #[a(href="https://zoomsense.io") ZoomSense] integration requires you to set up ZoomSense for broadcast prior to the event starting.
     p Paste the &ldquo;Anonymous access token&rdquo; generated when sharing your meeting in ZoomSense.
-    q-input(v-model="mytoken", label="ZoomSense Token", clearable)
+    q-input(v-model="mytoken", label="ZoomSense Token", clearable outlined)
     .text-negative {{ tokenerrormsg }}
-    p Automatic Person Titles from Zoom
-      q-btn-toggle(
+    .q-mt-lg
+      q-toggle.on-right(
+        label="Automatic Person Titles from Zoom"
         v-model="control.zoomsense_autotitles",
-        :options="titleoptions",
-        outline
       )
-  div(v-show="showcontent")
+      br
+      q-toggle.on-right(
+        label="Messages as Titles or Content"
+        v-model="control.zoomsense_titles",
+      )
+  div(v-show="showcontent && control.zoomsense_titles")
     q-list.col
       q-item
         q-item-section
