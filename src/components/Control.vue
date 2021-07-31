@@ -21,7 +21,7 @@ q-layout(view="hHh lpR fFf")
         q-icon(name="arrow_back")
       q-toolbar-title {{display.name}}
 
-  q-page-container()
+  q-page-container
     q-page
       .col-auto
         q-tabs(align="left" v-model="tab"  outside-arrows mobile-arrows active-color="primary")
@@ -58,17 +58,19 @@ q-layout(view="hHh lpR fFf")
                   q-item-section(side)
                     q-btn-toggle(v-model="control.title" :options="displayoptions" outline)
                 q-separator
-                q-item(v-if="!(display.draft && display.draft.titles && display.draft.titles.length)")
+                q-item()
                   q-item-label
                     q-btn(@click="tab='titles'" dense flat) Add Title
                 q-scroll-area(:style="colStyle" v-if="display.draft && display.draft.titles")
-                  draggable(v-model="display.draft.titles" group="titles" @end="updatetitles" )
-                    q-item(:class="{'text-info': display.title.title == title.title && display.title.subtitle == title.subtitle}" :key="index" clickable v-ripple v-for="(title,index) in display.draft.titles" @click="updatetitle(title)")
+                  //- draggable(v-model="display.draft.titles" group="titles" @end="updatetitles" )
+                  div(v-for="(title,index) in display.draft.titles" :key="index")
+                    q-item(:class="{'text-info': display.title.title == title.title && display.title.subtitle == title.subtitle}" clickable v-ripple  @click="updatetitle(title)")
                       q-item-section
                         q-item-label {{title.title}}
                         q-item-label(caption) {{title.subtitle}}
                       q-item-section(side)
                         q-icon(name="monitor" v-show="display.title.title == title.title && display.title.subtitle == title.subtitle")
+                    q-separator
                   
                 
 
@@ -186,38 +188,31 @@ q-layout(view="hHh lpR fFf")
                   q-card-actions.col-auto(align="right")
                     q-btn(flat @click="content_remove(index)") Remove
         
-        q-tab-panel(name="titles")
-          .q-pa-xs.row
-            //- div.row.q-col-gutter-sm
-            //-   .col-md-4.col-xs-12
-            //-     q-card(flat bordered)
-            //-       q-card-section
-            //-         q-input.col-6(label="title" v-model="newtitle.title")
-            //-         q-input.col-6(label="subtitle" v-model="newtitle.subtitle")
-            //-       q-separator
-            //-       q-card-actions(align="right")
-            //-         q-btn(flat @click="title_add()") Add
+        q-tab-panel.nopadding(name="titles")
+          .row
             
 
             .col-12.col-md-6.offset-md-3
               q-list(separator)
-                q-item
-                  q-item-section(side)
-                    q-icon(name="move")
+                q-item.bg-grey-10
                   q-item-section
-                    q-input.q-mb-xs(label="Title" v-model="newtitle.title" outlined)
-                    q-input(label="Subtitle" v-model="newtitle.subtitle" outlined)
+                    q-input.q-mb-xs(label="Title" v-model="newtitle.title" dense outlined)
+                    q-input(label="Subtitle" v-model="newtitle.subtitle" dense outlined)
                   q-item-section(side)
-                    q-btn(flat @click="title_add()" icon="add")
-
+                    q-btn(round flat @click="title_add()" icon="add")
+                q-separator
                 div(v-if="display.draft && display.draft.titles")
                   draggable(v-model="display.draft.titles" group="titles" @end="updatetitles" )
-                    q-item(:key="index" v-for="(title,index) in display.draft.titles")
-                      q-item-section
-                        q-item-label {{title.title}}
-                        q-item-label(caption) {{title.subtitle}}
-                      q-item-section(side)
-                        q-btn(flat @click="title_remove(index)" icon="delete")
+                    div.bg-grey-10(:key="index" v-for="(title,index) in display.draft.titles")
+                      q-item
+                        q-item-section(side)
+                          q-icon(name="drag_indicator")
+                        q-item-section
+                          q-item-label {{title.title}}
+                          q-item-label(caption) {{title.subtitle}}
+                        q-item-section(side)
+                          q-btn(round flat @click="title_remove(index)" icon="delete")
+                      q-separator
                         
 
                 //- .col-md-4(v-for="(title,index) in display.draft.titles" )
@@ -511,15 +506,17 @@ export default {
       if (!this.display.draft) this.display.draft = {};
 
       if (!this.display.draft.titles) this.display.draft.titles = [];
-      this.display.draft.titles.push(this.newtitle);
-      this.newtitle = {
-        title: "",
-        subtitle: "",
-      };
-      this.$firebaseRefs.display
-        .child("draft")
-        .child("titles")
-        .set(this.display.draft.titles);
+      if (this.newtitle.title != "") {
+        this.display.draft.titles.push(this.newtitle);
+        this.newtitle = {
+          title: "",
+          subtitle: "",
+        };
+        this.$firebaseRefs.display
+          .child("draft")
+          .child("titles")
+          .set(this.display.draft.titles);
+      }
     },
     title_remove(index) {
       // console.log(this.display.draft);
@@ -535,15 +532,17 @@ export default {
 
       if (!this.display.draft.people) this.display.draft.people = [];
 
-      this.display.draft.people.push(this.newperson);
-      this.newperson = {
-        name: "",
-        affiliation: "",
-      };
-      this.$firebaseRefs.display
-        .child("draft")
-        .child("people")
-        .set(this.display.draft.people);
+      if (this.newperson.name != "") {
+        this.display.draft.people.push(this.newperson);
+        this.newperson = {
+          name: "",
+          affiliation: "",
+        };
+        this.$firebaseRefs.display
+          .child("draft")
+          .child("people")
+          .set(this.display.draft.people);
+      }
     },
     person_remove(index) {
       // console.log(this.display.draft);
@@ -783,5 +782,9 @@ export default {
 
 .flip-list-move {
   transition: transform 1s;
+}
+
+.nopadding {
+  padding: 0 !important;
 }
 </style>
