@@ -1,0 +1,10 @@
+{
+  "rules": {
+    "displays": {
+      "$uid": {
+        ".write": "$uid === auth.uid",
+        ".read": "true"
+      }
+    }
+  }
+}

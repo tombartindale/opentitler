@@ -20,7 +20,7 @@ q-layout(view="hHh lpR fFf")
             
           .row.q-my-sm
             .col.text-center
-              .text-h5 My Displays
+              .text-h5.q-mb-md My Displays
 
               q-spinner-dots(color="primary" size="3em" v-if="loading")
           .row.q-col-gutter-md(v-if="!loading").justify-center
@@ -64,7 +64,7 @@ q-layout(view="hHh lpR fFf")
                     q-btn(clickable flat :to="'/display/'+userid.uid+'/'+index" icon="computer")
                       q-tooltip View Live Display
                     q-btn(clickable flat icon="person_add")
-                      q-tooltip Allow access
+                      q-tooltip Share Control
                     q-btn(clickable flat @click="copy(index)" icon="content_copy")
                       q-tooltip Copy
                     q-btn(clickable flat @click="remove(index)" icon="o_delete")

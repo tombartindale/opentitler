@@ -24,22 +24,27 @@ q-layout(view="hHh lpR fFf")
   q-page-container()
     q-page
       .col-auto
-        q-tabs(align="left" v-model="tab"  outside-arrows mobile-arrows)
-          q-tab(icon="tune" name="control" label="LIVE")
-          q-tab(icon="ballot" name="content" label="Content")
-          q-tab(icon="person" name="people" label="People")
-          q-tab(icon="title" name="titles" label="Titles")
-          q-tab(icon="subtitles" name="ticker" label="Ticker")
-          q-tab(icon="branding_watermark" name="watermark" label="Watermark")
+        q-tabs(align="left" v-model="tab"  outside-arrows mobile-arrows active-color="primary")
+          q-tab(icon="tune" name="control" label="LIVE" )
+          q-separator(vertical)
+          q-tab(icon="img:/img/title.svg" name="titles" label="Titles")
+          q-tab(icon="img:/img/card.svg" name="content" label="Cards")
+          q-tab(icon="img:/img/person.svg" name="people" label="People")
+          q-tab(icon="img:/img/ticker.svg" name="ticker" label="Ticker")
+          q-tab(icon="img:/img/watermark.svg" name="watermark" label="Watermark")
           q-tab(icon="group_work" name="plugins" label="Plugins")
           q-tab(icon="style" name="style" label="Settings")
+          q-tab(icon="help" name="help" label="Help")
 
       q-tab-panels.fixed.fixed-left.fixed-right.fixed-bottom(v-model="tab" v-if="loaded" padding style="top:122px;")
+        q-tab-panel(name="help")
+          .q-px-md.text-center
+            q-btn(@click="tab='control'" size="lg" color="primary") Get Started
 
         q-tab-panel(name="plugins")
           .q-px-md
             q-timeline
-              q-timeline-entry( icon="group_work" subtitle="ZoomSense")
+              q-timeline-entry( subtitle="ZoomSense")
                 ZoomSense(:token="control.zoomsense_token" :control="control" v-on:update:token="savetoken" settings="false")
 
         q-tab-panel(name="control")
@@ -48,10 +53,14 @@ q-layout(view="hHh lpR fFf")
               q-list(separator v-if="display")
                 q-item
                   q-item-section
-                    q-item-label.text-uppercase Available Titles
+                    q-item-label
+                      q-icon(name="img:/img/title.svg" size="lg")
                   q-item-section(side)
                     q-btn-toggle(v-model="control.title" :options="displayoptions" outline)
                 q-separator
+                q-item(v-if="!(display.draft && display.draft.titles && display.draft.titles.length)")
+                  q-item-label
+                    q-btn(@click="tab='titles'" dense flat) Add Title
                 q-scroll-area(:style="colStyle" v-if="display.draft && display.draft.titles")
                   draggable(v-model="display.draft.titles" group="titles" @end="updatetitles" )
                     q-item(:class="{'text-info': display.title.title == title.title && display.title.subtitle == title.subtitle}" :key="index" clickable v-ripple v-for="(title,index) in display.draft.titles" @click="updatetitle(title)")
@@ -61,14 +70,14 @@ q-layout(view="hHh lpR fFf")
                       q-item-section(side)
                         q-icon(name="monitor" v-show="display.title.title == title.title && display.title.subtitle == title.subtitle")
                   
-                  q-item(v-if="!display.draft.titles.length")
-                    q-item-label
-                      em No titles yet
+                
+
             .col-12.col-md.q-mr-md
               q-list.col-auto(separator)
                 q-item
                   q-item-section
-                    q-item-label.text-uppercase Available Content
+                    q-item-label
+                      q-icon(name="img:/img/card.svg" size="lg")
                   q-item-section(side)
                     q-btn-toggle(v-model="control.content" :options="displayoptions" outline)
                 q-separator
@@ -99,7 +108,7 @@ q-layout(view="hHh lpR fFf")
                             //- q-icon(name="blank" v-if="!(index == control.currentcontent)")
                     q-item(v-if="!display.content.length")
                       q-item-label
-                        em No content yet
+                        em No cards yet
                   template(v-slot:after)
                     ZoomSense.col(:control="control" :token="control.zoomsense_token" v-on:update:token="savetoken" v-on:new:message="addmsg" v-on:new:title="addtitle" v-on:update:person="zoomperson" showcontent="true")
 
@@ -108,11 +117,14 @@ q-layout(view="hHh lpR fFf")
               q-list(separator v-if="display")
                 q-item
                   q-item-section
-                    q-item-label.text-uppercase Available People
+                    q-item-label
+                      q-icon(name="img:/img/person.svg" size="lg")
                   q-item-section(side)
                     q-btn-toggle(v-model="control.people" :options="displayoptions" outline)
                 q-separator
                 .column
+                  q-item(v-if="!(display.draft && display.draft.people && display.draft.people.length)")
+                    q-btn(@click="tab='people'" dense flat) Add Person
                   q-scroll-area(:style="colStyle" v-if="display.draft && display.draft.people")
                     q-item(:class="{'text-info': display.people.name == people.name && display.people.affiliation == people.affiliation}" :key="index" v-for="(people,index) in display.draft.people" @click="fireperson(people)" clickable ripple)
                       q-item-section(side)
@@ -125,9 +137,6 @@ q-layout(view="hHh lpR fFf")
                         div
                           q-circular-progress(v-if="display.people" v-show="display.people.name == people.name && display.people.affiliation == people.affiliation" :value="peopletimer")
                           q-btn(flat dense icon="monitor" @click.capture.stop="updateperson(people)" color="primary")
-                    q-item(v-if="!display.draft.people.length")
-                      q-item-label
-                        em No people yet
             
 
         q-tab-panel(name="people")
@@ -178,25 +187,47 @@ q-layout(view="hHh lpR fFf")
                     q-btn(flat @click="content_remove(index)") Remove
         
         q-tab-panel(name="titles")
-          .q-pa-xs
-            div.row.q-col-gutter-sm
-              .col-md-4.col-xs-12
-                q-card(flat bordered)
-                  q-card-section
-                    q-input.col-6(label="title" v-model="newtitle.title")
-                    q-input.col-6(label="subtitle" v-model="newtitle.subtitle")
-                  q-separator
-                  q-card-actions(align="right")
-                    q-btn(flat @click="title_add()") Add
-              div(v-if="display.draft && display.draft.titles")
-                .col-md-4(v-for="(title,index) in display.draft.titles" )
-                  q-card.column.full-height(flat bordered)
-                    q-card-section.col
-                      .text-h6 {{title.title}}
-                      .text-subtitle2 {{title.subtitle}}
-                    q-separator
-                    q-card-actions.col-auto(align="right")
-                      q-btn(flat @click="title_remove(index)") Remove
+          .q-pa-xs.row
+            //- div.row.q-col-gutter-sm
+            //-   .col-md-4.col-xs-12
+            //-     q-card(flat bordered)
+            //-       q-card-section
+            //-         q-input.col-6(label="title" v-model="newtitle.title")
+            //-         q-input.col-6(label="subtitle" v-model="newtitle.subtitle")
+            //-       q-separator
+            //-       q-card-actions(align="right")
+            //-         q-btn(flat @click="title_add()") Add
+            
+
+            .col-12.col-md-6.offset-md-3
+              q-list(separator)
+                q-item
+                  q-item-section(side)
+                    q-icon(name="move")
+                  q-item-section
+                    q-input.q-mb-xs(label="Title" v-model="newtitle.title" outlined)
+                    q-input(label="Subtitle" v-model="newtitle.subtitle" outlined)
+                  q-item-section(side)
+                    q-btn(flat @click="title_add()" icon="add")
+
+                div(v-if="display.draft && display.draft.titles")
+                  draggable(v-model="display.draft.titles" group="titles" @end="updatetitles" )
+                    q-item(:key="index" v-for="(title,index) in display.draft.titles")
+                      q-item-section
+                        q-item-label {{title.title}}
+                        q-item-label(caption) {{title.subtitle}}
+                      q-item-section(side)
+                        q-btn(flat @click="title_remove(index)" icon="delete")
+                        
+
+                //- .col-md-4(v-for="(title,index) in display.draft.titles" )
+                //-   q-card.column.full-height(flat bordered)
+                //-     q-card-section.col
+                //-       .text-h6 {{title.title}}
+                //-       .text-subtitle2 {{title.subtitle}}
+                //-     q-separator
+                //-     q-card-actions.col-auto(align="right")
+                //-       q-btn(flat @click="title_remove(index)") Remove
               
 
         q-tab-panel(name="ticker")
@@ -217,16 +248,23 @@ q-layout(view="hHh lpR fFf")
             q-timeline
               q-timeline-entry(subtitle="Display")
                 q-toggle(v-model="control.watermark" val="true" toggle-color="primary" label="Display watermark")
+                q-toggle(v-model="control.watermarktext" val="true" toggle-color="primary" label="Display Live Indicator")
+              q-timeline-entry(subtitle="Live Indicator")
+                q-input(v-model="dirty.watermarktext" label="Live Text" v-on:keyup.enter="updatelive" outlined)
+                  template(v-slot:append v-if="dirty.watermarktext != display.watermarktext" )
+                    q-avatar
+                      q-icon(name="create")
+
               q-timeline-entry(subtitle="Update Image")
                 .row.q-my-md
                   q-file.col(
-                    style="max-width: 300px"
                     v-model="watermarkImg"
                     outlined
                     label="Select an Image"
                     accept=".jpg, image/*")
-                  .col
-                    p OR
+                  .col-auto
+                    .q-mx-lg
+                      h5.text-grey OR
                   q-input.col(outlined v-model="dirty.watermark.src" clearable label="Paste a URL" v-on:keyup.enter="updatewatermark" placeholder="paste url or data:url here")
                     template(v-slot:append v-if="dirty.watermark.src != display.watermark.src")
                       q-avatar
@@ -470,6 +508,9 @@ export default {
       this.$firebaseRefs.display.child("content").set(this.display.content);
     },
     title_add() {
+      if (!this.display.draft) this.display.draft = {};
+
+      if (!this.display.draft.titles) this.display.draft.titles = [];
       this.display.draft.titles.push(this.newtitle);
       this.newtitle = {
         title: "",
@@ -490,7 +531,10 @@ export default {
         .set(this.display.draft.titles);
     },
     person_add() {
-      // if (!this.display.draft.people) this.draft.people = [];
+      if (!this.display.draft) this.display.draft = {};
+
+      if (!this.display.draft.people) this.display.draft.people = [];
+
       this.display.draft.people.push(this.newperson);
       this.newperson = {
         name: "",
@@ -517,6 +561,12 @@ export default {
     updatename() {
       // console.log(val);
       this.$firebaseRefs.display.child("name").set(this.dirty.name);
+    },
+    updatelive() {
+      // console.log(val);
+      this.$firebaseRefs.display
+        .child("watermarktext")
+        .set(this.dirty.watermarktext);
     },
     updatewatermark() {
       // console.log(val);
@@ -626,6 +676,8 @@ export default {
               // },
             ],
 
+            watermarktext: "LIVE",
+
             people: {},
 
             watermark: {
@@ -649,8 +701,8 @@ export default {
           this.display
         );
 
-        if (!this.display.draft.titles) this.display.draft.titles = [];
-        if (!this.display.draft.people) this.display.draft.people = [];
+        // if (!this.display.draft.titles) this.display.draft.titles = [];
+        // if (!this.display.draft.people) this.display.draft.people = [];
 
         // console.log(this.display);
 

@@ -1,21 +1,26 @@
 <template lang="pug">
-.widescreen(v-if="display.config" :class="{ showclassname:display.control.debug}" :style="allstyles")
-  v-style {{display.config.style}}
+div
+  .rightclear
+  .bottomclear
+  .widescreen(v-if="display.config" :class="{ showclassname:display.control.debug}" :style="allstyles")
+    v-style {{display.config.style}}
 
-  transition(mode="out-in" enter-active-class="animate__animated animate__slideInRight" leave-active-class="animate__animated animate__slideOutRight" )
-    People(v-cname :key="display.people.name" :data="display.people" v-if="display.control.people")
+    transition(mode="out-in" enter-active-class="animate__animated animate__slideInRight" leave-active-class="animate__animated animate__slideOutRight" )
+      People(v-cname :key="display.people.name" :data="display.people" v-if="display.control.people")
 
-  Title(v-cname :data="display.title" :control="display.control")
+    Title(v-cname :data="display.title" :control="display.control")
 
-  Ticker(v-cname  :data="display.ticker" :control="display.control")
+    Ticker(v-cname  :data="display.ticker" :control="display.control")
 
-  transition(:key="display.control.content" enter-active-class="animate__animated animate__fadeIn animate__fast" leave-active-class="animate__animated animate__fadeOut animate__fast")
-    Content(v-cname :data="display.content" v-if="display.control.content" :current="display.control.currentcontent")
+    transition(:key="display.control.content" enter-active-class="animate__animated animate__fadeIn animate__fast" leave-active-class="animate__animated animate__fadeOut animate__fast")
+      Content(v-cname :data="display.content" v-if="display.control.content" :current="display.control.currentcontent")
 
-  Watermark(v-cname v-if="display.control.watermark" :data="display.watermark")
+    Watermark(v-cname v-if="display.control.watermark" :data="display.watermark")
 
-  .live()
-    div LIVE
+    //- iframe(id="myiframe" src="https://docs.google.com/presentation/d/e/2PACX-1vSXznFxQ0laAhrIzglQNo_OGQgiKc27RSVfRCR_CThAduk_DluVznyGcKzb9gqJhA/embed?rm=minimal&start=false&loop=false" frameborder="0" width="960" height="569")
+
+    .live(v-if="display.control.watermarktext")
+      div {{display.watermarktext}}
 </div>
 
 </template>
@@ -119,7 +124,7 @@ export default {
   overflow: hidden;
   position:relative;
   // background:#00ff00;
-  outline: solid white 5px;
+  outline: solid yellow 5px;
   z-index:-1;
   // background:green;
 }
@@ -141,11 +146,11 @@ export default {
   
   color:white;
   position: absolute;
-  left:10px;
-  top:15px;
+  right:10px;
+  top:10px;
   
-  border:solid 1px var(--primary);
-  padding-left:115px;
+  // border:solid 1px var(--primary);
+  // padding-left:115px;
   div {
     display:inline-block;
     background: var(--primary);
@@ -192,6 +197,23 @@ export default {
       // opacity: 1;
       // }
   }
+}
+
+.rightclear {
+  background-color: #333;
+  position:absolute;
+  top:0;
+  left:1285px;
+  bottom:0;
+  right:0;
+}
+.bottomclear {
+  background-color: #333;
+  position:absolute;
+  top:725px;
+  left:0;
+  bottom:0;
+  right:0;
 }
 </style>
 
