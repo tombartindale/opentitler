@@ -3,7 +3,23 @@
     "displays": {
       "$uid": {
         ".write": "$uid === auth.uid",
-        ".read": "true"
+        ".read": "$uid === auth.uid",
+        "$displayid": {
+          ".write": "root.child('anonymous/users/'+auth.uid+'/control/'+$uid+'/'+$displayid).exists()",
+          ".read": "root.child('anonymous/users/'+auth.uid+'/control/'+$uid+'/'+$displayid).exists()"
+        }
+      }
+    },
+    "anonymous": {
+      "users": {
+        "$uid": {
+          ".read": "$uid === auth.uid",
+          ".write": "$uid === auth.uid"
+        }
+      },
+      "tokens": {
+        ".read": false,
+        ".write": false
       }
     }
   }

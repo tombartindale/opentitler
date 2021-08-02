@@ -63,7 +63,8 @@ q-layout(view="hHh lpR fFf")
                     //- q-btn(icon="more_horiz" flat)
                     q-btn(clickable flat :to="'/display/'+userid.uid+'/'+index" icon="computer")
                       q-tooltip View Live Display
-                    q-btn(clickable flat icon="person_add")
+                    q-btn(clickable flat icon="person_add" @click="getShareLink(index)"
+          :disable="getLinkLoading",)
                       q-tooltip Share Control
                     q-btn(clickable flat @click="copy(index)" icon="content_copy")
                       q-tooltip Copy
@@ -74,15 +75,28 @@ q-layout(view="hHh lpR fFf")
               q-btn(flat @click="add" size="xl" stack)
                 q-icon(name="add")
                 .text-h6 Add New Display
+  q-dialog(v-model="shareCard")
+    q-card
+      q-card-section.col.items-center
+        .text-h6 {{ tokenSuccess ? 'Successfully Copied Share Link' : 'Copy and Share the Following Link' }}
+      q-separator
+      q-card-section
+        p Share this link with someone to give them access to control this display.
+        q-input(readonly, :value="token" outlined)
+      q-separator
+      q-card-actions(align="right")
+        q-btn(flat, label="OK", color="primary", v-close-popup)
+      q-inner-loading.darker(:showing="getLinkLoading")
   </template>
 
 <script>
 import { db } from "../lib/db";
-import firebase from "firebase";
+import firebase from "firebase/app";
 import HowTo from "./HowTo.vue";
 import { DateTime } from "luxon";
 import { sortBy } from "lodash";
 import { copyToClipboard } from "quasar";
+const generateLink = firebase.functions().httpsCallable("generateLink");
 const alldisplays = db.ref("displays");
 
 export default {
@@ -96,6 +110,10 @@ export default {
       displays: Object,
       showConnect: false,
       loading: true,
+      token: "",
+      shareCard: false,
+      tokenSuccess: false,
+      getLinkLoading: false,
     };
   },
   computed: {
@@ -107,6 +125,33 @@ export default {
     },
   },
   methods: {
+    async getShareLink(id) {
+      try {
+        this.token = "";
+        this.shareCard = true;
+        this.getLinkLoading = true;
+        // Read result of the generateLink Function
+        const result = await generateLink({
+          displayid: id,
+          userid: this.userid.uid,
+        });
+        this.token = `${process.env.VUE_APP_REDIRECT}/#/anon?token=${result.data}`;
+        copyToClipboard(this.token).then(
+          () => {
+            // Copy successful
+            this.tokenSuccess = true;
+          },
+          () => {
+            // Copy failed
+            this.tokenSuccess = false;
+          }
+        );
+        this.getLinkLoading = false;
+      } catch (error) {
+        console.log("Error " + error.code + ": " + error.message);
+        return this.$router.push("/");
+      }
+    },
     async copyLink(link) {
       await copyToClipboard(link);
       this.$q.notify("Linked copied to clipboard!");

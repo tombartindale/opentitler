@@ -17,7 +17,7 @@ q-layout(view="hHh lpR fFf")
 
   q-header.bg-primary.text-white(elevated height-hint="98")
     q-toolbar
-      q-btn(flat round dense to="/dashboard")
+      q-btn(flat round dense to="/dashboard" v-if="!isAnon")
         q-icon(name="arrow_back")
       q-toolbar-title {{display.name}}
 
@@ -313,6 +313,7 @@ const alldisplays = db.ref("displays");
 // const zsense = zs.ref('data');
 import draggable from "vuedraggable";
 import ZoomSense from "./ZoomSense";
+import Keypress from "vue-keypress";
 
 // import * as Tone from 'tone';
 // const meter = new Tone.Meter();
@@ -330,7 +331,7 @@ export default {
   components: {
     draggable,
     ZoomSense,
-    Keypress: () => import("vue-keypress"),
+    Keypress,
   },
   props: ["id"],
   created() {
@@ -611,6 +612,13 @@ export default {
     },
   },
   computed: {
+    isAnon() {
+      let anon = this.$q.localStorage.getItem("anon");
+      return !!anon;
+    },
+    getAnon() {
+      return this.$q.localStorage.getItem("anon");
+    },
     splitterModel() {
       return typeof this.control.zoomsense_token == "undefined" ||
         this.control.zoomsense_token == ""
@@ -628,35 +636,32 @@ export default {
       };
     },
     userid() {
+      // console.log(firebase.auth().currentUser);
+
       return firebase.auth().currentUser;
     },
-    // draft() {
-    //   return Object.assign(
-    //     {
-    //       people: [],
-    //       titles: [],
-    //     },
-    //     this.display.draft
-    //   );
-    // },
   },
   watch: {
     id: {
       // call it upon creation too
+
       immediate: true,
       async handler(id) {
+        let userid = this.userid.uid;
+        if (this.isAnon) userid = this.getAnon.userid;
+
+        console.log(userid);
+        console.log(id);
+
         await Promise.all([
           this.$rtdbBind(
             "control",
             alldisplays
-              .child(this.userid.uid)
+              .child(userid)
               .child(id)
               .child("control")
           ),
-          this.$rtdbBind(
-            "display",
-            alldisplays.child(this.userid.uid).child(id)
-          ),
+          this.$rtdbBind("display", alldisplays.child(userid).child(id)),
         ]);
 
         this.display = Object.assign(

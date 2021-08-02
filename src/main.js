@@ -23,6 +23,7 @@ import Display from "./components/Display";
 import Control from "./components/Control";
 import Dashboard from "./components/Dashboard";
 import Login from "./components/Login";
+import Anon from "./components/Anon";
 
 import "./quasar";
 // import { QBadge } from 'quasar';
@@ -42,6 +43,14 @@ const routes = [
     path: "/login",
     name: "Login",
     component: Login,
+  },
+  {
+    path: "/anon",
+    name: "Anon",
+    component: Anon,
+    meta: {
+      requiresAuth: false,
+    },
   },
   {
     path: "/display/:userid/:id",
@@ -121,6 +130,7 @@ Vue.directive("cname", {
 });
 
 firebase.auth().onAuthStateChanged(() => {
+  console.log("auth changed");
   if (!app) {
     new Vue({ router, render: (h) => h(App) }).$mount("#app");
   }
