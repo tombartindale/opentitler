@@ -5,9 +5,12 @@ import firebase from "firebase";
 import { rtdbPlugin } from "vuefire";
 import VueRouter from "vue-router";
 
+import VueTimers from "vue-timers";
+
 Vue.use(rtdbPlugin);
 Vue.use(require("vue-moment"));
 Vue.use(VueRouter);
+Vue.use(VueTimers);
 
 const ZoomSense = require("@zoomsense/vue-zoomsense");
 Vue.use(ZoomSense, {
@@ -130,7 +133,7 @@ Vue.directive("cname", {
 });
 
 firebase.auth().onAuthStateChanged(() => {
-  console.log("auth changed");
+  // console.log("auth changed");
   if (!app) {
     new Vue({ router, render: (h) => h(App) }).$mount("#app");
   }

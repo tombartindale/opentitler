@@ -15,3 +15,4 @@ const config = {
 const fbapp = firebase.initializeApp(config);
 
 export const db = fbapp.database();
+// export {Timestamp} = firebase.firestore;

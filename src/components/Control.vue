@@ -20,6 +20,7 @@ q-layout(view="hHh lpR fFf")
       q-btn(flat round dense to="/dashboard" v-if="!isAnon")
         q-icon(name="arrow_back")
       q-toolbar-title {{display.name}}
+      q-avatar(v-for="person in livepeople" round icon="person" size="md").bg-grey-8.q-ml-xs
 
   q-page-container
     
@@ -52,7 +53,7 @@ q-layout(view="hHh lpR fFf")
           q-tab-panel(name="control")
             .row.full-height
               .col-12.col-md.q-mr-md
-                q-list(separator v-if="display")
+                q-list(separator v-if="display").roundbox
                   q-item
                     q-item-section
                       q-item-label
@@ -75,7 +76,7 @@ q-layout(view="hHh lpR fFf")
                       q-separator
 
 
-              .col-12.col-md.q-mr-md
+              .col-12.col-md.q-mr-md.roundbox
                 q-list.col-auto(separator)
                   q-item
                     q-item-section
@@ -116,7 +117,7 @@ q-layout(view="hHh lpR fFf")
                       ZoomSense.col(:control="control" :token="control.zoomsense_token" v-on:update:token="savetoken" v-on:new:message="addmsg" v-on:new:title="addtitle" v-on:update:person="zoomperson" showcontent="true")
 
               
-              .col-12.col-md
+              .col-12.col-md.roundbox
                 q-list(separator v-if="display")
                   q-item
                     q-item-section
@@ -312,11 +313,11 @@ q-layout(view="hHh lpR fFf")
 import { db } from "../lib/db";
 import firebase from "firebase";
 const alldisplays = db.ref("displays");
-// const zsense = zs.ref('data');
 import draggable from "vuedraggable";
 import ZoomSense from "./ZoomSense";
 import Keypress from "vue-keypress";
-
+import { DateTime } from "luxon";
+import { filter } from "lodash";
 // import * as Tone from 'tone';
 // const meter = new Tone.Meter();
 // const mic = new Tone.UserMedia();
@@ -336,6 +337,9 @@ export default {
     Keypress,
   },
   props: ["id"],
+  timers: {
+    activeUser: { time: 5000, autostart: true, repeat: true },
+  },
   created() {
     this.$q.dark.set(true);
     window.addEventListener("resize", this.onResize);
@@ -395,6 +399,13 @@ export default {
     };
   },
   methods: {
+    activeUser() {
+      // console.log("save");
+      this.$firebaseRefs.display
+        .child("activeUsers")
+        .child(this.userid.uid)
+        .set(DateTime.now().toSeconds());
+    },
     onResize() {
       this.colheight = window.innerHeight - 190;
       // console.log(window.innerHeight);
@@ -614,6 +625,16 @@ export default {
     },
   },
   computed: {
+    livepeople() {
+      return filter(this.display.activeUsers, (dd) => {
+        return (
+          dd >
+          DateTime.now()
+            .minus({ minute: 1 })
+            .toSeconds()
+        );
+      });
+    },
     isAnon() {
       let anon = this.$q.localStorage.getItem("anon");
       return !!anon;
@@ -646,14 +667,13 @@ export default {
   watch: {
     id: {
       // call it upon creation too
-
       immediate: true,
       async handler(id) {
         let userid = this.userid.uid;
         if (this.isAnon) userid = this.getAnon.userid;
 
-        console.log(userid);
-        console.log(id);
+        // console.log(userid);
+        // console.log(id);
 
         await Promise.all([
           this.$rtdbBind(
@@ -676,11 +696,7 @@ export default {
               },
             },
 
-            content: [
-              // {
-              //   message: "My First Message",
-              // },
-            ],
+            content: [],
 
             watermarktext: "LIVE",
 
@@ -793,5 +809,10 @@ export default {
 
 .nopadding {
   padding: 0 !important;
+}
+
+.roundbox {
+  border-radius: 0.8em;
+  background: #222;
 }
 </style>

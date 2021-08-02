@@ -1,0 +1,8 @@
+- show who is controlling online
+- 'flag' content
+- chat between producers
+- video playback
+- scenes
+- display permissions (not just read all)
+- slideshow integration
+- bootstrap OBS setup

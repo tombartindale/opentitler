@@ -9,9 +9,11 @@
   },
   "dependencies": {
     "@quasar/extras": "^1.10.9",
+    "@zoomsense/vue-zoomsense": "1.1.0",
     "animate.css": "^4.1.1",
     "core-js": "^3.6.5",
     "firebase": "^8.2.5",
+    "luxon": "^2.0.1",
     "motion-css-animation": "^1.0.0",
     "node-sass": "^5.0.0",
     "pug": "^3.0.0",
@@ -24,10 +26,9 @@
     "vue-keypress": "^2.1.1",
     "vue-moment": "^4.1.0",
     "vue-router": "^3.5.1",
+    "vue-timers": "^2.0.4",
     "vuedraggable": "^2.24.3",
-    "vuefire": "^2.2.5",
-    "@zoomsense/vue-zoomsense": "1.1.0",
-    "luxon": "2.0.1"
+    "vuefire": "^2.2.5"
   },
   "devDependencies": {
     "@vue/cli-plugin-babel": "~4.5.0",
