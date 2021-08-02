@@ -55,43 +55,40 @@ q-layout(view="hHh lpR fFf")
                 div.full-height.roundbox
                   q-list(separator v-if="display")
                     q-item
-                      q-item-section
+                      q-item-section(side)
                         q-icon(name="img:/img/title.svg" size="lg")
                       q-item-section(side)
-                        q-btn-toggle(v-model="control.title" :options="displayoptions" outline)
-                    q-separator
-                    q-item()
-                      q-item-label
                         q-btn(@click="tab='titles'" dense flat) Add Title
+                      q-item-section
+                      q-item-section(side)
+                        q-btn-toggle(v-model="control.title" :options="displayoptions" outline)
+                        
                     q-separator
                   q-scroll-area.full-height(v-if="display.draft && display.draft.titles")
                     div(v-for="(title,index) in display.draft.titles" :key="index")
                       q-item(:class="{'text-info': display.title.title == title.title && display.title.subtitle == title.subtitle}" clickable v-ripple  @click="updatetitle(title)")
+                        q-item-section(side)
+                          q-icon(name="monitor" v-show="display.title.title == title.title && display.title.subtitle == title.subtitle")
+                          q-icon(name="blank" v-show="display.title.title != title.title && display.title.subtitle != title.subtitle")
                         q-item-section
                           q-item-label {{title.title}}
                           q-item-label(caption) {{title.subtitle}}
-                        q-item-section(side)
-                          q-icon(name="monitor" v-show="display.title.title == title.title && display.title.subtitle == title.subtitle")
                       q-separator
 
-              .col-12.col-md-6.colmin(v-if="control.zoomsense_titles")
-                div.full-height.roundbox
-                  ZoomSense.col(v-on:gotoconfig="tab='plugins'" :control="control" :token="control.zoomsense_token" v-on:update:token="savetoken" v-on:new:message="addmsg" v-on:new:title="addtitle" v-on:update:person="zoomperson" showcontent="true")
+              
 
               .col-12.col-md-6.colmin
                 div.full-height.roundbox
                   q-list(separator v-if="display")
                     q-item
+                      q-item-section(side)
+                        q-icon(name="img:/img/person.svg" size="lg")
+                      q-item-section(side)
+                        q-btn(@click="tab='people'" dense flat) Add Person
                       q-item-section
-                        q-item-label
-                          q-icon(name="img:/img/person.svg" size="lg")
                       q-item-section(side)
                         q-btn-toggle(v-model="control.people" :options="displayoptions" outline)
                     q-separator
-                    .column
-                      q-item(v-if="!(display.draft && display.draft.people && display.draft.people.length)")
-                        q-btn(@click="tab='people'" dense flat) Add Person
-                      q-separator
                   q-scroll-area.ful-height(:style="colStyle" v-if="display.draft && display.draft.people")
                     div(:key="index" v-for="(people,index) in display.draft.people" )
                       q-item(:class="{'text-info': display.people.name == people.name && display.people.affiliation == people.affiliation}" @click="fireperson(people)" clickable ripple)
@@ -107,14 +104,20 @@ q-layout(view="hHh lpR fFf")
                             q-btn(flat dense icon="monitor" @click.capture.stop="updateperson(people)" color="primary")
                       q-separator
 
+              .col-12.col-md-6.colmin(v-if="control.zoomsense_titles")
+                div.full-height.roundbox
+                  ZoomSense.col(v-on:gotoconfig="tab='plugins'" :control="control" :token="control.zoomsense_token" v-on:update:token="savetoken" v-on:new:message="addmsg" v-on:new:title="addtitle" v-on:update:person="zoomperson" showcontent="true")
+
                     
               .col-12.col-md-6.colmin
                 div.full-height.roundbox
                   q-list(separator)
                     q-item
+                      q-item-section(side)
+                        q-icon(name="img:/img/card.svg" size="lg")
+                      q-item-section(side)
+                        q-btn(@click="tab='content'" dense flat) Add Card
                       q-item-section
-                        q-item-label
-                          q-icon(name="img:/img/card.svg" size="lg")
                       q-item-section(side)
                         q-btn-toggle(v-model="control.content" :options="displayoptions" outline)
                     q-separator
@@ -148,35 +151,56 @@ q-layout(view="hHh lpR fFf")
                   //-     em No cards yet
                     //- template(v-slot:after)
 
-          q-tab-panel(name="people")
+          q-tab-panel.nopadding(name="people")
             .row
               .col-12.col-md-6.offset-md-3
                 q-banner(rounded).q-my-md.bg-grey-9
                   template(v-slot:avatar)
                     q-icon(name="o_info" size="lg")
-                  .text-body1 Introduce specific people using appearing titles.
-            .q-pa-xs
-              div.row.q-col-gutter-sm
-                .col-md-4.col-xs-12
-                  q-card(flat bordered)
-                    q-card-section
-                      q-input.col-6(label="name" v-model="newperson.name")
-                      q-input.col-6(label="affiliation" v-model="newperson.affiliation")
-                    q-separator
-                    q-card-actions(align="right")
-                      q-btn(flat @click="person_add()") Add
+                  .text-body1 Introduce specific people using temporary appearing titles.
+            
+                  //- q-card(flat bordered)
+                  //-   q-card-section
+                  //-     q-input.col-6(label="name" v-model="newperson.name")
+                  //-     q-input.col-6(label="affiliation" v-model="newperson.affiliation")
+                  //-   q-separator
+                  //-   q-card-actions(align="right")
+                  //-     q-btn(flat @click="person_add()") Add
 
-                div(v-if="display.draft && display.draft.people")
-                  .col-md-4.col-xs-12(v-for="(people,index) in display.draft.people" :key="index")
-                    q-card.column.full-height(flat bordered)
-                      q-card-section.col
-                        .text-h6 {{people.name}}
-                        .text-subtitle2 {{people.affiliation}}
-                      q-separator
-                      q-card-actions.col-auto(align="right")
-                        q-btn(flat @click="person_remove(index)") Remove
+                  //- div(v-if="display.draft && display.draft.people")
+                  //-   .col-md-4.col-xs-12(v-for="(people,index) in display.draft.people" :key="index")
+                  //-     q-card.column.full-height(flat bordered)
+                  //-       q-card-section.col
+                  //-         .text-h6 {{people.name}}
+                  //-         .text-subtitle2 {{people.affiliation}}
+                  //-       q-separator
+                  //-       q-card-actions.col-auto(align="right")
+                  //-         q-btn(flat @click="person_remove(index)") Remove
+
+                q-list(separator)
+                  q-item.bg-grey-10
+                    q-item-section
+                      q-input.q-mb-xs(label="Name" v-model="newperson.name" dense outlined)
+                      q-input(label="Affiliation" v-model="newperson.affiliation" dense outlined)
+                    q-item-section(side)
+                      q-btn(round flat @click="person_add()" icon="add")
+                  q-separator
+                  div(v-if="display.draft && display.draft.people")
+                    draggable(v-model="display.draft.people" group="people" @end="updatepeople" )
+                      div.bg-grey-10(:key="index" v-for="(person,index) in display.draft.people")
+                        q-item
+                          q-item-section(side)
+                            q-icon(name="drag_indicator")
+                          q-item-section
+                            q-item-label {{person.name}}
+                            q-item-label(caption) {{person.affiliation}}
+                          q-item-section(side)
+                            q-btn(round flat @click="person_remove(index)" icon="delete")
+                        q-separator
+
+            
                 
-          q-tab-panel(name="content")
+          q-tab-panel.nopadding(name="content")
             .row
               .col-12.col-md-6.offset-md-3
                 q-banner(rounded).q-my-md.bg-grey-9
@@ -234,19 +258,9 @@ q-layout(view="hHh lpR fFf")
                           q-item-section(side)
                             q-btn(round flat @click="title_remove(index)" icon="delete")
                         q-separator
-                          
-
-                  //- .col-md-4(v-for="(title,index) in display.draft.titles" )
-                  //-   q-card.column.full-height(flat bordered)
-                  //-     q-card-section.col
-                  //-       .text-h6 {{title.title}}
-                  //-       .text-subtitle2 {{title.subtitle}}
-                  //-     q-separator
-                  //-     q-card-actions.col-auto(align="right")
-                  //-       q-btn(flat @click="title_remove(index)") Remove
                 
 
-          q-tab-panel(name="ticker")
+          q-tab-panel.nopadding(name="ticker")
             .row
               .col-12.col-md-6.offset-md-3
                 q-banner(rounded).q-my-md.bg-grey-9
@@ -265,7 +279,7 @@ q-layout(view="hHh lpR fFf")
 
 
 
-          q-tab-panel(name="watermark" )
+          q-tab-panel.nopadding(name="watermark" )
             .row
               .col-12.col-md-6.offset-md-3
                 q-banner(rounded).q-my-md.bg-grey-9
@@ -516,6 +530,12 @@ export default {
         .child("draft")
         .child("titles")
         .set(this.display.draft.titles);
+    },
+    updatepeople() {
+      this.$firebaseRefs.display
+        .child("draft")
+        .child("people")
+        .set(this.display.draft.people);
     },
     updatecontent() {
       this.$firebaseRefs.display.child("content").set(this.display.content);
