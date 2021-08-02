@@ -26,7 +26,9 @@ div
     q-list.col
       q-item
         q-item-section
-          q-item-label.text-uppercase Zoom Messages for {{ meetinginfo.topic }}
+          q-icon(name="img:/img/zoom.svg" size="lg")
+        q-item-section
+          q-item-label.text-uppercase {{ meetinginfo.topic }}
         q-item-section(side)
           q-btn-toggle(
             v-model="control.zoomsense_autodisplay",
@@ -34,8 +36,13 @@ div
             outline
           )
       q-separator 
-      .text-center(v-show="loading")
+
+      .text-center(v-show="loading && mytoken")
         q-spinner-dots(size="3em")
+
+      .text-center(v-if="!mytoken").q-pt-lg
+        q-btn(@click="$emit('gotoconfig')" color="primary") Configure ZoomSense
+
       q-item(
         clickable,
         v-ripple,

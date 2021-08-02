@@ -15,17 +15,13 @@ q-layout(view="hHh lpR fFf")
   //- ctrl + num - person
   Keypress(key-event="keydown" :preventDefault="true" :modifiers="['altKey','ctrlKey']" @success="setPersonKey")
 
-  q-header.bg-primary.text-white(elevated height-hint="98")
-    q-toolbar
-      q-btn(flat round dense to="/dashboard" v-if="!isAnon")
-        q-icon(name="arrow_back")
-      q-toolbar-title {{display.name}}
-      q-avatar(v-for="person in livepeople" round icon="person" size="md").bg-grey-8.q-ml-xs
+  //- q-header.bg-primary.text-white(elevated height-hint="98")
+    //- q-toolbar
+      
+      //- q-toolbar-title {{display.name}}
 
   q-page-container
-    
     q-page
-      
         .col-auto
           q-tabs(align="left" v-model="tab"  outside-arrows mobile-arrows active-color="primary")
             q-tab(icon="tune" name="control" label="LIVE" )
@@ -38,34 +34,37 @@ q-layout(view="hHh lpR fFf")
             q-tab(icon="group_work" name="plugins" label="Plugins")
             q-tab(icon="style" name="style" label="Settings")
             q-tab(icon="help" name="help" label="Help")
+            q-space
+            q-route-tab(icon="home" to="/dashboard" v-if="!isAnon")
 
-        q-tab-panels.fixed.fixed-left.fixed-right.fixed-bottom(v-model="tab" v-if="loaded" padding style="top:122px;")
+        q-tab-panels.fixed.fixed-left.fixed-right.fixed-bottom(v-model="tab" v-if="loaded" padding style="top:72px;")
           q-tab-panel(name="help")
             .q-px-md.text-center
               q-btn(@click="tab='control'" size="lg" color="primary") Get Started
 
           q-tab-panel(name="plugins")
-            .q-px-md
-              q-timeline
-                q-timeline-entry( subtitle="ZoomSense")
-                  ZoomSense(:token="control.zoomsense_token" :control="control" v-on:update:token="savetoken" settings="false")
+            .row
+              .col-12.col-md-6.offset-md-3
+                q-timeline
+                  q-timeline-entry( subtitle="ZoomSense")
+                    ZoomSense(:token="control.zoomsense_token" :control="control" v-on:update:token="savetoken" settings="false")
 
           q-tab-panel(name="control")
-            .row.full-height
-              .col-12.col-md.q-mr-md
-                q-list(separator v-if="display").roundbox
-                  q-item
-                    q-item-section
-                      q-item-label
+            .column.full-height.q-col-gutter-sm
+              .col-12.col-md-6.colmin
+                div.full-height.roundbox
+                  q-list(separator v-if="display")
+                    q-item
+                      q-item-section
                         q-icon(name="img:/img/title.svg" size="lg")
-                    q-item-section(side)
-                      q-btn-toggle(v-model="control.title" :options="displayoptions" outline)
-                  q-separator
-                  q-item()
-                    q-item-label
-                      q-btn(@click="tab='titles'" dense flat) Add Title
-                  q-scroll-area(:style="colStyle" v-if="display.draft && display.draft.titles")
-                    //- draggable(v-model="display.draft.titles" group="titles" @end="updatetitles" )
+                      q-item-section(side)
+                        q-btn-toggle(v-model="control.title" :options="displayoptions" outline)
+                    q-separator
+                    q-item()
+                      q-item-label
+                        q-btn(@click="tab='titles'" dense flat) Add Title
+                    q-separator
+                  q-scroll-area.full-height(v-if="display.draft && display.draft.titles")
                     div(v-for="(title,index) in display.draft.titles" :key="index")
                       q-item(:class="{'text-info': display.title.title == title.title && display.title.subtitle == title.subtitle}" clickable v-ripple  @click="updatetitle(title)")
                         q-item-section
@@ -75,62 +74,27 @@ q-layout(view="hHh lpR fFf")
                           q-icon(name="monitor" v-show="display.title.title == title.title && display.title.subtitle == title.subtitle")
                       q-separator
 
+              .col-12.col-md-6.colmin(v-if="control.zoomsense_titles")
+                div.full-height.roundbox
+                  ZoomSense.col(v-on:gotoconfig="tab='plugins'" :control="control" :token="control.zoomsense_token" v-on:update:token="savetoken" v-on:new:message="addmsg" v-on:new:title="addtitle" v-on:update:person="zoomperson" showcontent="true")
 
-              .col-12.col-md.q-mr-md.roundbox
-                q-list.col-auto(separator)
-                  q-item
-                    q-item-section
-                      q-item-label
-                        q-icon(name="img:/img/card.svg" size="lg")
-                    q-item-section(side)
-                      q-btn-toggle(v-model="control.content" :options="displayoptions" outline)
-                  q-separator
-                q-list.col-auto(separator)
-                  q-item
-                    q-btn-group(spread style="width:100%;")
-                      q-btn(dense color="primary" outline @click="control.currentcontent--")
-                        q-icon(name="expand_less")
-                      q-btn(dense disabled outline color="primary") {{control.currentcontent+1}}
-                      q-btn(dense color="primary" outline @click="control.currentcontent++")
-                        q-icon(name="expand_more")
-                
-                  q-splitter.fill-height(:value="splitterModel" horizontal :style="splitStyle" v-if="display.content")
-                    template(v-slot:before)
-                      draggable(v-model="display.content" group="content" @end="updatecontent")
-                        transition-group(name="flip-list")
-                          q-item(:class="{'text-info': index == control.currentcontent}" :key="JSON.stringify(content)" clickable v-ripple v-for="(content,index) in display.content" @click="control.currentcontent = index")
-                            q-item-section(side)
-                              q-badge(outline) {{index+1}}
-                            q-item-section(side v-if="content.image")
-                              q-avatar(square)
-                                q-img( :src="content.image")
-                            q-item-section
-                              q-item-label.overflow-hidden {{content.message}}
-                              q-item-label {{content.caption}}
-                            q-item-section(side)
-                              q-icon(:name="(index == control.currentcontent)?'monitor':''") 
-                              //- q-icon(name="blank" v-if="!(index == control.currentcontent)")
-                      q-item(v-if="!display.content.length")
+              .col-12.col-md-6.colmin
+                div.full-height.roundbox
+                  q-list(separator v-if="display")
+                    q-item
+                      q-item-section
                         q-item-label
-                          em No cards yet
-                    template(v-slot:after)
-                      ZoomSense.col(:control="control" :token="control.zoomsense_token" v-on:update:token="savetoken" v-on:new:message="addmsg" v-on:new:title="addtitle" v-on:update:person="zoomperson" showcontent="true")
-
-              
-              .col-12.col-md.roundbox
-                q-list(separator v-if="display")
-                  q-item
-                    q-item-section
-                      q-item-label
-                        q-icon(name="img:/img/person.svg" size="lg")
-                    q-item-section(side)
-                      q-btn-toggle(v-model="control.people" :options="displayoptions" outline)
-                  q-separator
-                  .column
-                    q-item(v-if="!(display.draft && display.draft.people && display.draft.people.length)")
-                      q-btn(@click="tab='people'" dense flat) Add Person
-                    q-scroll-area(:style="colStyle" v-if="display.draft && display.draft.people")
-                      q-item(:class="{'text-info': display.people.name == people.name && display.people.affiliation == people.affiliation}" :key="index" v-for="(people,index) in display.draft.people" @click="fireperson(people)" clickable ripple)
+                          q-icon(name="img:/img/person.svg" size="lg")
+                      q-item-section(side)
+                        q-btn-toggle(v-model="control.people" :options="displayoptions" outline)
+                    q-separator
+                    .column
+                      q-item(v-if="!(display.draft && display.draft.people && display.draft.people.length)")
+                        q-btn(@click="tab='people'" dense flat) Add Person
+                      q-separator
+                  q-scroll-area.ful-height(:style="colStyle" v-if="display.draft && display.draft.people")
+                    div(:key="index" v-for="(people,index) in display.draft.people" )
+                      q-item(:class="{'text-info': display.people.name == people.name && display.people.affiliation == people.affiliation}" @click="fireperson(people)" clickable ripple)
                         q-item-section(side)
                           q-icon(name="monitor"  v-if="display.people" v-show="display.people.name == people.name && display.people.affiliation == people.affiliation")
                           q-icon(name="blank" v-show="!(display.people.name == people.name && display.people.affiliation == people.affiliation)")
@@ -141,9 +105,56 @@ q-layout(view="hHh lpR fFf")
                           div
                             q-circular-progress(v-if="display.people" v-show="display.people.name == people.name && display.people.affiliation == people.affiliation" :value="peopletimer")
                             q-btn(flat dense icon="monitor" @click.capture.stop="updateperson(people)" color="primary")
-              
+                      q-separator
+
+                    
+              .col-12.col-md-6.colmin
+                div.full-height.roundbox
+                  q-list(separator)
+                    q-item
+                      q-item-section
+                        q-item-label
+                          q-icon(name="img:/img/card.svg" size="lg")
+                      q-item-section(side)
+                        q-btn-toggle(v-model="control.content" :options="displayoptions" outline)
+                    q-separator
+                  q-list(separator)
+                    q-item
+                      q-btn-group(spread style="width:100%;")
+                        q-btn(dense color="primary" outline @click="control.currentcontent--")
+                          q-icon(name="expand_less")
+                        q-btn(dense disabled outline color="primary") {{control.currentcontent+1}}
+                        q-btn(dense color="primary" outline @click="control.currentcontent++")
+                          q-icon(name="expand_more")
+                  
+                    //- q-splitter.fill-height(:value="splitterModel" horizontal :style="splitStyle" v-if="display.content")
+                      template(v-slot:before)
+                    //- draggable(v-model="display.content" group="content" @end="updatecontent")
+                      //- transition-group(name="flip-list")
+                    q-item(:class="{'text-info': index == control.currentcontent}" :key="JSON.stringify(content)" clickable v-ripple v-for="(content,index) in display.content" @click="control.currentcontent = index")
+                      q-item-section(side)
+                        q-badge(outline) {{index+1}}
+                      q-item-section(side v-if="content.image")
+                        q-avatar(square)
+                          q-img( :src="content.image")
+                      q-item-section
+                        q-item-label.overflow-hidden {{content.message}}
+                        q-item-label {{content.caption}}
+                      q-item-section(side)
+                        q-icon(:name="(index == control.currentcontent)?'monitor':''") 
+                      //- q-icon(name="blank" v-if="!(index == control.currentcontent)")
+                  //- q-item(v-if="!display.content !display.content.length")
+                  //-   q-item-label
+                  //-     em No cards yet
+                    //- template(v-slot:after)
 
           q-tab-panel(name="people")
+            .row
+              .col-12.col-md-6.offset-md-3
+                q-banner(rounded).q-my-md.bg-grey-9
+                  template(v-slot:avatar)
+                    q-icon(name="o_info" size="lg")
+                  .text-body1 Introduce specific people using appearing titles.
             .q-pa-xs
               div.row.q-col-gutter-sm
                 .col-md-4.col-xs-12
@@ -166,6 +177,12 @@ q-layout(view="hHh lpR fFf")
                         q-btn(flat @click="person_remove(index)") Remove
                 
           q-tab-panel(name="content")
+            .row
+              .col-12.col-md-6.offset-md-3
+                q-banner(rounded).q-my-md.bg-grey-9
+                  template(v-slot:avatar)
+                    q-icon(name="o_info" size="lg")
+                  .text-body1 Cards are larger media items that are displayed over 50% of the screen.
             .q-pa-xs
               div.row.q-col-gutter-sm
                 .col-md-4.col-xs-12
@@ -192,9 +209,11 @@ q-layout(view="hHh lpR fFf")
           
           q-tab-panel.nopadding(name="titles")
             .row
-              
-
               .col-12.col-md-6.offset-md-3
+                q-banner(rounded).q-my-md.bg-grey-9
+                  template(v-slot:avatar)
+                    q-icon(name="o_info" size="lg")
+                  .text-body1 Titles are short form text that is kept displayed on the screen.
                 q-list(separator)
                   q-item.bg-grey-10
                     q-item-section
@@ -228,81 +247,96 @@ q-layout(view="hHh lpR fFf")
                 
 
           q-tab-panel(name="ticker")
-            .q-pa-xs
-              q-timeline
-                q-timeline-entry(subtitle="Display")
-                  q-toggle(v-model="control.ticker" val="true"  toggle-color="primary" label="Display ticker")
-                q-timeline-entry(subtitle="Content")
-                  q-input(v-model="dirty.ticker.message" clearable label="Ticker text" v-on:keyup.enter="updateticker" outlined)
-                    template(v-slot:append v-if="dirty.ticker.message != display.ticker.message")
-                      q-avatar
-                        q-icon(name="create")
+            .row
+              .col-12.col-md-6.offset-md-3
+                q-banner(rounded).q-my-md.bg-grey-9
+                  template(v-slot:avatar)
+                    q-icon(name="o_info" size="lg")
+                  .text-body1 Long-form rolling text continuously on the display.
+            
+                q-timeline
+                  q-timeline-entry(subtitle="Display")
+                    q-toggle(v-model="control.ticker" val="true"  toggle-color="primary" label="Display ticker")
+                  q-timeline-entry(subtitle="Content")
+                    q-input(v-model="dirty.ticker.message" clearable label="Ticker text" v-on:keyup.enter="updateticker" outlined)
+                      template(v-slot:append v-if="dirty.ticker.message != display.ticker.message")
+                        q-avatar
+                          q-icon(name="create")
 
 
 
           q-tab-panel(name="watermark" )
-            .q-pa-xs
-              q-timeline
-                q-timeline-entry(subtitle="Display")
-                  q-toggle(v-model="control.watermark" val="true" toggle-color="primary" label="Display watermark")
-                  q-toggle(v-model="control.watermarktext" val="true" toggle-color="primary" label="Display Live Indicator")
-                q-timeline-entry(subtitle="Live Indicator")
-                  q-input(v-model="dirty.watermarktext" label="Live Text" v-on:keyup.enter="updatelive" outlined)
-                    template(v-slot:append v-if="dirty.watermarktext != display.watermarktext" )
-                      q-avatar
-                        q-icon(name="create")
-
-                q-timeline-entry(subtitle="Update Image")
-                  .row.q-my-md
-                    q-file.col(
-                      v-model="watermarkImg"
-                      outlined
-                      label="Select an Image"
-                      accept=".jpg, image/*")
-                    .col-auto
-                      .q-mx-lg
-                        h5.text-grey OR
-                    q-input.col(outlined v-model="dirty.watermark.src" clearable label="Paste a URL" v-on:keyup.enter="updatewatermark" placeholder="paste url or data:url here")
-                      template(v-slot:append v-if="dirty.watermark.src != display.watermark.src")
+            .row
+              .col-12.col-md-6.offset-md-3
+                q-banner(rounded).q-my-md.bg-grey-9
+                  template(v-slot:avatar)
+                    q-icon(name="o_info" size="lg")
+                  .text-body1 Semi-transparent overlay in the corner of the display.
+                q-timeline
+                  q-timeline-entry(subtitle="Display")
+                    q-toggle(v-model="control.watermark" val="true" toggle-color="primary" label="Display watermark")
+                    q-toggle(v-model="control.watermarktext" val="true" toggle-color="primary" label="Display Live Indicator")
+                  q-timeline-entry(subtitle="Live Indicator")
+                    q-input(v-model="dirty.watermarktext" label="Live Text" v-on:keyup.enter="updatelive" outlined)
+                      template(v-slot:append v-if="dirty.watermarktext != display.watermarktext" )
                         q-avatar
                           q-icon(name="create")
-                q-timeline-entry(subtitle="Preview")
-                  q-toggle(v-model="showExample" val="true" toggle-color="primary" label="Show Example")
-                  .imgdark(:class="{noimg:!showExample}")
-                      q-img.watermark(:src="dirty.watermark.src")
+
+                  q-timeline-entry(subtitle="Update Image")
+                    .row.q-my-md
+                      q-file.col(
+                        v-model="watermarkImg"
+                        outlined
+                        label="Select an Image"
+                        accept=".jpg, image/*")
+                      .col-auto
+                        .q-mx-lg
+                          h5.text-grey OR
+                      q-input.col(outlined v-model="dirty.watermark.src" clearable label="Paste a URL" v-on:keyup.enter="updatewatermark" placeholder="paste url or data:url here")
+                        template(v-slot:append v-if="dirty.watermark.src != display.watermark.src")
+                          q-avatar
+                            q-icon(name="create")
+                  q-timeline-entry(subtitle="Preview")
+                    q-toggle(v-model="showExample" val="true" toggle-color="primary" label="Show Example")
+                    .imgdark(:class="{noimg:!showExample}")
+                        q-img.watermark(:src="dirty.watermark.src")
           
 
           q-tab-panel(name="style")
-            .q-pa-xs(v-if="display.config")
-              q-timeline
-                q-timeline-entry(subtitle="Settings")
-                  q-input(v-model="dirty.name" label="Display Name" v-on:keyup.enter="updatename" outlined)
-                    template(v-slot:append v-if="dirty.name != display.name" )
-                      q-avatar
-                        q-icon(name="create")
-                q-timeline-entry(subtitle="Brand Colors")
-                  //- p Brand colors
-                  .row.q-gutter-xs
-                    q-avatar(:style="{'background-color':display.config.colors.bgcolor}" style="border:1px solid silver")
-                    q-input.col-3( outlined v-model="display.config.colors.bgcolor"  :rules="['anyColor']" label="Background Color")
-                      template(v-slot:append)
-                        q-icon(name="colorize" class="cursor-pointer")
-                          q-popup-proxy(transition-show="scale" transition-hide="scale")
-                            q-color(v-model="display.config.colors.bgcolor" format-model="hex" @input="updatecolor")
-                    
-                    q-avatar(:style="{'background-color':display.config.colors.primary}" style="border:1px solid silver")
-                    q-input.col-3(outlined v-model="display.config.colors.primary" :rules="['anyColor']" label="Primary Color")
-                      template(v-slot:append)
-                        q-icon(name="colorize" class="cursor-pointer")
-                          q-popup-proxy(transition-show="scale" transition-hide="scale")
-                            q-color(v-model="display.config.colors.primary" format-model="hex" @input="updatecolor")
+            .row
+              .col-12.col-md-6.offset-md-3(v-if="display.config")
+                q-timeline
+                  q-timeline-entry(subtitle="Settings")
+                    q-input(v-model="dirty.name" label="Display Name" v-on:keyup.enter="updatename" outlined)
+                      template(v-slot:append v-if="dirty.name != display.name" )
+                        q-avatar
+                          q-icon(name="create")
+                  q-timeline-entry(subtitle="Brand Colors")
+                    //- p Brand colors
+                    .row.q-gutter-xs
+                      q-avatar(:style="{'background-color':display.config.colors.bgcolor}" style="border:1px solid silver")
+                      q-input.col-3( outlined v-model="display.config.colors.bgcolor"  :rules="['anyColor']" label="Background Color")
+                        template(v-slot:append)
+                          q-icon(name="colorize" class="cursor-pointer")
+                            q-popup-proxy(transition-show="scale" transition-hide="scale")
+                              q-color(v-model="display.config.colors.bgcolor" format-model="hex" @input="updatecolor")
+                      
+                      q-avatar(:style="{'background-color':display.config.colors.primary}" style="border:1px solid silver")
+                      q-input.col-3(outlined v-model="display.config.colors.primary" :rules="['anyColor']" label="Primary Color")
+                        template(v-slot:append)
+                          q-icon(name="colorize" class="cursor-pointer")
+                            q-popup-proxy(transition-show="scale" transition-hide="scale")
+                              q-color(v-model="display.config.colors.primary" format-model="hex" @input="updatecolor")
 
-                q-timeline-entry(subtitle="Advanced Formatting")
-                  q-input(type="textarea" v-model="display.config.style" outlined label="Style CSS")
-                  q-btn(label="Save" @click="savestyle()" outline)
+                  q-timeline-entry(subtitle="Advanced Formatting")
+                    q-input(type="textarea" v-model="display.config.style" outlined label="Style CSS")
+                    q-btn(label="Save" @click="savestyle()" outline)
 
-                q-timeline-entry(subtitle="Display Class Names")
-                  q-btn-toggle(v-model="control.debug" :options="displayoptions" outline)
+                  q-timeline-entry(subtitle="Display Class Names")
+                    q-btn-toggle(v-model="control.debug" :options="displayoptions" outline)
+
+        q-page-sticky(position="bottom-left" :offset="[18,18]")
+          q-avatar(v-for="(person,key) in livepeople" :key="key" round icon="person" size="md").bg-grey-8.q-ml-xs
 
         q-page-sticky(position="bottom-right" :offset="[18, 18]")
           q-btn(fab icon="tune" color="red" @click="tab='control'") Live
@@ -814,5 +848,9 @@ export default {
 .roundbox {
   border-radius: 0.8em;
   background: #222;
+}
+
+.colmin {
+  min-width: 400px;
 }
 </style>
