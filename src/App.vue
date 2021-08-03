@@ -3,7 +3,6 @@ router-view
 </template>
 
 <script>
-
 /*
 
 Voting / polling data (yes/no) animated results
@@ -16,33 +15,26 @@ Control Panel
 
 */
 
-
-
 export default {
-  name: 'App',
-  components: {
-   
+  name: "App",
+  components: {},
+  data: function() {
+    return {};
   },
-  data:function(){
-    return {
-      
-    }
-  },
-  
-}
+};
 </script>
 
 <style src="animate.css/animate.css">
-    /* global styles */
-</style> 
+/* global styles */
+</style>
 
 <style src="motion-css-animation/motion.css">
-    /* global styles */
-</style> 
+/* global styles */
+</style>
 
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Hammersmith+One&family=Titillium+Web&display=swap');
-</style> 
+@import url("https://fonts.googleapis.com/css2?family=Hammersmith+One&family=Titillium+Web&display=swap");
+</style>
 
 <style>
 /* .widescreen {
@@ -52,7 +44,7 @@ export default {
   position:relative;
   
   /* background:#00ff00; */
-  /* background:transparent; */
+/* background:transparent; */
 /* } */
 
 body {
@@ -60,12 +52,12 @@ body {
 }
 
 /* body { */
-  /* font-family: Avenir, Helvetica, Arial, sans-serif;
+/* font-family: Avenir, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   margin:0;
   padding:0; */
-  /* background:gray; */
+/* background:gray; */
 /* } */
 
 /* .fade-in-enter-active {
@@ -82,7 +74,10 @@ body {
 } */
 
 body {
-  color:white;
+  color: white;
+}
+
+.q-separator--dark {
+  background: rgba(255, 255, 255, 0.1) !important;
 }
 </style>
-

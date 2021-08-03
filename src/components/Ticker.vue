@@ -12,52 +12,49 @@
 </template>
 
 <script>
-import Time from './Time';
+import Time from "./Time";
 
 export default {
-  name: 'Ticker',
-  components:{Time},
+  name: "Ticker",
+  components: { Time },
   props: {
     data: Object,
     config: Object,
-    control:Object
+    control: Object,
   },
-  watch:{
-    currentmessage(){
-        //reset css
-        console.log('reset css');
-        // .ticker translate3d to 0,0,0;
+  watch: {
+    currentmessage() {
+      //reset css
+      console.log("reset css");
+      // .ticker translate3d to 0,0,0;
 
-        // this.$refs.ticker.classList.remove('animateme');
-        // this.$refs.ticker.style.transform = "translate3d(0%, 0, 0)";
+      // this.$refs.ticker.classList.remove('animateme');
+      // this.$refs.ticker.style.transform = "translate3d(0%, 0, 0)";
 
-        // this.$refs.ticker.classList.add('animateme');
-
-
-    }
+      // this.$refs.ticker.classList.add('animateme');
+    },
   },
-  computed:{
-    currentmessage(){
-      return this.data.message
-    }
-  }
-}
+  computed: {
+    currentmessage() {
+      return this.data.message;
+    },
+  },
+};
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style lang="scss">
-
 $duration: 20s;
 $width: 1150px;
 
 .ticker_wrapper {
   // box-shadow: 0px 0px 10px #00000077;
   position: absolute;
-  top:675px;
-  // background: var(--main-background);  
+  top: 675px;
+  // background: var(--main-background);
   //
-  left:15px;
-  width:1250px;
+  left: 15px;
+  width: 1250px;
   font-family: Titillium Web;
   // border-left:5px var(--primary) solid;
   overflow: hidden;
@@ -65,11 +62,11 @@ $width: 1150px;
 }
 
 .inner_ticker {
-  
 }
 
-
-* { box-sizing: border-box; }
+* {
+  box-sizing: border-box;
+}
 
 // @-webkit-keyframes ticker {
 //   0% {
@@ -98,29 +95,35 @@ $width: 1150px;
 }
 
 .lefter {
-  width:$width;
-  position:relative;
+  width: $width;
+  position: relative;
 }
 
 .fader {
-  background-image: -webkit-linear-gradient(left , black 0%, transparent 2%, transparent 98%, black 100%);
-  position:absolute;
-  left:0;
-  top:0;
-  width:100%;
-  height:100%;
+  background-image: -webkit-linear-gradient(
+    left,
+    var(--main-background) 0%,
+    transparent 2%,
+    transparent 98%,
+    var(--main-background) 100%
+  );
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
   z-index: 2;
 }
 
 .animateme {
- // -webkit-animation-itercation-count: infinite; 
-            animation-iteration-count: infinite;
-    // -webkit-animation-timing-function: linear;
-            animation-timing-function: linear;
+  // -webkit-animation-itercation-count: infinite;
+  animation-iteration-count: infinite;
+  // -webkit-animation-timing-function: linear;
+  animation-timing-function: linear;
   //  -webkit-animation-name: ticker;
-           animation-name: ticker;
-    // -webkit-animation-duration: $duration;
-            animation-duration: $duration;
+  animation-name: ticker;
+  // -webkit-animation-duration: $duration;
+  animation-duration: $duration;
 }
 
 .ticker-wrap {
@@ -128,16 +131,16 @@ $width: 1150px;
   height: 30px;
   padding-left: 100%;
   box-sizing: content-box;
-  position:relative;
+  position: relative;
   width: $width;
-   background:black;
-  
+  background: var(--main-background);
+
   // background: red;
 
   .ticker {
     // width:1100px;
     display: inline-block;
-    
+
     height: 30px;
     line-height: 30px;
     white-space: nowrap;
@@ -145,17 +148,12 @@ $width: 1150px;
     box-sizing: content-box;
 
     &__item {
-
       display: inline-block;
 
       padding: 0 2rem;
       font-size: 1.2rem;
-      color: white;   
-
+      color: white;
     }
-
   }
-
 }
-
 </style>

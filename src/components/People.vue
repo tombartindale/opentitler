@@ -6,33 +6,32 @@
 </template>
 
 <script>
-import Title1 from './animations/Title1';
+import Title1 from "./animations/Title1";
 
 export default {
-  name: 'People',
-  components:{
-    Title1
+  name: "People",
+  components: {
+    Title1,
   },
   props: {
-    data: Object
+    data: Object,
   },
-  computed:{
-    currentmessage(){
-      return this.data
-    }
-  }
-}
+  computed: {
+    currentmessage() {
+      return this.data;
+    },
+  },
+};
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-
 .people {
   position: absolute;
-  right:15px;
-  top:20px;
-  color:white;
-  font-family: Titillium Web;
+  right: 15px;
+  top: 50px;
+  color: white;
+  font-family: var(--font);
   /* box-shadow: 0px 0px 10px #00000077; */
   /* filter: drop-shadow(0 0 10px #00000077); */
   font-size: 1.3rem;
@@ -41,22 +40,21 @@ export default {
 
 .name {
   background: var(--primary);
-  padding:10px;
+  padding: 10px;
   text-transform: uppercase;
-  display:block;
-  border-right:white 5px solid;
+  display: block;
+  border-right: white 5px solid;
 }
 
 .attribution {
-  padding-left:10px;
-  padding-top:5px;
-  padding-bottom:5px;
-  padding-right:10px;
+  padding-left: 10px;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  padding-right: 10px;
   background: white;
-  display:inline-block;
+  display: inline-block;
   font-size: 15px;
   vertical-align: top;
-  color:var(--primary);
+  color: var(--primary);
 }
-
 </style>

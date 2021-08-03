@@ -1,19 +1,19 @@
 <template lang="pug">
 q-layout(view="hHh lpR fFf")
   //- q - next title
-  Keypress(key-event="keyup" :preventDefault="true" :modifiers="['altKey','ctrlKey']" :key-code="81" @success="prevTitle")
-  //- w - prev title
-  Keypress(key-event="keyup" :preventDefault="true" :modifiers="['altKey','ctrlKey']" :key-code="87" @success="nextTitle")
-  //- a - prev content
-  Keypress(key-event="keyup" :preventDefault="true" :modifiers="['altKey','ctrlKey']" :key-code="65" @success="control.currentcontent--;control.content=true;")
-  //- s - next content
-  Keypress(key-event="keyup" :preventDefault="true" :modifiers="['altKey','ctrlKey']" :key-code="83" @success="control.currentcontent++;control.content=true;")
-  //- z - hide content
-  Keypress(key-event="keyup" :preventDefault="true" :modifiers="['altKey','ctrlKey']" :key-code="90" @success="control.content=false;")
-  //- x - show content
-  Keypress(key-event="keyup" :preventDefault="true" :modifiers="['altKey','ctrlKey']" :key-code="88" @success="control.content=true;")
-  //- ctrl + num - person
-  Keypress(key-event="keydown" :preventDefault="true" :modifiers="['altKey','ctrlKey']" @success="setPersonKey")
+  //- Keypress(key-event="keyup" :preventDefault="true" :modifiers="['altKey','ctrlKey']" :key-code="81" @success="prevTitle")
+  //- //- w - prev title
+  //- Keypress(key-event="keyup" :preventDefault="true" :modifiers="['altKey','ctrlKey']" :key-code="87" @success="nextTitle")
+  //- //- a - prev content
+  //- Keypress(key-event="keyup" :preventDefault="true" :modifiers="['altKey','ctrlKey']" :key-code="65" @success="control.currentcontent--;control.content=true;")
+  //- //- s - next content
+  //- Keypress(key-event="keyup" :preventDefault="true" :modifiers="['altKey','ctrlKey']" :key-code="83" @success="control.currentcontent++;control.content=true;")
+  //- //- z - hide content
+  //- Keypress(key-event="keyup" :preventDefault="true" :modifiers="['altKey','ctrlKey']" :key-code="90" @success="control.content=false;")
+  //- //- x - show content
+  //- Keypress(key-event="keyup" :preventDefault="true" :modifiers="['altKey','ctrlKey']" :key-code="88" @success="control.content=true;")
+  //- //- ctrl + num - person
+  //- Keypress(key-event="keydown" :preventDefault="true" :modifiers="['altKey','ctrlKey']" @success="setPersonKey")
 
   //- q-header.bg-primary.text-white(elevated height-hint="98")
     //- q-toolbar
@@ -37,7 +37,7 @@ q-layout(view="hHh lpR fFf")
             q-space
             q-route-tab(icon="home" to="/dashboard" v-if="!isAnon")
 
-        q-tab-panels.fixed.fixed-left.fixed-right.fixed-bottom(v-model="tab" v-if="loaded" padding style="top:72px;")
+        q-tab-panels.fixed.fixed-left.fixed-right.fixed-bottom(v-model="tab" v-if="loaded" padding style="top:72px;" keep-alive)
           q-tab-panel(name="help")
             .q-px-md.text-center
               q-btn(@click="tab='control'" size="lg" color="primary") Get Started
@@ -62,13 +62,13 @@ q-layout(view="hHh lpR fFf")
                       q-item-section(side)
                         q-icon(name="img:/img/title.svg" size="lg")
                       q-item-section(side)
-                        q-btn(@click="tab='titles'" dense flat) Add Title
+                        q-btn(@click="tab='titles'" dense flat) Manage Titles
                       q-item-section
                       q-item-section(side)
                         q-btn-toggle(v-model="control.title" :options="displayoptions" outline)
                         
                     q-separator
-                  q-scroll-area.full-height(v-if="display.draft && display.draft.titles")
+                  q-scroll-area.q-pb-xl.full-height(v-if="display.draft && display.draft.titles")
                     div(v-for="(title,index) in display.draft.titles" :key="index")
                       q-item(:class="{'text-info': display.title.title == title.title && display.title.subtitle == title.subtitle}" clickable v-ripple  @click="updatetitle(title)")
                         q-item-section(side)
@@ -77,6 +77,8 @@ q-layout(view="hHh lpR fFf")
                         q-item-section
                           q-item-label {{title.title}}
                           q-item-label(caption) {{title.subtitle}}
+                        q-item-section(side)
+                          flag(:item="title" :route="`draft/titles/${index}`" :fbref="$firebaseRefs.display")
                       q-separator
 
               
@@ -88,12 +90,12 @@ q-layout(view="hHh lpR fFf")
                       q-item-section(side)
                         q-icon(name="img:/img/person.svg" size="lg")
                       q-item-section(side)
-                        q-btn(@click="tab='people'" dense flat) Add Person
+                        q-btn(@click="tab='people'" dense flat) Manage People
                       q-item-section
                       q-item-section(side)
                         q-btn-toggle(v-model="control.people" :options="displayoptions" outline)
                     q-separator
-                  q-scroll-area.ful-height(:style="colStyle" v-if="display.draft && display.draft.people")
+                  q-scroll-area.q-pb-xl.ful-height(:style="colStyle" v-if="display.draft && display.draft.people")
                     div(:key="index" v-for="(people,index) in display.draft.people" )
                       q-item.relative(:class="{'text-info': display.people.name == people.name && display.people.affiliation == people.affiliation}" @click="fireperson(people)" clickable ripple)
                         q-linear-progress.absolute-left.full-height(style="opacity:0.3" v-show="peopletimer>0 && display.people.name == people.name && display.people.affiliation == people.affiliation" :value="1-(peopletimer/100)")
@@ -121,7 +123,7 @@ q-layout(view="hHh lpR fFf")
                       q-item-section(side)
                         q-icon(name="img:/img/card.svg" size="lg")
                       q-item-section(side)
-                        q-btn(@click="tab='content'" dense flat) Add Card
+                        q-btn(@click="tab='content'" dense flat) Manage Cards
                       q-item-section
                       q-item-section(side)
                         q-btn-toggle( v-model="control.content" :options="displayoptions" outline)
@@ -329,11 +331,11 @@ q-layout(view="hHh lpR fFf")
                   q-timeline-entry(subtitle="Display Class Names")
                     q-btn-toggle(v-model="control.debug" :options="displayoptions" outline)
 
-        q-page-sticky(position="bottom-left" :offset="[18,18]")
-          q-avatar(v-for="(person,key) in livepeople" :key="key" round icon="person" size="md").bg-grey-8.q-ml-xs
+        q-page-sticky(position="bottom-left" :offset="[10,10]")
+          q-avatar(v-for="(person,key) in livepeople" :key="key" round icon="person" size="sm").bg-grey-8.q-ml-xs
 
         q-page-sticky(position="bottom-right" :offset="[18, 18]")
-          q-btn(fab icon="tune" color="red" @click="tab='control'") Live
+          q-btn(fab icon="tune" color="red" @click="tab='control'" v-if="tab!='control'") Live
     q-inner-loading(:showing="!loaded")
 </template>
 
@@ -346,6 +348,7 @@ import ZoomSense from "./ZoomSense";
 import Keypress from "vue-keypress";
 import { DateTime } from "luxon";
 import { filter } from "lodash";
+import Flag from "./Flag.vue";
 // import * as Tone from 'tone';
 // const meter = new Tone.Meter();
 // const mic = new Tone.UserMedia();
@@ -363,6 +366,7 @@ export default {
     draggable,
     ZoomSense,
     Keypress,
+    Flag,
   },
   props: ["id"],
   timers: {

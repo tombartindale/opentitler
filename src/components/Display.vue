@@ -74,7 +74,8 @@ export default {
     allstyles(){
       let local = {
         '--main-background':this.colors.bgcolor,
-        '--primary':this.colors.primary
+        '--primary':this.colors.primary,
+        '--font':'Titillium Web'
       };
       return local;
     },
@@ -146,7 +147,7 @@ export default {
   
   color:white;
   position: absolute;
-  right:10px;
+  right:14px;
   top:10px;
   
   // border:solid 1px var(--primary);
