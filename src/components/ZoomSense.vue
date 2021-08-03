@@ -1,5 +1,5 @@
 <template lang="pug">
-div
+div.full-height
   ZoomSenseConnection(
     :token="token",
     v-on:zoomsense:loading="loadingchanged",
@@ -22,48 +22,52 @@ div
         label="Messages as Titles or Content"
         v-model="control.zoomsense_titles",
       )
-  div(v-show="showcontent && control.zoomsense_titles")
-    q-list.col
-      q-item
-        q-item-section
-          q-icon(name="img:/img/zoom.svg" size="lg")
-        q-item-section
-          q-item-label.text-uppercase {{ meetinginfo.topic }}
-        q-item-section(side)
-          q-btn-toggle(
-            v-model="control.zoomsense_autodisplay",
-            :options="displayoptions",
-            outline
-          )
-      q-separator 
+  div.relative.full-height(v-show="showcontent && control.zoomsense_titles")
+    
+    q-item
+      q-item-section(side)
+        q-icon(name="img:/img/zoom.svg" size="lg")
+      q-item-section(side)
+        q-item-label.text-uppercase {{ meetinginfo.topic }}
+      q-item-section
+      q-item-section(side)
+        q-toggle(
+          v-model="control.zoomsense_autodisplay",
+          outline
+          label="Immediate Display"
+          left-label
+        )
+    q-separator 
 
-      .text-center(v-show="loading && mytoken")
-        q-spinner-dots(size="3em")
+    .text-center(v-show="loading && mytoken")
+      q-spinner-dots(size="3em")
 
-      .text-center(v-if="!mytoken").q-pt-lg
-        q-btn(@click="$emit('gotoconfig')" color="primary") Configure ZoomSense
+    .text-center(v-if="!mytoken").q-pt-lg
+      q-btn(@click="$emit('gotoconfig')" color="primary") Configure ZoomSense
+    q-scroll-area.full-height.q-pb-xl
+      div(v-for="(content,index) of ordered",
+        :key="JSON.stringify(content)")
+        q-item(
 
-      q-item(
-        clickable,
-        v-ripple,
-        v-for="(content,index) of ordered",
-        :key="JSON.stringify(content)"
-      )
-        q-item-section
-          q-item-label.overflow-hidden {{ content.msg }}
-          q-item-label(caption) {{ content.msgSenderName }} - {{ ts(content.timestamp).format('h:mma') }}
-            //- q-item-section(side top)
-        q-item-section(side)
-          q-btn(
-            flat,
-            icon="ballot",
-            @click.capture.stop="addmessage(content, control.zoomsense_autodisplay)"
-          )
-          q-btn(
-            flat,
-            icon="title",
-            @click.capture.stop="addtitle(content, control.zoomsense_autodisplay)"
-          )
+        )
+          q-item-section
+            q-item-label.overflow-hidden {{ content.msg }}
+            q-item-label(caption) {{ content.msgSenderName }} - {{ ts(content.timestamp).format('h:mma') }}
+              //- q-item-section(side top)
+          q-item-section(side)
+            q-btn.tinted(
+              flat,
+              icon="img:/img/card.svg",
+              @click.capture.stop="addmessage(content, control.zoomsense_autodisplay)"
+            )
+              q-tooltip Add as Card
+            q-btn(
+              flat,
+              icon="img:/img/title.svg",
+              @click.capture.stop="addtitle(content, control.zoomsense_autodisplay)"
+            )
+              q-tooltip Add as Title
+        q-separator
 </template>
 
 <script>
