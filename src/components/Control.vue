@@ -150,6 +150,8 @@ q-layout(view="hHh lpR fFf")
                         q-item-section
                           q-item-label.overflow-hidden {{content.message}}
                           q-item-label {{content.caption}}
+                        q-item-section(side)
+                          flag(:item="content" :route="`content/${index}`" :fbref="$firebaseRefs.display")
                       q-separator
 
           q-tab-panel(name="people")
