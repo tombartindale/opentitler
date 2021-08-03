@@ -70,7 +70,7 @@ q-layout(view="hHh lpR fFf")
                     q-separator
                   q-scroll-area.q-pb-xl.full-height(v-if="display.draft && display.draft.titles")
                     div(v-for="(title,index) in display.draft.titles" :key="index")
-                      q-item(:class="{'text-info': display.title.title == title.title && display.title.subtitle == title.subtitle}" clickable v-ripple  @click="updatetitle(title)")
+                      q-item.border-off(:class="{'border-on': control.title && display.title.title == title.title && display.title.subtitle == title.subtitle}" clickable v-ripple  @click="updatetitle(title)")
                         q-item-section(side)
                           q-icon(color="red" :name="(display.title.title == title.title && display.title.subtitle == title.subtitle)?'monitor':''")
                           //- q-icon(name="blank" v-show="display.title.title != title.title && display.title.subtitle != title.subtitle")
@@ -97,7 +97,7 @@ q-layout(view="hHh lpR fFf")
                     q-separator
                   q-scroll-area.q-pb-xl.ful-height(:style="colStyle" v-if="display.draft && display.draft.people")
                     div(:key="index" v-for="(people,index) in display.draft.people" )
-                      q-item.relative(:class="{'text-info': display.people.name == people.name && display.people.affiliation == people.affiliation}" @click="fireperson(people)" clickable ripple)
+                      q-item.relative.border-off(:class="{'border-on': control.people && display.people.name == people.name && display.people.affiliation == people.affiliation}" @click="fireperson(people)" clickable ripple)
                         q-linear-progress.absolute-left.full-height(style="opacity:0.3" v-show="peopletimer>0 && display.people.name == people.name && display.people.affiliation == people.affiliation" :value="1-(peopletimer/100)")
                         q-item-section(side)
                           q-icon(color="red" name="monitor"  v-if="display.people" v-show="display.people.name == people.name && display.people.affiliation == people.affiliation")
@@ -139,7 +139,7 @@ q-layout(view="hHh lpR fFf")
 
                   q-scroll-area.full-height
                     div(:key="JSON.stringify(content)" v-for="(content,index) in display.content")
-                      q-item(:class="{'text-info': index == control.currentcontent}"  clickable v-ripple  @click="control.currentcontent = index")
+                      q-item.border-off(:class="{'border-on': control.content && index == control.currentcontent}"  clickable v-ripple  @click="control.currentcontent = index")
                         q-item-section(side)
                           q-icon(color="red" :name="(index == control.currentcontent)?'monitor':''") 
                         q-item-section(side)
@@ -863,5 +863,13 @@ export default {
 
 .colmin {
   min-width: 400px;
+}
+
+.border-off {
+  border: 1px dashed transparent;
+}
+
+.border-on {
+  border-color: red;
 }
 </style>
