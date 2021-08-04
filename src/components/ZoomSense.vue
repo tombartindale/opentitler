@@ -124,6 +124,7 @@ export default {
               let username = this.users[uid].username;
               this.$emit("update:person", { name: username });
             }
+
             //AND
 
             //did not change the notification really recently
