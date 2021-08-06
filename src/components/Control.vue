@@ -81,8 +81,6 @@ q-layout(view="hHh lpR fFf")
                           flag(:item="title" :route="`draft/titles/${index}`" :fbref="$firebaseRefs.display")
                       q-separator
 
-              
-
               .col-12.col-md-6.colmin
                 div.full-height.roundbox
                   q-list(separator v-if="display")
@@ -98,7 +96,7 @@ q-layout(view="hHh lpR fFf")
                   q-scroll-area.q-pb-xl.ful-height(:style="colStyle" v-if="display.draft && display.draft.people")
                     div(:key="index" v-for="(people,index) in display.draft.people" )
                       q-item.relative.border-off(:class="{'border-on': control.people && display.people.name == people.name && display.people.affiliation == people.affiliation}" @click="fireperson(people)" clickable ripple)
-                        q-linear-progress.absolute-left.full-height(style="opacity:0.3" v-show="peopletimer>0 && display.people.name == people.name && display.people.affiliation == people.affiliation" :value="1-(peopletimer/100)")
+                        q-linear-progress.z-bottom.absolute-left.full-height(style="opacity:0.3" v-show="peopletimer>0 && display.people.name == people.name && display.people.affiliation == people.affiliation" :value="1-(peopletimer/100)")
                         q-item-section(side)
                           q-icon(color="red" name="monitor"  v-if="display.people" v-show="display.people.name == people.name && display.people.affiliation == people.affiliation")
                           q-icon(name="blank" v-show="!(display.people.name == people.name && display.people.affiliation == people.affiliation)")
@@ -115,7 +113,6 @@ q-layout(view="hHh lpR fFf")
                 div.full-height.roundbox
                   ZoomSense.col(v-on:gotoconfig="tab='plugins'" :control="control" :token="control.zoomsense_token" v-on:update:token="savetoken" v-on:new:message="addmsg" v-on:new:title="addtitle" v-on:update:person="zoomperson" showcontent="true")
 
-                    
               .col-12.col-md-6.colmin
                 div.full-height.roundbox
                   q-list(separator)
@@ -131,10 +128,10 @@ q-layout(view="hHh lpR fFf")
                   q-list(separator)
                     q-item
                       q-btn-group(spread style="width:100%;")
-                        q-btn(dense color="primary" outline @click="control.currentcontent--")
+                        q-btn(dense color="primary" outline @click="prevContent")
                           q-icon(name="expand_less")
                         q-btn(dense disabled outline color="primary") {{control.currentcontent+1}}
-                        q-btn(dense color="primary" outline @click="control.currentcontent++")
+                        q-btn(dense color="primary" outline @click="nextContent")
                           q-icon(name="expand_more")
 
                   q-scroll-area.full-height
@@ -302,6 +299,12 @@ q-layout(view="hHh lpR fFf")
 
           q-tab-panel(name="style")
             .row
+              .col-12.col-md-6.offset-md-3
+                q-banner(rounded).q-my-md.bg-grey-9
+                  template(v-slot:avatar)
+                    q-icon(name="o_info" size="lg")
+                  .text-body1 Change advanced settings such as branding and style.
+
               .col-12.col-md-6.offset-md-3(v-if="display.config")
                 q-timeline
                   q-timeline-entry(subtitle="Settings")
@@ -485,6 +488,13 @@ export default {
         this.$firebaseRefs.control.child("title").set(true);
       }
     },
+    prevContent() {
+      if (this.control.currentcontent > 0) this.control.currentcontent--;
+    },
+    nextContent() {
+      if (this.control.currentcontent < this.display.content.length - 1)
+        this.control.currentcontent++;
+    },
     addmsg(msg, display) {
       this.display.content.push(msg);
       this.$firebaseRefs.display.child("content").set(this.display.content);
@@ -645,11 +655,24 @@ export default {
       this.peopletimer = 0;
     },
     zoomperson(person) {
-      //find person affiliation:
-      for (let p of this.display.draft.people) {
-        if (p.name == person.name) person.affiliation = p.affiliation;
+      //only fire if this is the master account:
+      if (!this.isAnon) {
+        //find person affiliation:
+        let found = false;
+        for (let p of this.display.draft.people) {
+          if (p.name == person.name) {
+            found = true;
+            person.affiliation = p.affiliation;
+          }
+        }
+
+        if (!found) {
+          this.newperson.name = person.name;
+          this.person_add();
+        }
+
+        this.fireperson(person);
       }
-      this.fireperson(person);
     },
     fireperson(person) {
       this.updateperson(person);

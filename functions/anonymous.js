@@ -52,13 +52,13 @@ exports.decryptToken = functions.https.onCall(async (data, context) => {
   try {
     const decryptedString = cryptr.decrypt(token);
     const decryptedArr = decryptedString.split("|");
-    console.log(decryptedArr);
+    // console.log(decryptedArr);
     if (decryptedArr[0] === encryptionKey) {
       const displayid = decryptedArr[1];
       const userid = decryptedArr[2];
-      console.log(displayid);
-      console.log(userid);
-      console.log(token);
+      // console.log(displayid);
+      // console.log(userid);
+      // console.log(token);
       const tokenSnap = await anonymousTokens
         .child(`${userid}/${displayid}/token`)
         .once("value");
@@ -70,14 +70,14 @@ exports.decryptToken = functions.https.onCall(async (data, context) => {
           "The token provided has expired."
         );
     } else {
-      console.error("encryption key does not match");
+      // console.error("encryption key does not match");
       throw new functions.https.HttpsError(
         "invalid-argument",
         "The token provided is not a valid token containing the anonymous login details."
       );
     }
   } catch (error) {
-    console.error(error);
+    // console.error(error);
     throw new functions.https.HttpsError(
       "invalid-argument",
       "The token provided is not a valid token containing the anonymous login details."

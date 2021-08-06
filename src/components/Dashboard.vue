@@ -34,7 +34,7 @@ q-layout(view="hHh lpR fFf")
                     .text-subtitle.text-grey-7 {{timeFrom(display.lastTouched) || 'Never'}}
                   q-separator(inset vertical)
                   q-card-section.text-center.self-center
-                    q-btn(flat size="xl" stack icon="link" @click="showConnect=true") Connect
+                    q-btn(flat size="xl" stack icon="link" @click="currentindex=index;showConnect=true") Connect
                     q-dialog(v-model="showConnect")
                       q-card(style="width: 700px; max-width: 80vw;")
                         q-card-section
@@ -43,7 +43,7 @@ q-layout(view="hHh lpR fFf")
                         q-card-section.text-center
                           p Copy the following link and paste it into the URL input box in the 'Browser Source' settings in OBS. 
                             q-btn(dense flat @click="showConnect=false;showInstructions()") Help setting up OBS.
-                          q-input.col.q-mb-lg(readonly outlined type="text" :value="geturl(index)" size="xl")
+                          q-input.col.q-mb-lg(readonly outlined type="text" :value="geturl(currentindex)" size="xl")
                             q-tooltip Copy this link and paste into an OBS Browser Source.
                             template(v-slot:prepend)
                               q-icon(name="link")
@@ -114,6 +114,7 @@ export default {
       shareCard: false,
       tokenSuccess: false,
       getLinkLoading: false,
+      currentindex: 0,
     };
   },
   computed: {

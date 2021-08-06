@@ -1,5 +1,14 @@
 {
   "projects": {
     "default": "obstally"
+  },
+  "targets": {
+    "obstally": {
+      "hosting": {
+        "opentitler": [
+          "opentitler"
+        ]
+      }
+    }
   }
 }

@@ -4,6 +4,8 @@ admin.initializeApp({
 });
 
 const anonymous = require("./anonymous");
+const logging = require("./logging");
 
 exports.decryptToken = anonymous.decryptToken;
 exports.generateLink = anonymous.generateLink;
+exports.logChange = logging.logChange;

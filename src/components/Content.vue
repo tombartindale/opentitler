@@ -17,28 +17,26 @@
 
 <script>
 export default {
-  name: 'Content',
-  data(){
+  name: "Content",
+  data() {
     return {
-      offset:0
-    }
+      offset: 0,
+    };
   },
-  props:{
-    data:Array,
-    current:Number
-  }
-}
+  props: {
+    data: Array,
+    current: Number,
+  },
+};
 </script>
 
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Indie+Flower&display=swap');
-</style> 
+@import url("https://fonts.googleapis.com/css2?family=Indie+Flower&display=swap");
+</style>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style lang="scss" scoped>
-
 .wrapper {
-  
 }
 
 .content {
@@ -46,14 +44,13 @@ export default {
   // background: green;
   // height:100%;
   z-index: -3;
-  right:20px;
-  
+  right: 20px;
+
   // color:white;
   font-size: 30px;
-  line-height:60px;
+  line-height: 60px;
   // display: block;
-  
-  
+
   transition: top 2s;
   // background: red;
 
@@ -62,33 +59,32 @@ export default {
 }
 
 .persona {
-
   border-radius: 20px;
-  background:white;
-  padding:20px;
+  background: white;
+  padding: 20px;
   min-height: 190px;
   font-family: Titillium Web;
 
   .p_img {
-    width:150px;
+    width: 150px;
     border-radius: 50%;
-    height:150px;
-    float:right;
+    height: 150px;
+    float: right;
   }
 
   .p_text {
     line-height: 40px;
-    color:darkslategray;
+    color: darkslategray;
     word-wrap: break-word;
   }
 
   .p_caption {
-    color:var(--primary);
+    color: var(--primary);
   }
 }
 
 .message {
-  height:100%;
+  height: 100%;
   // background: green;
   display: flex;
   justify-content: center;
@@ -96,78 +92,78 @@ export default {
 }
 
 .text {
-  
-
   .message {
-    max-width:550px;
+    max-width: 550px;
     min-width: 200px;
     border-left: 1px solid white;
     border-right: 1px solid white;
     padding: 20px;
-    margin-top:auto;
-    margin-bottom:auto;
-    color:white;
+    margin-top: auto;
+    margin-bottom: auto;
+    color: white;
     text-align: center;
     font-size: 0.9em;
     line-height: 1.3em;
     word-wrap: break-word;
     display: inline-block;
-    background:rgba(0,0,0,0.2);
+    background: rgba(0, 0, 0, 0.2);
   }
 
   .caption {
-    text-align:right;
+    text-align: right;
     font-size: 0.5em;
-    margin-top:-20px;
+    margin-top: -20px;
   }
-
-  
 }
 
 .imagec {
-  border: 10px solid white;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 20%;
+  border: 5px solid white;
   box-shadow: 0px 0px 20px #00000077;
   background: white;
   border-radius: 1px;
   background: white;
 
   img {
-    max-height:450px;
-    max-width:450px;
+    max-height: 450px;
+    max-width: 450px;
   }
 
   .caption {
     background: white;
-    color:black;
+    color: black;
     // padding-top:10px;
-    padding-left:10px;
-    padding-right:10px;
-    margin-top:-10px;
+    padding-left: 10px;
+    padding-right: 10px;
+    margin-top: -10px;
     font-family: Indie Flower;
     line-height: 30px;
   }
 }
 
 .flipper {
-      -webkit-animation-iteration-count: infinite; 
-            animation-iteration-count: infinite;
-    -webkit-animation-timing-function: linear;
-            animation-timing-function: linear;
-   -webkit-animation-name: flipperan;
-           animation-name: flipperan;
-    -webkit-animation-duration: 5s;
-            animation-duration: 5s;
+  -webkit-animation-iteration-count: infinite;
+  animation-iteration-count: infinite;
+  -webkit-animation-timing-function: linear;
+  animation-timing-function: linear;
+  -webkit-animation-name: flipperan;
+  animation-name: flipperan;
+  -webkit-animation-duration: 5s;
+  animation-duration: 5s;
 }
 
 .flipperout {
-      -webkit-animation-iteration-count: infinite; 
-            animation-iteration-count: infinite;
-    -webkit-animation-timing-function: linear;
-            animation-timing-function: linear;
-   -webkit-animation-name: flipperou;
-           animation-name: flipperou;
-    -webkit-animation-duration: 5s;
-            animation-duration: 5s;
+  -webkit-animation-iteration-count: infinite;
+  animation-iteration-count: infinite;
+  -webkit-animation-timing-function: linear;
+  animation-timing-function: linear;
+  -webkit-animation-name: flipperou;
+  animation-name: flipperou;
+  -webkit-animation-duration: 5s;
+  animation-duration: 5s;
 }
 
 @-webkit-keyframes flipperan {
