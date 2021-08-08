@@ -68,7 +68,7 @@ q-layout(view="hHh lpR fFf")
                         q-btn-toggle(v-model="control.title" :options="displayoptions" outline)
                         
                     q-separator
-                  q-scroll-area.q-pb-xl.full-height(v-if="display.draft && display.draft.titles")
+                  q-scroll-area.pad-bottom.full-height(v-if="display.draft && display.draft.titles")
                     div(v-for="(title,index) in display.draft.titles" :key="index")
                       q-item.border-off(:class="{'border-on': control.title && display.title.title == title.title && display.title.subtitle == title.subtitle}" clickable v-ripple  @click="updatetitle(title)")
                         q-item-section(side)
@@ -93,7 +93,7 @@ q-layout(view="hHh lpR fFf")
                       q-item-section(side)
                         q-btn-toggle(v-model="control.people" :options="displayoptions" outline)
                     q-separator
-                  q-scroll-area.q-pb-xl.ful-height(:style="colStyle" v-if="display.draft && display.draft.people")
+                  q-scroll-area.pad-bottom.full-height(v-if="display.draft && display.draft.people")
                     div(:key="index" v-for="(people,index) in display.draft.people" )
                       q-item.relative.border-off(:class="{'border-on': control.people && display.people.name == people.name && display.people.affiliation == people.affiliation}" @click="fireperson(people)" clickable ripple)
                         q-linear-progress.z-bottom.absolute-left.full-height(style="opacity:0.3" v-show="peopletimer>0 && display.people.name == people.name && display.people.affiliation == people.affiliation" :value="1-(peopletimer/100)")
@@ -105,7 +105,6 @@ q-layout(view="hHh lpR fFf")
                           q-item-label(caption) {{people.affiliation}}
                         q-item-section(side)
                           div
-                            //- q-circular-progress(v-if="display.people" v-show="display.people.name == people.name && display.people.affiliation == people.affiliation" :value="peopletimer")
                             q-btn(flat dense icon="monitor" @click.capture.stop="updateperson(people)" color="primary")
                       q-separator
 
@@ -134,7 +133,7 @@ q-layout(view="hHh lpR fFf")
                         q-btn(dense color="primary" outline @click="nextContent")
                           q-icon(name="expand_more")
 
-                  q-scroll-area.full-height
+                  q-scroll-area.full-height.pad-bottomxl
                     div(:key="index" v-for="(content,index) in display.content")
                       q-item.border-off(:class="{'border-on': control.content && index == control.currentcontent}"  clickable v-ripple  @click="control.currentcontent = index")
                         q-item-section(side)
@@ -719,11 +718,11 @@ export default {
         ? 100
         : 50;
     },
-    colStyle() {
-      return {
-        height: this.colheight + "px",
-      };
-    },
+    // colStyle() {
+    //   return {
+    //     height: this.colheight + "px",
+    //   };
+    // },
     splitStyle() {
       return {
         height: this.colheight - 48 + "px",
@@ -918,5 +917,13 @@ export default {
 
 .border-on {
   border-color: red;
+}
+
+.pad-bottom {
+  padding-bottom: 4em;
+}
+
+.pad-bottomxl {
+  padding-bottom: 8em;
 }
 </style>

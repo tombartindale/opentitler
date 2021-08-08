@@ -6,7 +6,7 @@ q-layout(view="hHh lpR fFf")
         q-avatar
           q-icon(name="web")
         | Displays for {{userid.email}}
-      div {{version}}
+      div v{{version}}
       q-btn(flat right @click="logout" icon="logout")
 
   q-page-container
