@@ -50,12 +50,15 @@ import Time from './Time';
 import Watermark from './Watermark';
 import Content from './Content';
 import Title from './Title';
+import StyleVars from './../mixins/StyleVars';
+import {find} from 'lodash';
 
 const alldisplays = db.ref('displays');
 
 export default {
   name: 'Display',
   props:['id','userid' ],
+  mixins:[StyleVars],
   data() {
     return {
       display: Object,
@@ -72,24 +75,25 @@ export default {
   },
   computed:{
     allstyles(){
-      let local = {
-        '--main-background':this.colors.bgcolor,
-        '--primary':this.colors.primary,
-        '--font':'Titillium Web'
-      };
-      return local;
+      let returns = {};
+      this.stylevars.forEach(el => {
+        returns[`--${el.name}`] = `${this.styleconfig(el.name)}${(el.type=='numeric')?'px':''}`;
+      });
+
+      console.log(returns);
+      return returns;
     },
-    colors(){
-      if (this.display.config && this.display.config.colors)
+    
+  },
+  methods:{
+    styleconfig(name){
+      if (this.display.config && this.display.config.stylevars && this.display.config.stylevars[name])
       {
-        return this.display.config.colors;
+        return this.display.config.stylevars[name];
       }
       else
       {
-        return {
-          bgcolor:'green',
-          primary:'red'
-        }
+        return find(this.stylevars,{name:name}).default;
       }
     }
   },

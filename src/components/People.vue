@@ -32,8 +32,8 @@ export default {
   top: 50px;
   color: white;
   font-family: var(--font);
-  /* box-shadow: 0px 0px 10px #00000077; */
-  /* filter: drop-shadow(0 0 10px #00000077); */
+  /* box-shadow: 0px 0px 10px #ff010177; */
+  filter: drop-shadow(0 0 var(--shadow-depth) var(--shadow-color));
   font-size: 1.3rem;
   text-align: right;
 }

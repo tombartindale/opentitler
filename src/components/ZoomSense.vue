@@ -46,7 +46,7 @@ div.full-height
       q-btn(@click="$emit('gotoconfig')" color="primary") Configure ZoomSense
     q-scroll-area.full-height.q-pb-xl
       div(v-for="(content,index) of ordered",
-        :key="JSON.stringify(content)")
+        :key="index")
         q-item(
 
         )

@@ -135,7 +135,7 @@ q-layout(view="hHh lpR fFf")
                           q-icon(name="expand_more")
 
                   q-scroll-area.full-height
-                    div(:key="JSON.stringify(content)" v-for="(content,index) in display.content")
+                    div(:key="index" v-for="(content,index) in display.content")
                       q-item.border-off(:class="{'border-on': control.content && index == control.currentcontent}"  clickable v-ripple  @click="control.currentcontent = index")
                         q-item-section(side)
                           q-icon(color="red" :name="(index == control.currentcontent)?'monitor':''") 
@@ -194,20 +194,20 @@ q-layout(view="hHh lpR fFf")
                 q-card(flat bordered).bg-grey-10
                   q-card-section
                     q-option-group(inline :options="contenttypes" v-model="newcontent.itemtype")
-                    q-input(label="Message" type="text" v-model="newcontent.message")
-                    q-input(label="Image URL" type="text" v-model="newcontent.image")
-                    q-input(label="Caption" type="text" v-model="newcontent.caption")
+                    q-input(label="Message" type="text" v-model="newcontent.message" v-if="newcontent.itemtype=='message'")
+                    q-input(label="Image URL" type="text" v-model="newcontent.image" v-if="newcontent.itemtype=='image'")
+                    q-input(label="Caption" type="text" v-model="newcontent.caption" v-if="newcontent.itemtype=='image'")
                   q-separator
                   q-card-actions(align="right")
                     q-btn(flat @click="content_add()") Add New
 
                 div.q-mt-md(v-if="display.content && display.content" v-for="(content,index) in display.content")
-                  q-card.bg-grey-10.column.full-height(flat bordered )
-                    q-card-section.col
-                      q-badge(floating transparent) {{content.itemtype}}
+                  q-card.bg-grey-10.full-height.relative(flat bordered)
+                    q-chip.absolute-right.z-max(color="secondary" size="md" rounded) {{content.itemtype}}
+                    q-img(v-if="content.image" contain :src="content.image")
+                      .absolute-bottom.text-subtitle1.text-center {{content.caption}}
+                    q-card-section(v-if="content.message").col-auto
                       p {{content.message}}
-                      q-img(v-if="content.image" contain :src="content.image" style="height:100%;")
-                        .absolute-bottom.text-subtitle1.text-center {{content.caption}}
                     q-separator
                     q-card-actions.col-auto(align="right")
                       q-btn(flat @click="content_remove(index)") Remove
@@ -312,22 +312,24 @@ q-layout(view="hHh lpR fFf")
                       template(v-slot:append v-if="dirty.name != display.name" )
                         q-avatar
                           q-icon(name="create")
-                  q-timeline-entry(subtitle="Brand Colors")
-                    //- p Brand colors
-                    .row.q-gutter-xs
-                      q-avatar(:style="{'background-color':display.config.colors.bgcolor}" style="border:1px solid silver")
-                      q-input.col-3( outlined v-model="display.config.colors.bgcolor"  :rules="['anyColor']" label="Background Color")
-                        template(v-slot:append)
-                          q-icon(name="colorize" class="cursor-pointer")
-                            q-popup-proxy(transition-show="scale" transition-hide="scale")
-                              q-color(v-model="display.config.colors.bgcolor" format-model="hex" @input="updatecolor")
-                      
-                      q-avatar(:style="{'background-color':display.config.colors.primary}" style="border:1px solid silver")
-                      q-input.col-3(outlined v-model="display.config.colors.primary" :rules="['anyColor']" label="Primary Color")
-                        template(v-slot:append)
-                          q-icon(name="colorize" class="cursor-pointer")
-                            q-popup-proxy(transition-show="scale" transition-hide="scale")
-                              q-color(v-model="display.config.colors.primary" format-model="hex" @input="updatecolor")
+
+                  q-timeline-entry(subtitle="Adjust Style")
+                    .row
+                      .col-4(v-for="style of stylevars")
+                        div(v-if="style.type=='color'")
+                          q-input.on-left(outlined v-model="display.config.stylevars[style.name]" :rules="['anyColor']" :label="style.display")
+                            template(v-slot:before)
+                              q-avatar(:style="{'background-color':display.config.stylevars[style.name]}" style="border:1px solid silver;" size="xl")
+                            template(v-slot:append)
+                              q-icon(name="colorize" class="cursor-pointer")
+                                q-popup-proxy(transition-show="scale" transition-hide="scale")
+                                  q-color(v-model="display.config.stylevars[style.name]" format-model="hex" @input="updatestyle()")
+
+                        div(v-if="style.type=='font'")
+                          q-input.on-left(outlined v-model="display.config.stylevars[style.name]" :label="style.display" @input="updatestyle()")
+
+                        div(v-if="style.type=='numeric'")
+                          q-input.on-left(outlined v-model.number="display.config.stylevars[style.name]" type="number" suffix="px" :label="style.display" @input="updatestyle()")
 
                   q-timeline-entry(subtitle="Advanced Formatting")
                     q-input(type="textarea" v-model="display.config.style" outlined label="Style CSS")
@@ -354,6 +356,7 @@ import Keypress from "vue-keypress";
 import { DateTime } from "luxon";
 import { filter } from "lodash";
 import Flag from "./Flag.vue";
+import StyleVars from "./../mixins/StyleVars";
 // import * as Tone from 'tone';
 // const meter = new Tone.Meter();
 // const mic = new Tone.UserMedia();
@@ -373,6 +376,7 @@ export default {
     Keypress,
     Flag,
   },
+  mixins: [StyleVars],
   props: ["id"],
   timers: {
     activeUser: { time: 5000, autostart: true, repeat: true },
@@ -400,10 +404,10 @@ export default {
           label: "Image",
           value: "image",
         },
-        {
-          label: "Profile",
-          value: "profile",
-        },
+        // {
+        //   label: "Profile",
+        //   value: "profile",
+        // },
         {
           label: "Video",
           value: "video",
@@ -540,11 +544,11 @@ export default {
     updatecontent() {
       this.$firebaseRefs.display.child("content").set(this.display.content);
     },
-    updatecolor() {
+    updatestyle() {
       this.$firebaseRefs.display
         .child("config")
-        .child("colors")
-        .set(this.display.config.colors);
+        .child("stylevars")
+        .set(this.display.config.stylevars);
     },
     savestyle() {
       this.$firebaseRefs.display
@@ -730,6 +734,14 @@ export default {
 
       return firebase.auth().currentUser;
     },
+    allstyles() {
+      let returns = {};
+      this.stylevars.forEach((el) => {
+        returns[`${el.name}`] = el.default;
+      });
+
+      return returns;
+    },
   },
   watch: {
     id: {
@@ -757,10 +769,7 @@ export default {
           {
             config: {
               style: "",
-              colors: {
-                bgcolor: "",
-                primary: "",
-              },
+              stylevars: { ...this.allstyles },
             },
 
             content: [],
@@ -795,6 +804,21 @@ export default {
 
         // console.log(this.display);
 
+        //retrofit style:
+        if (this.display.config.colors) {
+          this.display.config.stylevars = this.allstyles;
+          this.display.config.stylevars[
+            "main-background"
+          ] = this.display.config.colors.bgcolor;
+          this.display.config.stylevars[
+            "primary"
+          ] = this.display.config.colors.primary;
+        }
+
+        this.display.config.colors = null;
+
+        console.log(this.display.config);
+
         await this.$firebaseRefs.display.set(this.display);
 
         // console.log("********");
@@ -805,7 +829,7 @@ export default {
             ticker: {},
             watermark: {},
           },
-          JSON.parse(JSON.stringify(this.display))
+          { ...this.display }
         );
 
         this.loaded = true;

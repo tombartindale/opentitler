@@ -6,6 +6,7 @@ q-layout(view="hHh lpR fFf")
         q-avatar
           q-icon(name="web")
         | Displays for {{userid.email}}
+      div {{version}}
       q-btn(flat right @click="logout" icon="logout")
 
   q-page-container
@@ -118,6 +119,9 @@ export default {
     };
   },
   computed: {
+    version() {
+      return process.env.VUE_APP_VERSION;
+    },
     userid() {
       return firebase.auth().currentUser;
     },

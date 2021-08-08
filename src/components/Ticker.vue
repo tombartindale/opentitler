@@ -59,6 +59,7 @@ $width: 1150px;
   // border-left:5px var(--primary) solid;
   overflow: hidden;
   height: 30px;
+  // filter: drop-shadow(0 0 var(--shadow-depth) var(--shadow-color));
 }
 
 .inner_ticker {

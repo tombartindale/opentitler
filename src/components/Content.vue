@@ -1,9 +1,12 @@
 <template lang="pug">
 .content_wrapper
   .content(v-if="data" :class="content.itemtype" v-for="(content,index) in data" v-bind:style="{top: offset + (index-current)*720+'px'}")
-    .imagec(v-if="content.itemtype=='image'")
-      img(:src="content.image")
-      .caption {{content.caption}}
+    .column.justify-center.full-height(style="max-height:400px;")
+      .imagec(v-if="content.itemtype=='image'")
+        //-   .column.items-center
+        img(:src="content.image")
+        
+        .caption {{content.caption}}
 
     .text(v-if="content.itemtype=='message'")
       .message {{content.message}}
@@ -41,8 +44,9 @@ export default {
 
 .content {
   position: absolute;
-  // background: green;
-  // height:100%;
+  height: 720px;
+  background: green;
+  // height: 100%;
   z-index: -3;
   right: 20px;
 
@@ -58,34 +62,33 @@ export default {
   // transform: perspective(1500px) rotateY(-15deg);
 }
 
-.persona {
-  border-radius: 20px;
-  background: white;
-  padding: 20px;
-  min-height: 190px;
-  font-family: Titillium Web;
+// .persona {
+//   border-radius: 20px;
+//   background: white;
+//   padding: 20px;
+//   min-height: 190px;
+//   font-family: Titillium Web;
 
-  .p_img {
-    width: 150px;
-    border-radius: 50%;
-    height: 150px;
-    float: right;
-  }
+//   .p_img {
+//     width: 150px;
+//     border-radius: 50%;
+//     height: 150px;
+//     float: right;
+//   }
 
-  .p_text {
-    line-height: 40px;
-    color: darkslategray;
-    word-wrap: break-word;
-  }
+//   .p_text {
+//     line-height: 40px;
+//     color: darkslategray;
+//     word-wrap: break-word;
+//   }
 
-  .p_caption {
-    color: var(--primary);
-  }
-}
+//   .p_caption {
+//     color: var(--primary);
+//   }
+// }
 
 .message {
   height: 100%;
-  // background: green;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -110,17 +113,18 @@ export default {
   }
 
   .caption {
-    text-align: right;
+    text-align: center;
     font-size: 0.5em;
     margin-top: -20px;
   }
 }
 
 .imagec {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  margin-top: 20%;
+  // display: flex;
+  // justify-content: center;
+  // align-items: center;
+  // margin-top: 20%;
+  text-align: center;
   border: 5px solid white;
   box-shadow: 0px 0px 20px #00000077;
   background: white;
@@ -128,11 +132,13 @@ export default {
   background: white;
 
   img {
-    max-height: 450px;
-    max-width: 450px;
+    // max-height: 420px;
+    // max-width: 400px;
+    width: 100%;
   }
 
   .caption {
+    min-width: 0;
     background: white;
     color: black;
     // padding-top:10px;
