@@ -194,7 +194,7 @@ q-layout(view="hHh lpR fFf")
                   q-card-section
                     q-option-group(inline :options="contenttypes" v-model="newcontent.itemtype")
                     q-input(label="Message" type="text" v-model="newcontent.message" v-if="newcontent.itemtype=='message'")
-                    q-input(label="Image URL" type="text" v-model="newcontent.image" v-if="newcontent.itemtype=='image'")
+                    q-input(label="Image URL" type="text" v-model="newcontent.image" v-if="newcontent.itemtype=='image'" hint="Accepts any public URL or Google Drive shared link (Anyone with Link)")
                     q-input(label="Caption" type="text" v-model="newcontent.caption" v-if="newcontent.itemtype=='image'")
                   q-separator
                   q-card-actions(align="right")
@@ -353,7 +353,7 @@ import draggable from "vuedraggable";
 import ZoomSense from "./ZoomSense";
 import Keypress from "vue-keypress";
 import { DateTime } from "luxon";
-import { filter } from "lodash";
+import { filter, includes } from "lodash";
 import Flag from "./Flag.vue";
 import StyleVars from "./../mixins/StyleVars";
 // import * as Tone from 'tone';
@@ -557,6 +557,18 @@ export default {
     },
     content_add() {
       if (!this.display.content) this.display.content = [];
+
+      //google drive share fix:
+      //https://drive.google.com/file/d/1n9CixwDn1wDoTsKccpv9b7clPqHJb1jS/view?usp=sharing
+
+      //https://drive.google.com/open?id=DRIVE_FILE_ID
+      //https://drive.google.com/uc?id=1n9CixwDn1wDoTsKccpv9b7clPqHJb1jS
+      if (includes(this.newcontent.image, "https://drive.google.com/file/d/")) {
+        let id = this.newcontent.image
+          .replace("https://drive.google.com/file/d/", "")
+          .split("/view")[0];
+        this.newcontent.image = `https://drive.google.com/uc?id=${id}`;
+      }
 
       this.display.content.push(this.newcontent);
       this.newcontent = {
@@ -916,7 +928,7 @@ export default {
 }
 
 .border-on {
-  border-color: red;
+  border-color: rgb(186, 29, 29);
 }
 
 .pad-bottom {
