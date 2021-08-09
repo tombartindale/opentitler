@@ -255,11 +255,29 @@ q-layout(view="hHh lpR fFf")
                 q-timeline
                   q-timeline-entry(subtitle="Display")
                     q-toggle(v-model="control.ticker" val="true"  toggle-color="primary" label="Display ticker")
-                  q-timeline-entry(subtitle="Content")
-                    q-input(v-model="dirty.ticker.message" clearable label="Ticker text" v-on:keyup.enter="updateticker" outlined)
-                      template(v-slot:append v-if="dirty.ticker.message != display.ticker.message")
-                        q-avatar
-                          q-icon(name="create")
+                  q-timeline-entry(subtitle="Current Display")
+                    q-input(disable v-model="display.ticker.message" autogrow outlined dense)
+                  q-timeline-entry(subtitle="Edit Content")
+                    q-list(separator)
+                      q-item.bg-grey-10
+                        q-item-section
+                          q-input.q-mb-xs(label="New ticker text" v-model="newticker.message" dense outlined)
+                        q-item-section(side)
+                          q-btn(round flat @click="ticker_add()" icon="add")
+                      q-separator
+                      div(v-if="display.draft && display.draft.ticker")
+                        draggable(v-model="display.draft.ticker" group="ticker" @end="updateticker" )
+                          div.bg-grey-10(:key="index" v-for="(ticker,index) in display.draft.ticker")
+                            q-item
+                              q-item-section(side)
+                                q-icon(name="drag_indicator")
+                              q-item-section(side)
+                                q-checkbox(v-model="ticker.selected" @input="updateticker")
+                              q-item-section
+                                q-item-label {{ticker.message}}
+                              q-item-section(side)
+                                q-btn(round flat @click="ticker_remove(index)" icon="delete")
+                            q-separator
 
 
 
@@ -360,7 +378,7 @@ import draggable from "vuedraggable";
 import ZoomSense from "./ZoomSense";
 import Keypress from "vue-keypress";
 import { DateTime } from "luxon";
-import { filter, includes } from "lodash";
+import { filter, includes, map } from "lodash";
 import Flag from "./Flag.vue";
 import StyleVars from "./../mixins/StyleVars";
 import Chat from "./Chat.vue";
@@ -412,10 +430,6 @@ export default {
           label: "Image",
           value: "image",
         },
-        // {
-        //   label: "Profile",
-        //   value: "profile",
-        // },
         {
           label: "Video",
           value: "video",
@@ -441,6 +455,10 @@ export default {
       newtitle: {
         title: "",
         subtitle: "",
+      },
+      newticker: {
+        message: "",
+        selected: false,
       },
       newcontent: {
         itemtype: "message",
@@ -596,6 +614,33 @@ export default {
       // console.log(this.display.draft.people);
       this.$firebaseRefs.display.child("content").set(this.display.content);
     },
+    ticker_add() {
+      if (!this.display.draft) this.display.draft = {};
+
+      if (!this.display.draft.ticker) this.display.draft.ticker = [];
+      if (this.newticker.message != "") {
+        this.display.draft.ticker.push(this.newticker);
+        this.newticker = {
+          message: "",
+          selected: false,
+        };
+        this.$firebaseRefs.display
+          .child("draft")
+          .child("ticker")
+          .set(this.display.draft.ticker);
+      }
+    },
+    ticker_remove(index) {
+      // console.log(this.display.draft);
+      this.display.draft.ticker.splice(index, 1);
+      // console.log(this.display.draft.people);
+      this.$firebaseRefs.display
+        .child("draft")
+        .child("ticker")
+        .set(this.display.draft.ticker);
+
+      this.updateticker();
+    },
     title_add() {
       if (!this.display.draft) this.display.draft = {};
 
@@ -648,8 +693,22 @@ export default {
         .set(this.display.draft.people);
     },
     updateticker() {
-      // console.log(val);
-      this.$firebaseRefs.display.child("ticker").set(this.dirty.ticker);
+      //save the draft ticker (order etc might have changed)
+      if (this.display.draft.ticker) {
+        this.$firebaseRefs.display
+          .child("draft")
+          .child("ticker")
+          .set(this.display.draft.ticker);
+      }
+
+      //for each ticker in order
+      //if selected, concat
+      let result = filter(this.display.draft.ticker, "selected");
+      result = map(result, "message");
+      result = result.join(" · ");
+      this.display.ticker.message = result;
+
+      this.$firebaseRefs.display.child("ticker").set(this.display.ticker);
     },
     updatename() {
       // console.log(val);
