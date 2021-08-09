@@ -20,7 +20,7 @@ q-layout(view="hHh lpR fFf")
       
       //- q-toolbar-title {{display.name}}
   
-  q-drawer(v-model="chatopen" :width="300" side="right" overlay :content-style="{'background-color':'#00000000'}")
+  q-drawer(v-if="livepeople.length>0" v-model="chatopen" :width="300" side="right" overlay :content-style="{'background-color':'#00000000'}")
     chat(v-on:new:message="onChatMsg" :id="id" :uid="uid")
     q-btn(v-show="chatopen" @click="chatopen=false;" dense round :icon="(chatopen)?'keyboard_arrow_right':'chat'" color="primary" style="bottom:8px;left:-40px;").absolute
   
@@ -341,10 +341,13 @@ q-layout(view="hHh lpR fFf")
                   q-timeline-entry(subtitle="Display Class Names")
                     q-btn-toggle(v-model="control.debug" :options="displayoptions" outline)
 
-        q-page-sticky(position="bottom-left" :offset="[10,10]")
-          q-avatar(v-for="(person,key) in livepeople" :key="key" round icon="person" size="sm").bg-grey-8.q-ml-xs
+        q-page-sticky(position="bottom-right" :offset="[10,10]" v-if="livepeople.length>0" v-show="!chatopen")
+          q-avatar(round icon="person" size="sm").bg-grey-8.q-ml-xs
+            q-tooltip {{'Me'}}
+          q-avatar(v-for="(person,key) of livepeople" :key="key" round icon="person" size="sm").bg-grey-8.q-ml-xs
+            q-tooltip {{'Producer'}}
+          q-btn.on-right( :class="{'ring':hasmessages}"   @click="chatopen=true;clearChatMsg();" dense round :icon="(chatopen)?'keyboard_arrow_right':'chat'" color="primary")
 
-        q-btn(:class="{'ring':hasmessages}"  v-show="!chatopen" @click="chatopen=true;clearChatMsg();" dense round :icon="(chatopen)?'keyboard_arrow_right':'chat'" color="primary" style="bottom:8px;right:8px;").fixed
     
     q-inner-loading(:showing="!loaded")
 </template>
@@ -396,7 +399,7 @@ export default {
   },
   data() {
     return {
-      chatopen: true,
+      chatopen: false,
       zoomsense: {},
       watermarkImg: null,
       showExample: true,
@@ -722,12 +725,14 @@ export default {
   },
   computed: {
     livepeople() {
-      return filter(this.display.activeUsers, (dd) => {
+      return filter(this.display.activeUsers, (dd, key) => {
+        // console.log(key);
         return (
+          key != this.uid &&
           dd >
-          DateTime.now()
-            .minus({ minute: 1 })
-            .toSeconds()
+            DateTime.now()
+              .minus({ minute: 1 })
+              .toSeconds()
         );
       });
     },
@@ -956,7 +961,7 @@ export default {
 }
 
 .ring {
-  outline: orange solid 3px;
+  outline: orange solid 3px !important;
 }
 </style>
 <style lang="scss">

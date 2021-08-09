@@ -10,9 +10,7 @@ div.fit
       q-input(autogrow outlined placeholder="new message..." dense v-model="newmsg" v-on:keydown.meta.enter="sendmsg" v-on:keydown.ctrl.enter="sendmsg")
         template(v-slot:append)
         q-btn(icon="send" flat dense @click="sendmsg")
-  
-  //- q-page-sticky(position="bottom-right" :offset="[18, 18]")
-  //- q-btn(fab icon="chat" color="secondary" @click="sendmsg").absolute-left-bottom.z-max
+
 </template>
 
 <script>
@@ -66,11 +64,17 @@ export default {
             .child(this.id)
             .child("chat")
         );
-
-        this.chat.forEach((element) => {
-          element.read = true;
-        });
+        // console.log(this.chat);
+        // if (this.chat) {
+        try {
+          this.chat.forEach((element) => {
+            element.read = true;
+          });
+        } catch (e) {
+          //do nothgin
+        }
         this.animateScroll();
+        // }
       },
     },
     chat: {
