@@ -39,8 +39,6 @@ Control Panel
 
 */
 
-
-
 import {db} from '../lib/db';
 // import firebase from 'firebase';
 import Tweets from './Tweets';
@@ -212,6 +210,7 @@ export default {
   bottom:0;
   right:0;
 }
+
 .bottomclear {
   background-color: #333;
   position:absolute;
