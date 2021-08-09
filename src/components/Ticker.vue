@@ -25,12 +25,10 @@ export default {
   watch: {
     currentmessage() {
       //reset css
-      console.log("reset css");
+      // console.log("reset css");
       // .ticker translate3d to 0,0,0;
-
       // this.$refs.ticker.classList.remove('animateme');
       // this.$refs.ticker.style.transform = "translate3d(0%, 0, 0)";
-
       // this.$refs.ticker.classList.add('animateme');
     },
   },

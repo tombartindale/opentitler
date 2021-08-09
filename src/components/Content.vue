@@ -1,21 +1,17 @@
 <template lang="pug">
 .content_wrapper
   .content(v-if="data" :class="content.itemtype" v-for="(content,index) in data" v-bind:style="{top: offset + (index-current)*720+'px'}")
-    .column.justify-center.full-height(style="max-height:400px;")
-      .imagec(v-if="content.itemtype=='image'")
-        //-   .column.items-center
-        img(:src="content.image")
+    .column.justify-center.full-height
+      .col(v-if="content.itemtype=='image'")
+        .imagec()
+          q-img(:src="content.image" basic contain)
         
-        .caption {{content.caption}}
+          .caption {{content.caption}}
 
-    .text(v-if="content.itemtype=='message'")
-      .message {{content.message}}
-      .caption {{content.caption}}
-
-    .persona(v-if="content.itemtype=='profile'") {{content.text}}
-      img.p_img(:src="content.image")
-      .p_caption {{content.caption}}
-      .p_text {{content.message}}
+      .col-auto
+        .text(v-if="content.itemtype=='message'")
+          .message {{content.message}}
+          .caption {{content.caption}}
 </template>
 
 <script>
@@ -58,7 +54,7 @@ export default {
   transition: top 2s;
   // background: red;
 
-  transform: perspective(1500px) rotateY(-20deg);
+  transform: perspective(1500px) rotateY(-15deg);
   // transform: perspective(1500px) rotateY(-15deg);
 }
 
@@ -130,15 +126,16 @@ export default {
   background: white;
   border-radius: 1px;
   background: white;
+  // max-width: 350px;
+  max-height: 300px;
 
-  img {
-    // max-height: 420px;
-    // max-width: 400px;
-    width: 100%;
-  }
+  // img {
+  // max-height: 420px;
+  // max-width: 400px;
+  // width: 100%;
+  // }
 
   .caption {
-    min-width: 0;
     background: white;
     color: black;
     // padding-top:10px;

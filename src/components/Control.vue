@@ -19,7 +19,11 @@ q-layout(view="hHh lpR fFf")
     //- q-toolbar
       
       //- q-toolbar-title {{display.name}}
-
+  
+  q-drawer(v-model="chatopen" :width="300" side="right" overlay :content-style="{'background-color':'#00000000'}")
+    chat(v-on:new:message="onChatMsg" :id="id" :uid="uid")
+    q-btn(v-show="chatopen" @click="chatopen=false;" dense round :icon="(chatopen)?'keyboard_arrow_right':'chat'" color="primary" style="bottom:8px;left:-40px;").absolute
+  
   q-page-container
     q-page
         .col-auto
@@ -142,7 +146,7 @@ q-layout(view="hHh lpR fFf")
                           q-badge(outline) {{index+1}}
                         q-item-section(side v-if="content.image")
                           q-avatar(square)
-                            q-img( :src="content.image")
+                            q-img( :src="content.image" style="border-radius:2px;")
                         q-item-section
                           q-item-label.overflow-hidden {{content.message}}
                           q-item-label {{content.caption}}
@@ -340,8 +344,8 @@ q-layout(view="hHh lpR fFf")
         q-page-sticky(position="bottom-left" :offset="[10,10]")
           q-avatar(v-for="(person,key) in livepeople" :key="key" round icon="person" size="sm").bg-grey-8.q-ml-xs
 
-        q-page-sticky(position="bottom-right" :offset="[18, 18]")
-          q-btn(fab icon="tune" color="red" @click="tab='control'" v-if="tab!='control'") Live
+        q-btn(:class="{'ring':hasmessages}"  v-show="!chatopen" @click="chatopen=true;clearChatMsg();" dense round :icon="(chatopen)?'keyboard_arrow_right':'chat'" color="primary" style="bottom:8px;right:8px;").fixed
+    
     q-inner-loading(:showing="!loaded")
 </template>
 
@@ -356,6 +360,7 @@ import { DateTime } from "luxon";
 import { filter, includes } from "lodash";
 import Flag from "./Flag.vue";
 import StyleVars from "./../mixins/StyleVars";
+import Chat from "./Chat.vue";
 // import * as Tone from 'tone';
 // const meter = new Tone.Meter();
 // const mic = new Tone.UserMedia();
@@ -374,6 +379,7 @@ export default {
     ZoomSense,
     Keypress,
     Flag,
+    Chat,
   },
   mixins: [StyleVars],
   props: ["id"],
@@ -390,7 +396,7 @@ export default {
   },
   data() {
     return {
-      colheight: 100,
+      chatopen: true,
       zoomsense: {},
       watermarkImg: null,
       showExample: true,
@@ -440,6 +446,8 @@ export default {
         caption: "",
       },
       loaded: false,
+      hasmessages: false,
+      uid: null,
     };
   },
   methods: {
@@ -705,6 +713,12 @@ export default {
         }, 1000);
       }
     },
+    onChatMsg() {
+      if (!this.chatopen) this.hasmessages = true;
+    },
+    clearChatMsg() {
+      this.hasmessages = false;
+    },
   },
   computed: {
     livepeople() {
@@ -724,22 +738,22 @@ export default {
     getAnon() {
       return this.$q.localStorage.getItem("anon");
     },
-    splitterModel() {
-      return typeof this.control.zoomsense_token == "undefined" ||
-        this.control.zoomsense_token == ""
-        ? 100
-        : 50;
-    },
+    // splitterModel() {
+    //   return typeof this.control.zoomsense_token == "undefined" ||
+    //     this.control.zoomsense_token == ""
+    //     ? 100
+    //     : 50;
+    // },
     // colStyle() {
     //   return {
     //     height: this.colheight + "px",
     //   };
     // },
-    splitStyle() {
-      return {
-        height: this.colheight - 48 + "px",
-      };
-    },
+    // splitStyle() {
+    //   return {
+    //     height: this.colheight - 48 + "px",
+    //   };
+    // },
     userid() {
       // console.log(firebase.auth().currentUser);
 
@@ -761,6 +775,7 @@ export default {
       async handler(id) {
         let userid = this.userid.uid;
         if (this.isAnon) userid = this.getAnon.userid;
+        this.uid = userid;
 
         // console.log(userid);
         // console.log(id);
@@ -816,7 +831,7 @@ export default {
         // console.log(this.display);
 
         //retrofit style:
-        if (this.display.config.colors) {
+        if (this.display.config && this.display.config.colors) {
           this.display.config.stylevars = this.allstyles;
           this.display.config.stylevars[
             "main-background"
@@ -865,6 +880,7 @@ export default {
           function() {
             // convert image file to base64 string
             insidethis.dirty.watermark.src = reader.result;
+            insidethis.updatewatermark();
           },
           false
         );
@@ -937,5 +953,14 @@ export default {
 
 .pad-bottomxl {
   padding-bottom: 8em;
+}
+
+.ring {
+  outline: orange solid 3px;
+}
+</style>
+<style lang="scss">
+.q-drawer {
+  background-color: #00000011 !important;
 }
 </style>
