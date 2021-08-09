@@ -1,15 +1,17 @@
 <template lang="pug">
 .content_wrapper
   .content(v-if="data" :class="content.itemtype" v-for="(content,index) in data" v-bind:style="{top: offset + (index-current)*720+'px'}")
-    .column.justify-center.full-height
-      .col(v-if="content.itemtype=='image'")
-        .imagec()
-          q-img(:src="content.image" basic contain)
-        
-          .caption {{content.caption}}
+    .column.justify-center.full-height.items-end
+      .col-auto(v-if="content.itemtype=='image'")
+        .imagec
+          //- .column
+            //- .col
+          img(:src="content.image" basic cover)
+            //- .col
+          .caption(v-if="content.caption") {{content.caption}}
 
-      .col-auto
-        .text(v-if="content.itemtype=='message'")
+      .col-auto(v-if="content.itemtype=='message'")
+        .text()
           .message {{content.message}}
           .caption {{content.caption}}
 </template>
@@ -35,27 +37,22 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style lang="scss" scoped>
-.wrapper {
-}
-
 .content {
   position: absolute;
   height: 720px;
-  background: green;
+  // background: green;
+  width: 480px;
   // height: 100%;
   z-index: -3;
   right: 20px;
-
-  // color:white;
   font-size: 30px;
   line-height: 60px;
-  // display: block;
 
   transition: top 2s;
   // background: red;
 
-  transform: perspective(1500px) rotateY(-15deg);
   // transform: perspective(1500px) rotateY(-15deg);
+  transform: perspective(1500px) rotateY(-15deg);
 }
 
 // .persona {
@@ -97,8 +94,8 @@ export default {
     border-left: 1px solid white;
     border-right: 1px solid white;
     padding: 20px;
-    margin-top: auto;
-    margin-bottom: auto;
+    // margin-top: auto;
+    // margin-bottom: auto;
     color: white;
     text-align: center;
     font-size: 0.9em;
@@ -120,28 +117,35 @@ export default {
   // justify-content: center;
   // align-items: center;
   // margin-top: 20%;
+  // margin-bottom: 60px;
   text-align: center;
   border: 5px solid white;
   box-shadow: 0px 0px 20px #00000077;
   background: white;
   border-radius: 1px;
   background: white;
-  // max-width: 350px;
-  max-height: 300px;
+  // max-height: 500px;
+  // max-height: 400px;
+  // max-height: 200px;
+  max-width: 320px;
+  line-height: 0px;
 
-  // img {
-  // max-height: 420px;
-  // max-width: 400px;
-  // width: 100%;
-  // }
+  img {
+    // max-height: 420px;
+    // max-width: 400px;
+    width: 100%;
+    // max-height: 390px;
+  }
 
   .caption {
     background: white;
     color: black;
     // padding-top:10px;
+    // min-height: 40px;
     padding-left: 10px;
     padding-right: 10px;
-    margin-top: -10px;
+    padding-top: 5px;
+    // margin-top: -10px;
     font-family: Indie Flower;
     line-height: 30px;
   }
