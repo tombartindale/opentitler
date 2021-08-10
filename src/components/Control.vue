@@ -66,7 +66,6 @@ q-layout(view="hHh lpR fFf")
                           q-item.border-off(:class="{'border-on': control.title && display.title.title == title.title && display.title.subtitle == title.subtitle}" clickable v-ripple  @click="updatetitle(title)")
                             q-item-section(side)
                               q-icon(color="red" :name="(display.title.title == title.title && display.title.subtitle == title.subtitle)?'monitor':''")
-                              //- q-icon(name="blank" v-show="display.title.title != title.title && display.title.subtitle != title.subtitle")
                             q-item-section
                               q-item-label {{title.title}}
                               q-item-label(caption) {{title.subtitle}}
@@ -165,6 +164,14 @@ q-layout(view="hHh lpR fFf")
                         q-item
                           q-item-section(side)
                             q-icon(name="drag_indicator")
+                          q-item-section(side)
+                            q-btn(round dense flat icon="audiotrack" :color="(person.audio)?'white':'grey-9'" @click="")
+                              q-menu(auto-close)
+                                q-list(style="min-width: 100px")
+                                  q-item(clickable @click="addTriggerAudio(person,null)")
+                                    q-item-section No Audio
+                                  q-item(clickable @click="addTriggerAudio(person,aud)" :key="index" v-for="(aud,index) in display.draft.audio")
+                                    q-item-section {{aud.name || 'Track '+(index+1)}}
                           q-item-section
                             q-item-label {{person.name}}
                             q-item-label(caption) {{person.affiliation}}
@@ -178,7 +185,7 @@ q-layout(view="hHh lpR fFf")
                 q-banner(rounded).q-my-md.bg-grey-9
                   template(v-slot:avatar)
                     q-icon(name="o_info" size="lg")
-                  .text-body1 Play background or specific audio.
+                  .text-body1 Create a library of audio to play in the background or when triggered.
 
                 q-list(separator)
                   q-item.bg-grey-10
@@ -196,11 +203,11 @@ q-layout(view="hHh lpR fFf")
                             q-icon(name="drag_indicator")
                           q-item-section(side)
                             q-badge(outline) {{index+1}}
+                          q-item-section(side)
+                            q-btn(round dense flat :icon="(aud.bed)?'bed':'audiotrack'" @click="toggleBed(aud)")
                           q-item-section
                             q-item-label {{aud.name || 'Track '+(index+1)}}
                             q-item-label(caption) {{aud.url}}
-                          //- q-item-section(side)
-                          //-   q-btn(icon="play")
                           q-item-section(side)
                             q-btn(round flat @click="audio_remove(index)" icon="delete")
                         q-separator
@@ -422,6 +429,7 @@ import Flag from "./Flag.vue";
 import StyleVars from "./../mixins/StyleVars";
 import Chat from "./Chat.vue";
 import AudioPlayer from "./AudioPlayer.vue";
+import { Howl } from "howler";
 // import * as Tone from 'tone';
 // const meter = new Tone.Meter();
 // const mic = new Tone.UserMedia();
@@ -610,6 +618,17 @@ export default {
         .child("draft")
         .child("audio")
         .set(this.display.draft.audio);
+    },
+    addTriggerAudio(person, audio) {
+      // console.log(person);
+      // console.log(audio);
+      if (audio != null) person.audio = audio.url;
+      else person.audio = null;
+      this.updatepeople();
+    },
+    toggleBed(aud) {
+      aud.bed = !aud.bed;
+      this.updateaudio();
     },
     updatepeople() {
       this.$firebaseRefs.display
@@ -820,6 +839,11 @@ export default {
     cancelperson() {
       this.$firebaseRefs.control.child("people").set(false);
       this.peopletimer = 0;
+      try {
+        // this.currentsound.fade(1.0, 0, 1000, "people");
+      } catch (e) {
+        //no sound
+      }
     },
     zoomperson(person) {
       //only fire if this is the master account:
@@ -842,6 +866,22 @@ export default {
       }
     },
     fireperson(person) {
+      if (person.audio) {
+        //TODO: fire audio
+        // console.log("playing", person.audio);
+        var sound = new Howl({
+          html5: true,
+          src: [person.audio],
+        });
+
+        sound.play();
+
+        this.currentsound = sound;
+        // sound.on("fade", () => {
+        //   sound.unload();
+        // });
+      }
+
       this.updateperson(person);
       this.peopletimer = 100;
       clearTimeout(this.coutdowntimer);
@@ -989,7 +1029,7 @@ export default {
 
         this.display.config.colors = null;
 
-        console.log(this.display.config);
+        // console.log(this.display.config);
 
         await this.$firebaseRefs.display.set(this.display);
 
