@@ -5,8 +5,11 @@ import firebase from "firebase";
 import { rtdbPlugin } from "vuefire";
 import VueRouter from "vue-router";
 
+import Plugin from "@quasar/quasar-ui-qmediaplayer";
+import "@quasar/quasar-ui-qmediaplayer/dist/index.css";
 import VueTimers from "vue-timers";
 
+Vue.use(Plugin);
 Vue.use(rtdbPlugin);
 Vue.use(require("vue-moment"));
 Vue.use(VueRouter);

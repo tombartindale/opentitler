@@ -35,124 +35,113 @@ q-layout(view="hHh lpR fFf")
             q-tab(icon="img:/img/person.svg" name="people" label="People")
             q-tab(icon="img:/img/ticker.svg" name="ticker" label="Ticker")
             q-tab(icon="img:/img/watermark.svg" name="watermark" label="Watermark")
+            q-tab(icon="volume_up" name="audio" label="Audio")
             q-tab(icon="group_work" name="plugins" label="Plugins")
             q-tab(icon="style" name="style" label="Settings")
             //- q-tab(icon="help" name="help" label="Help")
             q-space
             q-route-tab(icon="home" to="/dashboard" v-if="!isAnon")
 
-        q-tab-panels.fixed.fixed-left.fixed-right.fixed-bottom(v-model="tab" v-if="loaded" padding style="top:72px;" keep-alive)
-          q-tab-panel(name="help")
-            .q-px-md.text-center
-              q-btn(@click="tab='control'" size="lg" color="primary") Get Started
-
-          q-tab-panel(name="plugins")
-            .row
-              .col-12.col-md-6.offset-md-3
-                q-banner(rounded).q-my-md.bg-grey-9
-                  template(v-slot:avatar)
-                    q-icon(name="o_info" size="lg")
-                  .text-body1 Integration with external tools.
-                q-timeline
-                  q-timeline-entry( subtitle="ZoomSense")
-                    ZoomSense(:token="control.zoomsense_token" :control="control" v-on:update:token="savetoken" settings="false")
-
+        q-tab-panels.fixed.fixed-left.fixed-right.fixed-bottom(v-model="tab" v-if="loaded" padding style="top:72px;padding-bottom:94px;" keep-alive)
+          
           q-tab-panel(name="control")
-            .column.full-height.q-col-gutter-sm
-              .col-12.col-md-6.colmin
-                div.full-height.roundbox
-                  q-list(separator v-if="display")
-                    q-item
-                      q-item-section(side)
-                        q-icon(name="img:/img/title.svg" size="lg")
-                      q-item-section(side)
-                        q-btn(@click="tab='titles'" dense flat) Manage Titles
-                      q-item-section
-                      q-item-section(side)
-                        q-btn-toggle(v-model="control.title" :options="displayoptions" outline)
-                        
-                    q-separator
-                  q-scroll-area.pad-bottom.full-height(v-if="display.draft && display.draft.titles")
-                    div(v-for="(title,index) in display.draft.titles" :key="index")
-                      q-item.border-off(:class="{'border-on': control.title && display.title.title == title.title && display.title.subtitle == title.subtitle}" clickable v-ripple  @click="updatetitle(title)")
-                        q-item-section(side)
-                          q-icon(color="red" :name="(display.title.title == title.title && display.title.subtitle == title.subtitle)?'monitor':''")
-                          //- q-icon(name="blank" v-show="display.title.title != title.title && display.title.subtitle != title.subtitle")
-                        q-item-section
-                          q-item-label {{title.title}}
-                          q-item-label(caption) {{title.subtitle}}
-                        q-item-section(side)
-                          flag(:item="title" :route="`draft/titles/${index}`" :fbref="$firebaseRefs.display")
-                      q-separator
+            .column.fit
+              .col
+                .column.full-height.q-col-gutter-sm
+                  .col-12.col-md-6.colmin
+                    div.full-height.roundbox
+                      q-list(separator v-if="display")
+                        q-item
+                          q-item-section(side)
+                            q-icon(name="img:/img/title.svg" size="lg")
+                          q-item-section(side)
+                            q-btn(@click="tab='titles'" dense flat) Manage Titles
+                          q-item-section
+                          q-item-section(side)
+                            q-btn-toggle(v-model="control.title" :options="displayoptions" outline)
+                            
+                        q-separator
+                      q-scroll-area.pad-bottom.full-height(v-if="display.draft && display.draft.titles")
+                        div(v-for="(title,index) in display.draft.titles" :key="index")
+                          q-item.border-off(:class="{'border-on': control.title && display.title.title == title.title && display.title.subtitle == title.subtitle}" clickable v-ripple  @click="updatetitle(title)")
+                            q-item-section(side)
+                              q-icon(color="red" :name="(display.title.title == title.title && display.title.subtitle == title.subtitle)?'monitor':''")
+                              //- q-icon(name="blank" v-show="display.title.title != title.title && display.title.subtitle != title.subtitle")
+                            q-item-section
+                              q-item-label {{title.title}}
+                              q-item-label(caption) {{title.subtitle}}
+                            q-item-section(side)
+                              flag(:item="title" :route="`draft/titles/${index}`" :fbref="$firebaseRefs.display")
+                          q-separator
 
-              .col-12.col-md-6.colmin
-                div.full-height.roundbox
-                  q-list(separator v-if="display")
-                    q-item
-                      q-item-section(side)
-                        q-icon(name="img:/img/person.svg" size="lg")
-                      q-item-section(side)
-                        q-btn(@click="tab='people'" dense flat) Manage People
-                      q-item-section
-                      q-item-section(side)
-                        q-btn-toggle(v-model="control.people" :options="displayoptions" outline)
-                    q-separator
-                  q-scroll-area.pad-bottom.full-height(v-if="display.draft && display.draft.people")
-                    div(:key="index" v-for="(people,index) in display.draft.people" )
-                      q-item.relative.border-off(:class="{'border-on': control.people && display.people.name == people.name && display.people.affiliation == people.affiliation}" @click="fireperson(people)" clickable ripple)
-                        q-linear-progress.z-bottom.absolute-left.full-height(style="opacity:0.3" v-show="peopletimer>0 && display.people.name == people.name && display.people.affiliation == people.affiliation" :value="1-(peopletimer/100)")
-                        q-item-section(side)
-                          q-icon(color="red" name="monitor"  v-if="display.people" v-show="display.people.name == people.name && display.people.affiliation == people.affiliation")
-                          q-icon(name="blank" v-show="!(display.people.name == people.name && display.people.affiliation == people.affiliation)")
-                        q-item-section
-                          q-item-label {{people.name}}
-                          q-item-label(caption) {{people.affiliation}}
-                        q-item-section(side)
-                          div
-                            q-btn(flat dense icon="monitor" @click.capture.stop="updateperson(people)" color="primary")
-                      q-separator
+                  .col-12.col-md-6.colmin
+                    div.full-height.roundbox
+                      q-list(separator v-if="display")
+                        q-item
+                          q-item-section(side)
+                            q-icon(name="img:/img/person.svg" size="lg")
+                          q-item-section(side)
+                            q-btn(@click="tab='people'" dense flat) Manage People
+                          q-item-section
+                          q-item-section(side)
+                            q-btn-toggle(v-model="control.people" :options="displayoptions" outline)
+                        q-separator
+                      q-scroll-area.pad-bottom.full-height(v-if="display.draft && display.draft.people")
+                        div(:key="index" v-for="(people,index) in display.draft.people" )
+                          q-item.relative.border-off(:class="{'border-on': control.people && display.people.name == people.name && display.people.affiliation == people.affiliation}" @click="fireperson(people)" clickable ripple)
+                            q-linear-progress.z-bottom.absolute-left.full-height(style="opacity:0.3" v-show="peopletimer>0 && display.people.name == people.name && display.people.affiliation == people.affiliation" :value="1-(peopletimer/100)")
+                            q-item-section(side)
+                              q-icon(color="red" name="monitor"  v-if="display.people" v-show="display.people.name == people.name && display.people.affiliation == people.affiliation")
+                              q-icon(name="blank" v-show="!(display.people.name == people.name && display.people.affiliation == people.affiliation)")
+                            q-item-section
+                              q-item-label {{people.name}}
+                              q-item-label(caption) {{people.affiliation}}
+                            q-item-section(side)
+                              div
+                                q-btn(flat dense icon="monitor" @click.capture.stop="updateperson(people)" color="primary")
+                          q-separator
 
-              .col-12.col-md-6.colmin(v-if="control.zoomsense_titles")
-                div.full-height.roundbox
-                  ZoomSense.col(v-on:gotoconfig="tab='plugins'" :control="control" :token="control.zoomsense_token" v-on:update:token="savetoken" v-on:new:message="addmsg" v-on:new:title="addtitle" v-on:update:person="zoomperson" showcontent="true")
+                  .col-12.col-md-6.colmin(v-if="control.zoomsense_titles")
+                    div.full-height.roundbox
+                      ZoomSense.col(v-on:gotoconfig="tab='plugins'" :control="control" :token="control.zoomsense_token" v-on:update:token="savetoken" v-on:new:message="addmsg" v-on:new:title="addtitle" v-on:update:person="zoomperson" showcontent="true")
 
-              .col-12.col-md-6.colmin
-                div.full-height.roundbox
-                  q-list(separator)
-                    q-item
-                      q-item-section(side)
-                        q-icon(name="img:/img/card.svg" size="lg")
-                      q-item-section(side)
-                        q-btn(@click="tab='content'" dense flat) Manage Cards
-                      q-item-section
-                      q-item-section(side)
-                        q-btn-toggle( v-model="control.content" :options="displayoptions" outline)
-                    q-separator
-                  q-list(separator)
-                    q-item
-                      q-btn-group(spread style="width:100%;")
-                        q-btn(dense color="primary" outline @click="prevContent")
-                          q-icon(name="expand_less")
-                        q-btn(dense disabled outline color="primary") {{control.currentcontent+1}}
-                        q-btn(dense color="primary" outline @click="nextContent")
-                          q-icon(name="expand_more")
+                  .col-12.col-md-6.colmin
+                    div.full-height.roundbox
+                      q-list(separator)
+                        q-item
+                          q-item-section(side)
+                            q-icon(name="img:/img/card.svg" size="lg")
+                          q-item-section(side)
+                            q-btn(@click="tab='content'" dense flat) Manage Cards
+                          q-item-section
+                          q-item-section(side)
+                            q-btn-toggle( v-model="control.content" :options="displayoptions" outline)
+                        q-separator
+                      q-list(separator)
+                        q-item
+                          q-btn-group(spread style="width:100%;")
+                            q-btn(dense color="primary" outline @click="prevContent")
+                              q-icon(name="expand_less")
+                            q-btn(dense disabled outline color="primary") {{control.currentcontent+1}}
+                            q-btn(dense color="primary" outline @click="nextContent")
+                              q-icon(name="expand_more")
 
-                  q-scroll-area.full-height.pad-bottomxl
-                    div(:key="index" v-for="(content,index) in display.content")
-                      q-item.border-off(:class="{'border-on': control.content && index == control.currentcontent}"  clickable v-ripple  @click="control.currentcontent = index")
-                        q-item-section(side)
-                          q-icon(color="red" :name="(index == control.currentcontent)?'monitor':''") 
-                        q-item-section(side)
-                          q-badge(outline) {{index+1}}
-                        q-item-section(side v-if="content.image")
-                          q-avatar(square)
-                            q-img( :src="content.image" style="border-radius:2px;")
-                        q-item-section
-                          q-item-label.overflow-hidden {{content.message}}
-                          q-item-label {{content.caption}}
-                        q-item-section(side)
-                          flag(:item="content" :route="`content/${index}`" :fbref="$firebaseRefs.display")
-                      q-separator
+                      q-scroll-area.full-height.pad-bottomxl
+                        div(:key="index" v-for="(content,index) in display.content")
+                          q-item.border-off(:class="{'border-on': control.content && index == control.currentcontent}"  clickable v-ripple  @click="control.currentcontent = index")
+                            q-item-section(side)
+                              q-icon(color="red" :name="(index == control.currentcontent)?'monitor':''") 
+                            q-item-section(side)
+                              q-badge(outline) {{index+1}}
+                            q-item-section(side v-if="content.image")
+                              q-avatar(square)
+                                q-img( :src="content.image" style="border-radius:2px;")
+                            q-item-section
+                              q-item-label.overflow-hidden {{content.message}}
+                              q-item-label {{content.caption}}
+                            q-item-section(side)
+                              flag(:item="content" :route="`content/${index}`" :fbref="$firebaseRefs.display")
+                          q-separator
 
           q-tab-panel(name="people")
             .row
@@ -181,6 +170,39 @@ q-layout(view="hHh lpR fFf")
                             q-item-label(caption) {{person.affiliation}}
                           q-item-section(side)
                             q-btn(round flat @click="person_remove(index)" icon="delete")
+                        q-separator
+          
+          q-tab-panel(name="audio")
+            .row
+              .col-12.col-md-6.offset-md-3
+                q-banner(rounded).q-my-md.bg-grey-9
+                  template(v-slot:avatar)
+                    q-icon(name="o_info" size="lg")
+                  .text-body1 Play background or specific audio.
+
+                q-list(separator)
+                  q-item.bg-grey-10
+                    q-item-section
+                      q-input.q-mb-xs(label="URL" v-model="newaudio.url" dense outlined)
+                      q-input.q-mb-xs(label="Name (optional)" v-model="newaudio.name" dense outlined)
+                    q-item-section(side)
+                      q-btn(round flat @click="audio_add()" icon="add")
+                  q-separator
+                  div(v-if="display.draft && display.draft.audio")
+                    draggable(v-model="display.draft.audio" group="audio" @end="updateaudio" )
+                      div.bg-grey-10(:key="index" v-for="(aud,index) in display.draft.audio")
+                        q-item
+                          q-item-section(side)
+                            q-icon(name="drag_indicator")
+                          q-item-section(side)
+                            q-badge(outline) {{index+1}}
+                          q-item-section
+                            q-item-label {{aud.name || 'Track '+(index+1)}}
+                            q-item-label(caption) {{aud.url}}
+                          //- q-item-section(side)
+                          //-   q-btn(icon="play")
+                          q-item-section(side)
+                            q-btn(round flat @click="audio_remove(index)" icon="delete")
                         q-separator
 
 
@@ -316,7 +338,22 @@ q-layout(view="hHh lpR fFf")
                     q-toggle(v-model="showExample" val="true" toggle-color="primary" label="Show Example")
                     .imgdark(:class="{noimg:!showExample}")
                         q-img.watermark(:src="dirty.watermark.src")
-          
+
+
+          q-tab-panel(name="help")
+            .q-px-md.text-center
+              q-btn(@click="tab='control'" size="lg" color="primary") Get Started
+
+          q-tab-panel(name="plugins")
+            .row
+              .col-12.col-md-6.offset-md-3
+                q-banner(rounded).q-my-md.bg-grey-9
+                  template(v-slot:avatar)
+                    q-icon(name="o_info" size="lg")
+                  .text-body1 Integration with external tools.
+                q-timeline
+                  q-timeline-entry( subtitle="ZoomSense")
+                    ZoomSense(:token="control.zoomsense_token" :control="control" v-on:update:token="savetoken" settings="false")
 
           q-tab-panel(name="style")
             .row
@@ -366,6 +403,8 @@ q-layout(view="hHh lpR fFf")
             q-tooltip {{'Producer'}}
           q-btn.on-right( :class="{'ring':hasmessages}"   @click="chatopen=true;clearChatMsg();" dense round :icon="(chatopen)?'keyboard_arrow_right':'chat'" color="primary")
 
+        .roundbox.fixed-bottom.q-ma-md
+          AudioPlayer(:id="id" :uid="uid")
     
     q-inner-loading(:showing="!loaded")
 </template>
@@ -382,6 +421,7 @@ import { filter, includes, map } from "lodash";
 import Flag from "./Flag.vue";
 import StyleVars from "./../mixins/StyleVars";
 import Chat from "./Chat.vue";
+import AudioPlayer from "./AudioPlayer.vue";
 // import * as Tone from 'tone';
 // const meter = new Tone.Meter();
 // const mic = new Tone.UserMedia();
@@ -401,6 +441,7 @@ export default {
     Keypress,
     Flag,
     Chat,
+    AudioPlayer,
   },
   mixins: [StyleVars],
   props: ["id"],
@@ -448,6 +489,7 @@ export default {
       dirty: {
         watermark: "",
       },
+      newaudio: { url: "" },
       newperson: {
         name: "",
         affiliation: "",
@@ -563,6 +605,12 @@ export default {
         .child("titles")
         .set(this.display.draft.titles);
     },
+    updateaudio() {
+      this.$firebaseRefs.display
+        .child("draft")
+        .child("audio")
+        .set(this.display.draft.audio);
+    },
     updatepeople() {
       this.$firebaseRefs.display
         .child("draft")
@@ -656,6 +704,40 @@ export default {
           .child("titles")
           .set(this.display.draft.titles);
       }
+    },
+    audio_add() {
+      if (!this.display.draft) this.display.draft = {};
+
+      if (!this.display.draft.audio) this.display.draft.audio = [];
+      if (this.newaudio.url != "") {
+        if (includes(this.newaudio.url, "https://drive.google.com/file/d/")) {
+          let id = this.newaudio.url
+            .replace("https://drive.google.com/file/d/", "")
+            .split("/view")[0];
+          this.newaudio.url = `https://drive.google.com/uc?id=${id}`;
+        }
+
+        this.newaudio.bed = true;
+
+        this.display.draft.audio.push(this.newaudio);
+        this.newaudio = {
+          url: "",
+          name: "",
+        };
+        this.$firebaseRefs.display
+          .child("draft")
+          .child("audio")
+          .set(this.display.draft.audio);
+      }
+    },
+    audio_remove(index) {
+      // console.log(this.display.draft);
+      this.display.draft.audio.splice(index, 1);
+      // console.log(this.display.draft.people);
+      this.$firebaseRefs.display
+        .child("draft")
+        .child("audio")
+        .set(this.display.draft.audio);
     },
     title_remove(index) {
       // console.log(this.display.draft);

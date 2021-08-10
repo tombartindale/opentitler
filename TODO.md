@@ -1,12 +1,10 @@
-- chat between producers
 - video playback
 - bed audio track
 - scenes
 - display permissions (not just read all)
 - slideshow integration
 - bootstrap OBS setup
-- multiple ticker options (drafts)
 - auto-log all events (fb function)
 - auto-summarise sessions based on metadata.
-- backchannel chat
 - name of alternative operators
+- intro music for people

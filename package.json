@@ -9,6 +9,7 @@
   },
   "dependencies": {
     "@quasar/extras": "^1.10.9",
+    "@quasar/quasar-ui-qmediaplayer": "^1.4.1",
     "@zoomsense/vue-zoomsense": "1.1.0",
     "animate.css": "^4.1.1",
     "core-js": "^3.6.5",
