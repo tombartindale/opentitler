@@ -205,6 +205,7 @@ q-layout(view="hHh lpR fFf")
                             q-badge(outline) {{index+1}}
                           q-item-section(side)
                             q-btn(round dense flat :icon="(aud.bed)?'bed':'audiotrack'" @click="toggleBed(aud)")
+                              q-tooltip Use as a Bed Track or Sound FX
                           q-item-section
                             q-item-label {{aud.name || 'Track '+(index+1)}}
                             q-item-label(caption) {{aud.url}}
@@ -840,9 +841,10 @@ export default {
       this.$firebaseRefs.control.child("people").set(false);
       this.peopletimer = 0;
       try {
-        // this.currentsound.fade(1.0, 0, 1000, "people");
+        this.currentsound.fade(1.0, 0, 1000);
       } catch (e) {
         //no sound
+        console.log(e);
       }
     },
     zoomperson(person) {
@@ -867,8 +869,6 @@ export default {
     },
     fireperson(person) {
       if (person.audio) {
-        //TODO: fire audio
-        // console.log("playing", person.audio);
         var sound = new Howl({
           html5: true,
           src: [person.audio],
