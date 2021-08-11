@@ -1,5 +1,4 @@
 - video playback
-- bed audio track
 - scenes
 - display permissions (not just read all)
 - slideshow integration
@@ -7,4 +6,3 @@
 - auto-log all events (fb function)
 - auto-summarise sessions based on metadata.
 - name of alternative operators
-- intro music for people
