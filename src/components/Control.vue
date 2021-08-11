@@ -85,6 +85,9 @@ q-layout(view="hHh lpR fFf")
                           q-item-section(side)
                             q-btn-toggle(v-model="control.people" :options="displayoptions" outline)
                         q-separator
+                        q-item(dense v-if="control.zoomsense_autotitles").bg-accent
+                          q-item-section
+                            q-item-label Automatically triggered by Zoom
                       q-scroll-area.pad-bottom.full-height(v-if="display.draft && display.draft.people")
                         div(:key="index" v-for="(people,index) in display.draft.people" )
                           q-item.relative.border-off(:class="{'border-on': control.people && display.people.name == people.name && display.people.affiliation == people.affiliation}" @click="fireperson(people)" clickable ripple)
