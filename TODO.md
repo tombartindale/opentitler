@@ -6,3 +6,4 @@
 - auto-log all events (fb function)
 - auto-summarise sessions based on metadata.
 - name of alternative operators
+- editing existing titles/people/cards/tickers
