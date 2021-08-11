@@ -4,6 +4,8 @@
     .row
       .col-12.col-sm-6.q-pr-sm
         q-btn-toggle(v-model="playstate" :options="playstates" outline)
+        q-icon.on-right(name="help_outline" size="sm" color="grey-8")
+          q-tooltip When using Zoom, you need to share you Computer Audio (under advanced sharing)
       .col-12.col-sm-6.q-pr-sm.text-right
         q-chip(:key="track.url" :color="trackColor(index)"  clickable @click="playTrack(index)" outline v-for="(track,index) in bedtracks")
           span(v-if="!errors[index]") {{index+1}}
@@ -47,7 +49,7 @@ export default {
       playstates: [
         { label: "Stopped", value: 0 },
         { label: "Bed Track", value: 1 },
-        { label: "Bed Track (Ducked)", value: 2 },
+        // { label: "Bed Track (Ducked)", value: 2 },
         { label: "Primary", value: 3 },
       ],
     };

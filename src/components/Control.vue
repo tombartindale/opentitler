@@ -95,6 +95,8 @@ q-layout(view="hHh lpR fFf")
                             q-item-section
                               q-item-label {{people.name}}
                               q-item-label(caption) {{people.affiliation}}
+                            q-item-section(side v-if="people.audio")
+                              q-icon(name="audiotrack")
                             q-item-section(side)
                               div
                                 q-btn(flat dense icon="monitor" @click.capture.stop="updateperson(people)" color="primary")
@@ -877,9 +879,9 @@ export default {
         sound.play();
 
         this.currentsound = sound;
-        // sound.on("fade", () => {
-        //   sound.unload();
-        // });
+        sound.on("fade", () => {
+          sound.unload();
+        });
       }
 
       this.updateperson(person);
