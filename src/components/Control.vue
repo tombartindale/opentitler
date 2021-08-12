@@ -495,10 +495,10 @@ export default {
           label: "Image",
           value: "image",
         },
-        {
-          label: "Video",
-          value: "video",
-        },
+        // {
+        //   label: "Video",
+        //   value: "video",
+        // },
       ],
       displayoptions: [
         { label: "Display", value: true },
