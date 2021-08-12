@@ -40,7 +40,7 @@ export default {
   data: () => {
     return {
       audio: [],
-      volume: 80,
+      volume: 70,
       currentsrc: "",
       currentindex: 0,
       playstate: 0,
@@ -99,16 +99,16 @@ export default {
 
           case 1:
             this.$refs.theplayer.play();
-            this.volume = 30;
+            this.volume = 20;
             break;
 
           case 2:
-            this.volume = 30;
+            this.volume = 20;
             this.$refs.theplayer.play();
             break;
 
           case 3:
-            this.volume = 80;
+            this.volume = 70;
             this.$refs.theplayer.play();
             break;
         }
