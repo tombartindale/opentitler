@@ -30,7 +30,7 @@ export default {
   position: absolute;
   right: 15px;
   top: 50px;
-  color: white;
+  color: var(--textdark);
   font-family: var(--font);
   /* box-shadow: 0px 0px 10px #ff010177; */
   filter: drop-shadow(0 0 var(--shadow-depth) var(--shadow-color));
@@ -39,22 +39,24 @@ export default {
 }
 
 .name {
+  border-radius: var(--corners) 0 0 var(--corners);
   background: var(--primary);
   padding: 10px;
   text-transform: uppercase;
   display: block;
-  border-right: white 5px solid;
+  border-right: var(--background) 5px solid;
 }
 
 .attribution {
+  border-radius: 0 0 var(--corners) var(--corners);
   padding-left: 10px;
   padding-top: 5px;
   padding-bottom: 5px;
   padding-right: 10px;
-  background: white;
+  background: var(--background);
   display: inline-block;
   font-size: 15px;
   vertical-align: top;
-  color: var(--primary);
+  color: var(--textlight);
 }
 </style>

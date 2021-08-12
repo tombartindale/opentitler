@@ -63,27 +63,34 @@ export default {
 .title {
   padding: 5px;
   width: 1250px;
-  color: black;
+  color: var(--textlight);
   z-index: 2;
   text-transform: uppercase;
   font-weight: bold;
-
-  border-left: var(--primary) solid 5px;
+  text-align: right;
+  border-right: var(--primary) solid 5px;
   /* box-shadow: 0px 0px 10px #00000077; */
 
   // font-size: 2rem;
 
-  background: white;
+  background: var(--background);
+
+  border-radius: var(--corners) 0 0 0;
 }
 .subtitle {
   background: var(--primary);
   padding: 5px;
   padding-left: 10px;
   padding-right: 10px;
-  color: white;
+  color: var(--textdark);
   display: inline-block;
   font-size: 1.4rem;
   text-transform: uppercase;
   vertical-align: bottom;
+  border-radius: var(--corners) var(--corners) 0 0;
+}
+
+.titles {
+  text-align: right;
 }
 </style>

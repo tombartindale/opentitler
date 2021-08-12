@@ -58,6 +58,7 @@ $width: 1150px;
   overflow: hidden;
   height: 30px;
   // filter: drop-shadow(0 0 var(--shadow-depth) var(--shadow-color));
+  border-radius: 0 0 var(--corners) var(--corners);
 }
 
 .inner_ticker {
@@ -151,7 +152,7 @@ $width: 1150px;
 
       padding: 0 2rem;
       font-size: 1.2rem;
-      color: white;
+      color: var(--textdark);
     }
   }
 }

@@ -147,7 +147,7 @@ export default {
 
 .live {
   
-  color:white;
+  color:var(--textdark);
   position: absolute;
   right:14px;
   top:10px;
@@ -160,7 +160,9 @@ export default {
     padding:5px;
     padding-left:10px;
     padding-right:10px;
+    border-radius: var(--corners) var(--corners) var(--corners) var(--corners);
   }
+  
 }
 
 .classlabel {

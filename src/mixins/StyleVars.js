@@ -5,14 +5,32 @@ export default {
         {
           type: "color",
           name: "main-background",
-          display: "Background",
+          display: "Secondary",
           default: "black",
         },
         {
           type: "color",
           name: "primary",
-          display: "Foreground",
+          display: "Primary",
           default: "purple",
+        },
+        {
+          type: "color",
+          name: "background",
+          display: "Background",
+          default: "white",
+        },
+        {
+          type: "color",
+          name: "textdark",
+          display: "Text Color (Dark)",
+          default: "white",
+        },
+        {
+          type: "color",
+          name: "textlight",
+          display: "Text Color (Light)",
+          default: "black",
         },
         {
           type: "color",
@@ -31,6 +49,12 @@ export default {
           name: "shadow-depth",
           display: "Shadow Depth",
           default: "0",
+        },
+        {
+          type: "numeric",
+          name: "corners",
+          display: "Rounded Corners",
+          default: "10",
         },
       ],
     };

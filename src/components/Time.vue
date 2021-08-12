@@ -4,43 +4,40 @@
 
 <script>
 export default {
-  name: 'Time',
+  name: "Time",
   data() {
-    return{
-      nowTime:""
-    }
+    return {
+      nowTime: "",
+    };
   },
   created() {
     this.nowTimes();
   },
-  methods:{
-    nowTimes(){
+  methods: {
+    nowTimes() {
       this.timeFormate(Date.now());
-      setTimeout(this.nowTimes,1*1000);
+      setTimeout(this.nowTimes, 1 * 1000);
     },
     timeFormate(timeStamp) {
       this.nowTime = timeStamp;
     },
   },
-  mounted(){
-    
-  }
-}
+  mounted() {},
+};
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped lang="scss">
-
 .time {
   position: absolute;
-  right:0px;
-  bottom:0px;
+  right: 0px;
+  bottom: 0px;
   text-align: center;
-  color:white;
+  color: var(--textdark);
   font-size: 1.2rem;
-  line-height:30px;
+  line-height: 30px;
   background: var(--primary);
-  width:100px;
+  width: 100px;
 
   /* box-shadow: 0px 0px 10px #00000077; */
 }
