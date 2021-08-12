@@ -178,8 +178,10 @@ q-layout(view="hHh lpR fFf")
                                   q-item(clickable @click="addTriggerAudio(person,aud)" :key="index" v-for="(aud,index) in display.draft.audio")
                                     q-item-section {{aud.name || 'Track '+(index+1)}}
                           q-item-section
-                            q-item-label {{person.name}}
-                            q-item-label(caption) {{person.affiliation}}
+                            q-item-label
+                              EditString(:value="person.name" :path="`draft/people/${index}/name`" :fbref="$firebaseRefs.display")
+                            q-item-label(caption)
+                              EditString(:value="person.affiliation" :path="`draft/people/${index}/affiliation`" :fbref="$firebaseRefs.display")
                           q-item-section(side)
                             q-btn(round flat @click="person_remove(index)" icon="delete")
                         q-separator
@@ -212,7 +214,8 @@ q-layout(view="hHh lpR fFf")
                             q-btn(round dense flat :icon="(aud.bed)?'bed':'audiotrack'" @click="toggleBed(aud)")
                               q-tooltip Use as a Bed Track or Sound FX
                           q-item-section
-                            q-item-label {{aud.name || 'Track '+(index+1)}}
+                            q-item-label
+                              EditString(:value="aud.name || 'Track '+(index+1)" :path="`draft/audio/${index}/name`" :fbref="$firebaseRefs.display")
                             q-item-label(caption) {{aud.url}}
                           q-item-section(side)
                             q-btn(round flat @click="audio_remove(index)" icon="delete")
@@ -243,9 +246,11 @@ q-layout(view="hHh lpR fFf")
                   q-card.bg-grey-10.full-height.relative(flat bordered)
                     q-chip.absolute-right.z-max(color="secondary" size="md" rounded) {{content.itemtype}}
                     q-img(v-if="content.image" contain :src="content.image")
-                      .absolute-bottom.text-subtitle1.text-center {{content.caption}}
+                      .absolute-bottom.text-subtitle1.text-center
+                        EditString(:value="content.caption" :path="`content/${index}/caption`" :fbref="$firebaseRefs.display")
                     q-card-section(v-if="content.message").col-auto
-                      p {{content.message}}
+                      p
+                        EditString(:value="content.message" :path="`content/${index}/message`" :fbref="$firebaseRefs.display")
                     q-separator
                     q-card-actions.col-auto(align="right")
                       q-btn(flat @click="content_remove(index)") Remove
@@ -272,8 +277,10 @@ q-layout(view="hHh lpR fFf")
                           q-item-section(side)
                             q-icon(name="drag_indicator")
                           q-item-section
-                            q-item-label {{title.title}}
-                            q-item-label(caption) {{title.subtitle}}
+                            q-item-label
+                              EditString(:value="title.title" :path="`draft/titles/${index}/title`" :fbref="$firebaseRefs.display")
+                            q-item-label(caption)
+                              EditString(:value="title.subtitle" :path="`draft/titles/${index}/subtitle`" :fbref="$firebaseRefs.display")
                           q-item-section(side)
                             q-btn(round flat @click="title_remove(index)" icon="delete")
                         q-separator
@@ -309,7 +316,8 @@ q-layout(view="hHh lpR fFf")
                               q-item-section(side)
                                 q-checkbox(v-model="ticker.selected" @input="updateticker")
                               q-item-section
-                                q-item-label {{ticker.message}}
+                                q-item-label
+                                  EditString(:value="ticker.message" :path="`draft/ticker/${index}/message`" :fbref="$firebaseRefs.display")
                               q-item-section(side)
                                 q-btn(round flat @click="ticker_remove(index)" icon="delete")
                             q-separator
@@ -435,6 +443,7 @@ import Flag from "./Flag.vue";
 import StyleVars from "./../mixins/StyleVars";
 import Chat from "./Chat.vue";
 import AudioPlayer from "./AudioPlayer.vue";
+import EditString from "./EditString.vue";
 import { Howl } from "howler";
 // import * as Tone from 'tone';
 // const meter = new Tone.Meter();
@@ -456,6 +465,7 @@ export default {
     Flag,
     Chat,
     AudioPlayer,
+    EditString,
   },
   mixins: [StyleVars],
   props: ["id"],
