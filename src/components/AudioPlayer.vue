@@ -99,11 +99,11 @@ export default {
 
           case 1:
             this.$refs.theplayer.play();
-            this.volume = 10;
+            this.volume = 6;
             break;
 
           case 2:
-            this.volume = 10;
+            this.volume = 6;
             this.$refs.theplayer.play();
             break;
 

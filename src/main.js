@@ -18,11 +18,11 @@ Vue.use(VueTimers);
 const ZoomSense = require("@zoomsense/vue-zoomsense");
 Vue.use(ZoomSense, {
   name: "zoom",
-  apiKey: "AIzaSyAzlJsBb_xz0p9bd9caHr_79tagYnFU77A",
+  apiKey: "AIzaSyBQx95IIQivK3c--e4X6W9Ks6xNlaUuhe4",
   authDomain: "zoombot.firebaseapp.com",
   databaseURL: "https://zoombot.firebaseio.com",
   projectId: "zoombot",
-  appId: "1:578675125264:web:27a74a7ee45f0ca7b6ee95",
+  appId: "1:578675125264:web:64b8cfb489ae9dc9b6ee95",
 });
 
 import Display from "./components/Display";
