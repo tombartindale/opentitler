@@ -21,8 +21,8 @@ q-layout(view="hHh lpR fFf")
       //- q-toolbar-title {{display.name}}
   
   q-drawer(v-if="livepeople.length>0" v-model="chatopen" :width="300" side="right" overlay :content-style="{'background-color':'#00000000'}")
-    chat(v-on:new:message="onChatMsg" :id="id" :uid="uid")
-    q-btn(v-show="chatopen" @click="chatopen=false;" dense round :icon="(chatopen)?'keyboard_arrow_right':'chat'" color="primary" style="bottom:8px;left:-40px;").absolute
+    chat.z-max(v-on:new:message="onChatMsg" :id="id" :uid="uid")
+    q-btn.z-max(v-show="chatopen" @click="chatopen=false;" dense round :icon="(chatopen)?'keyboard_arrow_right':'chat'" color="primary" style="bottom:8px;left:-40px;").absolute
   
   q-page-container
     q-page
@@ -417,7 +417,7 @@ q-layout(view="hHh lpR fFf")
                   q-timeline-entry(subtitle="Display Class Names")
                     q-btn-toggle(v-model="control.debug" :options="displayoptions" outline)
 
-        q-page-sticky(position="bottom-right" :offset="[10,10]" v-if="livepeople.length>0" v-show="!chatopen")
+        q-page-sticky.z-max(position="bottom-right" :offset="[10,10]" v-if="livepeople.length>0" v-show="!chatopen")
           q-avatar(round icon="person" size="sm").bg-grey-8.q-ml-xs
             q-tooltip {{'Me'}}
           q-avatar(v-for="(person,key) of livepeople" :key="key" round icon="person" size="sm").bg-grey-8.q-ml-xs
