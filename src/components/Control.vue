@@ -133,6 +133,7 @@ q-layout(view="hHh lpR fFf")
                       q-scroll-area.full-height.pad-bottomxl
                         div(:key="index" v-for="(content,index) in display.content")
                           q-item.border-off(:class="{'border-on': control.content && index == control.currentcontent}"  clickable v-ripple  @click="control.currentcontent = index")
+                           
                             q-item-section(side)
                               q-icon(color="red" :name="(index == control.currentcontent)?'monitor':''") 
                             q-item-section(side)
@@ -140,6 +141,8 @@ q-layout(view="hHh lpR fFf")
                             q-item-section(side v-if="content.image")
                               q-avatar(square)
                                 q-img( :src="content.image" style="border-radius:2px;")
+                                q-tooltip(max-width="300px" content-style="margin:-10px;")
+                                  img(:src="content.image" style="width:110%;margin:-10px;")
                             q-item-section
                               q-item-label.overflow-hidden {{content.message}}
                               q-item-label {{content.caption}}
