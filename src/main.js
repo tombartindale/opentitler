@@ -88,8 +88,10 @@ const router = new VueRouter({
   routes, // short for `routes: routes`
 });
 
-router.beforeEach((to, from, next) => {
-  const currentUser = firebase.auth().currentUser;
+import { getCurrentUser } from "./lib/db";
+
+router.beforeEach(async (to, from, next) => {
+  const currentUser = await getCurrentUser();
 
   // console.log(currentUser)
 

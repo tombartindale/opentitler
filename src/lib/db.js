@@ -14,5 +14,18 @@ const config = {
 
 const fbapp = firebase.initializeApp(config);
 
+const auth = firebase.auth();
+
+export const getCurrentUser = () => {
+  return new Promise((resolve, reject) => {
+    const unsubscribe = auth.onAuthStateChanged(async (user) => {
+      if (user) {
+        unsubscribe();
+        resolve(user);
+      } else resolve(null);
+    }, reject);
+  });
+};
+
 export const db = fbapp.database();
 // export {Timestamp} = firebase.firestore;
