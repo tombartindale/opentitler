@@ -1,15 +1,19 @@
 <template lang="pug">
 q-layout(view="hHh lpR fFf")
-  video(autoplay loop muted).fixed-right.fixed-left.vid
-    source(src="/vids/vid2.mp4" type="video/mp4")
+  video.fixed-right.fixed-left.vid(autoplay, loop, muted)
+    source(src="/vids/vid2.mp4", type="video/mp4")
   q-page-container.fullscreen
     q-page(padding)
       .q-pa-lg
-        div.animate__animated.animate__slideInLeft.animate__slow
+        .animate__animated.animate__slideInLeft.animate__slow
           .title2 For your live video productions
           .title1
-            transition(enter-active-class="animate__animated animate__fadeIn" leave-active-class="animate__animated animate__fadeOut" mode="out-in")
-              div(:key="title" ) {{alltitles[title]}}
+            transition(
+              enter-active-class="animate__animated animate__fadeIn",
+              leave-active-class="animate__animated animate__fadeOut",
+              mode="out-in"
+            )
+              div(:key="title") {{ alltitles[title] }}
         .row
           .text-h5.q-mt-xl Key Features
             ul
@@ -19,7 +23,7 @@ q-layout(view="hHh lpR fFf")
               li Fully customisable styles and graphics
               li Integrated with ZoomSense for live Zoom chat display.
         .text-center.q-mt-lg
-          q-btn(@click="socialLogin" color="primary" size="lg") Login with Google
+          q-btn(@click="socialLogin", color="primary", size="lg") Login with Google
 </template>
 
 <style src="animate.css/animate.css">
@@ -43,7 +47,7 @@ export default {
   },
   mounted() {
     var self = this;
-    setInterval(function() {
+    setInterval(function () {
       self.title = (self.title + 1) % self.alltitles.length;
     }, 3000);
   },
@@ -54,6 +58,7 @@ export default {
         .auth()
         .signInWithPopup(provider)
         .then(() => {
+          this.$q.localStorage.remove("anon");
           this.$router.replace("dashboard");
         })
         .catch((err) => {

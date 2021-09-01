@@ -43,7 +43,7 @@ Vue.component("v-style", {
 const routes = [
   {
     path: "*",
-    redirect: "/login",
+    redirect: "/dashboard",
   },
   {
     path: "/login",
@@ -89,11 +89,12 @@ const router = new VueRouter({
 });
 
 import { getCurrentUser } from "./lib/db";
+import { LocalStorage } from "quasar";
 
 router.beforeEach(async (to, from, next) => {
   const currentUser = await getCurrentUser();
 
-  // console.log(currentUser)
+  // console.log(currentUser);
 
   // console.log(to);
 
@@ -107,15 +108,20 @@ router.beforeEach(async (to, from, next) => {
   if (!requiresAuth) return next();
 
   if (currentUser && to.path.startsWith("/login")) {
-    // console.log('sending to dash')
     return next("dashboard");
   }
 
+  if (LocalStorage.has("anon") && !to.path.startsWith("/control")) {
+    // console.log("anon");
+    let anon = LocalStorage.getItem("anon").displayid;
+    next("/control/" + anon);
+  }
+
   if (requiresAuth && !currentUser) {
-    // console.log('sending to login')
+    // console.log("sending to login");
     next("login");
   } else if (currentUser && requiresAuth) {
-    // console.log('sending to dash 2')
+    // console.log("sending to next");
     next();
   } else next();
 });

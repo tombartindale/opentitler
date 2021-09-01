@@ -1,8 +1,8 @@
 <template lang="pug">
 .absolute-center.text-center
   h4(v-if="!error") Connecting to controller...
-  q-spinner(size="lg" v-if="!error")
-  q-banner(rounded v-if="error").bg-red
+  q-spinner(size="lg", v-if="!error")
+  q-banner.bg-red(rounded, v-if="error")
     .text-body1 Your link is invalid. Please contact the display owner to receive another.
 </template>
 
@@ -23,37 +23,37 @@ export default {
       error: false,
     };
   },
-  mounted() {
+  async mounted() {
     //when mounted -- do anon firebase login:
-    firebase
-      .auth()
-      .signInAnonymously()
-      .then(async (loginData) => {
-        //do login:
-        const user = loginData.user;
-        // Read result of the decryptToken Function
-        // console.log(this.token);
-        const result = await decryptToken({ token: this.token });
-        const { displayid, userid } = result.data;
-        // curMeetingid = displayid;
-        // curHostuid = userid;
-        const anonymousSession = {
-          displayid,
-          userid,
-        };
-        this.$q.localStorage.set("anon", anonymousSession);
+    try {
+      let loginData = await firebase.auth().signInAnonymously();
 
-        //write this user's account access to rtdb:
-        await db
-          .ref(`/anonymous/users/${user.uid}/control/${userid}/${displayid}`)
-          .set({ createdAt: new Date().getTime() });
+      // .then(async (loginData) => {
+      //do login:
+      const user = loginData.user;
+      // Read result of the decryptToken Function
+      // console.log(this.token);
+      const result = await decryptToken({ token: this.token });
+      const { displayid, userid } = result.data;
+      // curMeetingid = displayid;
+      // curHostuid = userid;
+      const anonymousSession = {
+        displayid,
+        userid,
+      };
+      this.$q.localStorage.set("anon", anonymousSession);
 
-        this.$router.push("/control/" + displayid);
-      })
-      .catch((err) => {
-        console.error(err);
-        this.error = true;
-      });
+      //write this user's account access to rtdb:
+      await db
+        .ref(`/anonymous/users/${user.uid}/control/${userid}/${displayid}`)
+        .set({ createdAt: new Date().getTime() });
+
+      // console.log("push to control");
+      this.$router.replace("/control/" + displayid);
+    } catch (err) {
+      console.error(err);
+      this.error = true;
+    }
     //if the code is valid, link this account to that display
   },
 };
