@@ -11,4 +11,3 @@
 # BUGS
 
 - when people people is missing, tabs crash
-- when viewing as anon user, allows adding of own displays
