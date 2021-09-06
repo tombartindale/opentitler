@@ -17,7 +17,7 @@ q-layout(view="hHh lpR fFf")
 
   //- q-header.bg-primary.text-white(elevated height-hint="98")
     //- q-toolbar
-  
+
       //- q-toolbar-title {{display.name}}
 
   q-drawer(
@@ -140,7 +140,10 @@ q-layout(view="hHh lpR fFf")
                             outline
                           )
                       q-separator
-                      q-item.bg-accent(dense, v-if="control.zoomsense_autotitles")
+                      q-item.bg-accent(
+                        dense,
+                        v-if="control.zoomsense_autotitles"
+                      )
                         q-item-section
                           q-item-label Automatically triggered by Zoom
                     q-scroll-area.pad-bottom.full-height(
@@ -151,14 +154,14 @@ q-layout(view="hHh lpR fFf")
                         v-for="(people, index) in display.draft.people"
                       )
                         q-item.relative.border-off(
-                          :class="{ 'border-on': control.people && display.people.name == people.name && display.people.affiliation == people.affiliation }",
+                          :class="{ 'border-on': control.people && display.people && display.people.name == people.name && display.people.affiliation == people.affiliation }",
                           @click="fireperson(people)",
                           clickable,
                           ripple
                         )
                           q-linear-progress.z-bottom.absolute-left.full-height(
                             style="opacity: 0.3",
-                            v-show="peopletimer>0 && display.people.name == people.name && display.people.affiliation == people.affiliation",
+                            v-show="peopletimer>0 && display.people && display.people.name == people.name && display.people.affiliation == people.affiliation",
                             :value="1 - peopletimer / 100"
                           )
                           q-item-section(side)
@@ -166,11 +169,11 @@ q-layout(view="hHh lpR fFf")
                               color="red",
                               name="monitor",
                               v-if="display.people",
-                              v-show="display.people.name == people.name && display.people.affiliation == people.affiliation"
+                              v-show="display.people && display.people.name == people.name && display.people.affiliation == people.affiliation"
                             )
                             q-icon(
                               name="blank",
-                              v-show="!(display.people.name == people.name && display.people.affiliation == people.affiliation)"
+                              v-show="!(display.people && display.people.name == people.name && display.people.affiliation == people.affiliation)"
                             )
                           q-item-section
                             q-item-label {{ people.name }}
@@ -1261,7 +1264,7 @@ export default {
       this.$firebaseRefs.control.child("people").set(false);
       this.peopletimer = 0;
       try {
-        this.currentsound.fade(1.0, 0, 1000);
+        if (this.currentsound) this.currentsound.fade(1.0, 0, 1000);
       } catch (e) {
         //no sound
         console.log(e);
@@ -1464,8 +1467,10 @@ export default {
       immediate: false,
       deep: true,
       handler(control) {
+        // console.log("saving");
         if (!control.currentcontent) control.currentcontent = 0;
         this.$firebaseRefs.control.set(control);
+        // console.log("fail");
       },
     },
     watermarkImg: {
